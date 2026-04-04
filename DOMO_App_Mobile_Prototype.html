@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOMO — Prototype Résident</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0B1622; --card:#132030; --card2:#1A2C42;
+  --orange:#FF6B35; --orange2:#FF4500;
+  --teal:#00D4AA; --teal2:#00A882;
+  --violet:#7C3AED; --violet2:#5B21B6;
+  --gold:#F59E0B; --gold2:#D97706;
+  --navy:#0F1E35; --white:#FFF; --muted:#7A90A8;
+  --border:#1E3048; --green:#10B981; --red:#EF4444;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#060e1a 0%,#0a1525 50%,#07101e 100%);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.phone{
+  width:390px;height:844px;background:var(--bg);border-radius:52px;
+  position:relative;overflow:hidden;
+  box-shadow:
+    0 50px 120px rgba(0,0,0,.8),
+    0 0 0 1px rgba(255,255,255,.06),
+    inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.notch{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:126px;height:36px;background:#000;border-radius:0 0 24px 24px;z-index:200;
+}
+.screen{
+  position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden;
+}
+.screen.active{display:flex;}
+.screen.slide-in{animation:slideIn .35s cubic-bezier(.25,.46,.45,.94) forwards;}
+.screen.slide-out{animation:slideOut .35s cubic-bezier(.25,.46,.45,.94) forwards;}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-30px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.pin-box:focus{border-color:var(--teal);box-shadow:0 0 16px rgba(0,212,170,.4);}
+.pin-box::-webkit-outer-spin-button,.pin-box::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.pin-box[type=number]{-moz-appearance:textfield;}
+.scroll{flex:1;overflow-y:auto;padding-bottom:88px;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
+/* === GLASSMORPHISM NAV === */
+.nav{
+  position:absolute;bottom:0;left:0;right:0;height:78px;
+  background:rgba(11,22,34,.85);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;justify-content:space-around;
+  padding:0 6px 14px;z-index:100;
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;padding:8px 14px;border-radius:16px;transition:all .25s;
+  position:relative;
+}
+.nav-item .ni{font-size:21px;transition:all .25s;}
+.nav-item .nl{font-size:10px;color:var(--muted);font-weight:500;transition:all .25s;}
+.nav-item.active{background:rgba(255,107,53,.12);}
+.nav-item.active .nl{color:var(--orange);font-weight:700;}
+.nav-item.active .ni{filter:drop-shadow(0 0 8px rgba(255,107,53,.6));transform:translateY(-1px);}
+/* === CARDS === */
+.card{
+  background:linear-gradient(145deg,#132030,#1A2C42);
+  border-radius:24px;padding:20px;margin:0 16px 12px;
+  border:1px solid rgba(255,255,255,.05);
+}
+.card-glow-teal{box-shadow:0 4px 24px rgba(0,212,170,.12),inset 0 0 0 1px rgba(0,212,170,.1);}
+.card-glow-orange{box-shadow:0 4px 24px rgba(255,107,53,.12),inset 0 0 0 1px rgba(255,107,53,.1);}
+.card-glow-violet{box-shadow:0 4px 24px rgba(124,58,237,.12),inset 0 0 0 1px rgba(124,58,237,.1);}
+/* === BUTTONS === */
+.btn{
+  border:none;cursor:pointer;font-family:'Poppins',sans-serif;
+  font-weight:700;border-radius:50px;transition:all .2s;letter-spacing:.3px;
+}
+.btn:active{transform:scale(.95);}
+.btn-orange{
+  background:linear-gradient(135deg,#FF6B35,#FF4500);color:#fff;
+  padding:15px 32px;font-size:15px;
+  box-shadow:0 6px 24px rgba(255,100,53,.45),0 2px 8px rgba(0,0,0,.3);
+}
+.btn-orange:hover{box-shadow:0 8px 32px rgba(255,100,53,.55);transform:translateY(-1px);}
+.btn-teal{
+  background:linear-gradient(135deg,#00D4AA,#009980);color:#fff;
+  padding:13px 26px;font-size:14px;
+  box-shadow:0 6px 20px rgba(0,212,170,.4),0 2px 8px rgba(0,0,0,.2);
+}
+.btn-violet{
+  background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;
+  padding:13px 26px;font-size:14px;
+  box-shadow:0 6px 20px rgba(124,58,237,.4);
+}
+.btn-sm{padding:8px 18px;font-size:12px;}
+.btn-ghost{background:rgba(255,255,255,.06);color:var(--muted);padding:13px;border:1px solid var(--border);}
+/* === INPUTS === */
+.inp{
+  width:100%;padding:14px 18px;
+  background:rgba(30,48,72,.6);
+  border:1.5px solid var(--border);border-radius:16px;
+  color:#fff;font-family:'Poppins',sans-serif;font-size:14px;outline:none;
+  transition:border .2s,background .2s;
+}
+.inp:focus{border-color:var(--teal);background:rgba(0,212,170,.06);}
+.inp::placeholder{color:var(--muted);}
+textarea.inp{resize:none;}
+/* === BADGES === */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:50px;font-size:11px;font-weight:700;}
+.b-green{background:rgba(16,185,129,.15);color:#10B981;}
+.b-yellow{background:rgba(245,158,11,.15);color:#F59E0B;}
+.b-red{background:rgba(239,68,68,.15);color:#EF4444;}
+.b-blue{background:rgba(96,165,250,.15);color:#60A5FA;}
+.b-gray{background:rgba(120,144,168,.15);color:#7A90A8;}
+.b-violet{background:rgba(124,58,237,.15);color:#A78BFA;}
+.b-teal{background:rgba(0,212,170,.15);color:var(--teal);}
+/* === MODALS === */
+.modal-overlay{
+  position:absolute;inset:0;background:rgba(5,10,18,.88);
+  display:none;align-items:flex-end;z-index:150;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.modal-overlay.open{display:flex;animation:fadeOverlay .25s ease;}
+@keyframes fadeOverlay{from{opacity:0}to{opacity:1}}
+.modal{
+  width:100%;background:linear-gradient(160deg,#0F1E30,#152540);
+  border-radius:36px 36px 0 0;padding:28px 20px 36px;
+  max-height:82%;overflow-y:auto;scrollbar-width:none;
+  border-top:1px solid rgba(255,255,255,.08);
+  animation:modalUp .3s cubic-bezier(.25,.46,.45,.94);
+}
+.modal::-webkit-scrollbar{display:none;}
+@keyframes modalUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mhandle{width:44px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:0 auto 22px;}
+/* === SECTION TITLE === */
+.stitle{
+  font-size:16px;font-weight:800;color:#fff;
+  margin:18px 16px 10px;display:flex;align-items:center;justify-content:space-between;
+}
+.stitle a{font-size:12px;color:var(--teal);cursor:pointer;font-weight:600;}
+/* === BACK BTN === */
+.backbtn{
+  width:40px;height:40px;background:rgba(255,255,255,.07);border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:18px;border:1px solid var(--border);
+  color:#fff;flex-shrink:0;transition:all .2s;
+}
+.backbtn:active{transform:scale(.9);}
+/* === CAT BUTTONS === */
+.cat-btn{
+  background:rgba(30,48,72,.7);border:1.5px solid var(--border);border-radius:18px;
+  padding:14px 6px;text-align:center;cursor:pointer;color:var(--muted);
+  transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:5px;
+}
+.cat-btn:active{transform:scale(.94);}
+.cat-btn.sel{border-color:var(--teal);background:rgba(0,212,170,.1);color:var(--teal);}
+/* === PRIO BUTTONS === */
+.prio-btn{
+  flex:1;padding:11px 6px;border:1.5px solid var(--border);border-radius:50px;
+  text-align:center;font-size:12px;font-weight:700;color:var(--muted);
+  cursor:pointer;transition:all .2s;background:rgba(30,48,72,.5);
+}
+.prio-btn:active{transform:scale(.95);}
+.prio-low.sel{border-color:var(--green);color:var(--green);background:rgba(16,185,129,.1);}
+.prio-med.sel{border-color:var(--yellow);color:var(--yellow);background:rgba(245,158,11,.1);}
+.prio-high.sel{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.1);}
+/* === PAY METHODS === */
+.pay-meth{
+  display:flex;align-items:center;gap:14px;padding:16px;
+  background:rgba(20,36,56,.8);border-radius:18px;border:1.5px solid var(--border);
+  cursor:pointer;transition:all .2s;
+}
+.pay-meth:active{transform:scale(.98);}
+.pay-meth.sel{border-color:var(--teal);background:rgba(0,212,170,.08);box-shadow:0 0 0 1px rgba(0,212,170,.2);}
+/* === MENU ITEMS === */
+.menu-item{
+  display:flex;align-items:center;gap:16px;padding:18px;cursor:pointer;
+  transition:background .2s;
+}
+.menu-item:active{background:rgba(255,255,255,.03);}
+/* === TOAST === */
+#toast{
+  position:absolute;bottom:100px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,#132030,#1e3a55);
+  border:1px solid rgba(0,212,170,.3);border-radius:20px;
+  padding:12px 22px;font-size:13px;color:#fff;font-weight:600;
+  display:none;z-index:300;text-align:center;white-space:nowrap;
+  box-shadow:0 8px 28px rgba(0,0,0,.5),0 0 0 1px rgba(0,212,170,.1);
+}
+/* === STAGGER ANIMATIONS === */
+.anim-1{animation:fadeUp .4s .05s both;}
+.anim-2{animation:fadeUp .4s .1s both;}
+.anim-3{animation:fadeUp .4s .15s both;}
+.anim-4{animation:fadeUp .4s .2s both;}
+.anim-5{animation:fadeUp .4s .25s both;}
+.anim-6{animation:fadeUp .4s .3s both;}
+/* === QR PATTERN === */
+.qr-cell{background:#000;}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="notch"></div>
+
+<!-- ==================== SCREEN 1: LOGIN ==================== -->
+<div class="screen active" id="s-login">
+  <div style="flex:1;background:linear-gradient(170deg,#0F1E35 0%,#0B1622 55%,#081018 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:40px 30px;position:relative;overflow:hidden;">
+    <!-- BG glows -->
+    <div style="position:absolute;top:-100px;right:-100px;width:280px;height:280px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,107,53,.18) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:absolute;bottom:60px;left:-120px;width:300px;height:300px;border-radius:50%;
+      background:radial-gradient(circle,rgba(0,212,170,.12) 0%,transparent 70%);pointer-events:none;"></div>
+    <!-- Geometric decor -->
+    <div style="position:absolute;top:100px;left:20px;width:60px;height:60px;border-radius:18px;
+      background:rgba(255,107,53,.09);border:1px solid rgba(255,107,53,.2);transform:rotate(20deg);"></div>
+    <div style="position:absolute;top:160px;right:28px;width:36px;height:36px;border-radius:10px;
+      background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.25);transform:rotate(-15deg);"></div>
+    <div style="position:absolute;bottom:200px;right:18px;width:50px;height:50px;border-radius:50%;
+      background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);"></div>
+    <!-- Logo block -->
+    <div style="animation:scaleIn .5s .1s both;text-align:center;margin-bottom:40px;">
+      <div style="width:80px;height:80px;border-radius:28px;margin:0 auto 14px;
+        background:linear-gradient(145deg,#FF6B35,#FF4500);
+        display:flex;align-items:center;justify-content:center;font-size:38px;
+        box-shadow:0 12px 36px rgba(255,100,53,.45),0 4px 12px rgba(0,0,0,.3);">🏘️</div>
+      <div style="font-size:38px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;">DOMO</div>
+      <div style="font-size:13px;color:var(--muted);font-weight:300;letter-spacing:2px;margin-top:4px;">Votre résidence, connectée.</div>
+    </div>
+    <!-- Form -->
+    <div style="width:100%;display:flex;flex-direction:column;gap:14px;animation:fadeUp .5s .25s both;">
+      <div>
+        <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:7px;letter-spacing:.5px;">📱 NUMÉRO DE TÉLÉPHONE</label>
+        <div style="position:relative;display:flex;align-items:center;gap:8px;">
+          <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);padding:12px 14px;border-radius:14px;border:1px solid rgba(0,212,170,.2);">
+            <span style="font-size:16px;">🇨🇮</span>
+            <span style="font-size:13px;color:var(--muted);font-weight:600;">+225</span>
+          </div>
+          <input class="inp" type="tel" placeholder="07 XX XX XX" value="07 49 52 33" style="flex:1;">
+        </div>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:10px;letter-spacing:.5px;">🔐 CODE PIN (4 CHIFFRES)</label>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <input class="pin-box" type="password" maxlength="1" value="2" style="width:52px;height:52px;font-size:20px;font-weight:700;text-align:center;border:2px solid rgba(0,212,170,.3);border-radius:14px;background:rgba(11,22,34,.6);color:#fff;outline:none;">
+          <input class="pin-box" type="password" maxlength="1" value="5" style="width:52px;height:52px;font-size:20px;font-weight:700;text-align:center;border:2px solid rgba(0,212,170,.3);border-radius:14px;background:rgba(11,22,34,.6);color:#fff;outline:none;">
+          <input class="pin-box" type="password" maxlength="1" value="8" style="width:52px;height:52px;font-size:20px;font-weight:700;text-align:center;border:2px solid rgba(0,212,170,.3);border-radius:14px;background:rgba(11,22,34,.6);color:#fff;outline:none;">
+          <input class="pin-box" type="password" maxlength="1" value="4" style="width:52px;height:52px;font-size:20px;font-weight:700;text-align:center;border:2px solid rgba(0,212,170,.3);border-radius:14px;background:rgba(11,22,34,.6);color:#fff;outline:none;">
+        </div>
+      </div>
+      <button class="btn btn-orange" style="width:100%;margin-top:12px;font-size:15px;letter-spacing:.5px;" onclick="navigate('home')">
+        Se connecter →
+      </button>
+    </div>
+    <!-- Footer -->
+    <div style="position:absolute;bottom:28px;font-size:11px;color:rgba(120,144,168,.5);">
+      DOMO · Côte d'Ivoire · v1.0
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SCREEN 2: HOME ==================== -->
+<div class="screen" id="s-home">
+  <div class="scroll">
+    <!-- Header -->
+    <div style="padding:52px 20px 0;display:flex;align-items:center;justify-content:space-between;" class="anim-1">
+      <div>
+        <div style="font-size:12px;color:var(--muted);font-weight:500;">Sam. 4 avril 2026</div>
+        <div style="font-size:23px;font-weight:800;color:#fff;line-height:1.2;">Bonjour Adjoua 👋</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="position:relative;cursor:pointer;width:40px;height:40px;background:rgba(255,255,255,.07);
+          border-radius:14px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);">
+          <span style="font-size:20px;">🔔</span>
+          <span style="position:absolute;top:-4px;right:-4px;width:17px;height:17px;
+            background:linear-gradient(135deg,var(--orange),var(--orange2));border-radius:50%;
+            font-size:9px;color:#fff;display:flex;align-items:center;justify-content:center;
+            font-weight:800;border:2px solid var(--bg);">2</span>
+        </div>
+        <div onclick="navigate('profil')" style="width:40px;height:40px;border-radius:50%;cursor:pointer;
+          background:linear-gradient(135deg,#FF6B35,#7C3AED);
+          display:flex;align-items:center;justify-content:center;
+          font-size:17px;font-weight:800;color:#fff;
+          box-shadow:0 4px 16px rgba(255,107,53,.35);">A</div>
+      </div>
+    </div>
+    <!-- HERO CARD -->
+    <div class="anim-2" style="margin:14px 16px;border-radius:28px;padding:24px;
+      background:linear-gradient(145deg,#0F2540 0%,#005A4E 60%,#003D4A 100%);
+      box-shadow:0 12px 40px rgba(0,212,170,.2),0 4px 16px rgba(0,0,0,.4);
+      position:relative;overflow:hidden;border:1px solid rgba(0,212,170,.15);">
+      <!-- BG orbs -->
+      <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;
+        background:rgba(0,212,170,.08);pointer-events:none;"></div>
+      <div style="position:absolute;bottom:-50px;left:20px;width:130px;height:130px;border-radius:50%;
+        background:rgba(0,90,78,.5);pointer-events:none;"></div>
+      <div style="position:relative;">
+        <div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px;margin-bottom:5px;">🏠 MA RÉSIDENCE</div>
+        <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:2px;">Villa 14B</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:20px;">Résidence Les Palmiers · Cocody</div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:2px;">Solde dû — Mars 2026</div>
+            <div style="font-size:30px;font-weight:900;color:#fff;line-height:1;">15 000
+              <span style="font-size:15px;font-weight:500;color:rgba(255,255,255,.7);">XOF</span>
+            </div>
+          </div>
+          <span class="badge b-yellow" style="font-size:12px;padding:7px 14px;">⚠️ En attente</span>
+        </div>
+        <!-- Mini progress -->
+        <div style="margin-top:16px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:10px;color:rgba(255,255,255,.4);">Payé : 10 000 XOF</span>
+            <span style="font-size:10px;color:rgba(255,255,255,.4);">40%</span>
+          </div>
+          <div style="height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="width:40%;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:3px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- QUICK ACTIONS -->
+    <div class="anim-3" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 16px;margin-bottom:6px;">
+      <div onclick="navigate('paiement')" style="background:linear-gradient(145deg,#0C2535,#0A3030);border:1px solid rgba(0,212,170,.2);
+        border-radius:22px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:7px;
+        cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(0,212,170,.1);">
+        <span style="font-size:24px;filter:drop-shadow(0 2px 6px rgba(0,212,170,.4));">💰</span>
+        <span style="font-size:10px;color:var(--teal);font-weight:700;">Payer</span>
+      </div>
+      <div onclick="navigate('incidents')" style="background:linear-gradient(145deg,#2A1208,#300E06);border:1px solid rgba(255,107,53,.2);
+        border-radius:22px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:7px;
+        cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(255,107,53,.1);">
+        <span style="font-size:24px;filter:drop-shadow(0 2px 6px rgba(255,107,53,.4));">🚨</span>
+        <span style="font-size:10px;color:var(--orange);font-weight:700;">Incident</span>
+      </div>
+      <div onclick="navigate('visiteurs')" style="background:linear-gradient(145deg,#1A0D35,#200E40);border:1px solid rgba(124,58,237,.2);
+        border-radius:22px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:7px;
+        cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(124,58,237,.1);">
+        <span style="font-size:24px;filter:drop-shadow(0 2px 6px rgba(124,58,237,.4));">🔑</span>
+        <span style="font-size:10px;color:#A78BFA;font-weight:700;">Visiteur</span>
+      </div>
+      <div style="background:linear-gradient(145deg,#0D2030,#142840);border:1px solid rgba(96,165,250,.2);
+        border-radius:22px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:7px;
+        cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(96,165,250,.1);">
+        <span style="font-size:24px;filter:drop-shadow(0 2px 6px rgba(96,165,250,.4));">📢</span>
+        <span style="font-size:10px;color:#60A5FA;font-weight:700;">Messages</span>
+      </div>
+    </div>
+
+    <!-- INCIDENTS SECTION -->
+    <div class="stitle anim-4">Mes incidents <a onclick="navigate('incidents')">Voir tout →</a></div>
+    <div class="card card-glow-blue anim-4" style="padding:16px;cursor:pointer;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:48px;height:48px;border-radius:16px;flex-shrink:0;
+          background:linear-gradient(135deg,rgba(96,165,250,.2),rgba(59,130,246,.1));
+          border:1px solid rgba(96,165,250,.2);
+          display:flex;align-items:center;justify-content:center;font-size:22px;">💧</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Fuite d'eau salle de bain</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Plomberie · Il y a 2 jours</div>
+        </div>
+        <span class="badge b-blue">🔄 En cours</span>
+      </div>
+    </div>
+    <div class="card anim-5" style="padding:16px;cursor:pointer;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:48px;height:48px;border-radius:16px;flex-shrink:0;
+          background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(217,119,6,.1));
+          border:1px solid rgba(245,158,11,.2);
+          display:flex;align-items:center;justify-content:center;font-size:22px;">⚡</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Ampoule couloir cassée</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Électricité · Il y a 5 jours</div>
+        </div>
+        <span class="badge b-yellow">📋 Ouvert</span>
+      </div>
+    </div>
+    <!-- NOTIFICATIONS SECTION -->
+    <div class="stitle anim-5">Notifications récentes</div>
+    <div class="card anim-6" style="padding:0;overflow:hidden;margin-bottom:8px;">
+      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:12px;align-items:flex-start;">
+        <div style="width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--orange),var(--orange2));
+          display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">💰</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:#fff;">Rappel de cotisation</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Mars 2026 — 15 000 XOF restants à régler.</div>
+          <div style="font-size:10px;color:var(--teal);margin-top:4px;font-weight:600;">Il y a 1h</div>
+        </div>
+      </div>
+      <div style="padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
+        <div style="width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#60A5FA,#3B82F6);
+          display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🔄</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:#fff;">Incident mis à jour</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Votre fuite d'eau est en cours de traitement.</div>
+          <div style="font-size:10px;color:var(--teal);margin-top:4px;font-weight:600;">Il y a 3h</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- end scroll -->
+</div><!-- end s-home -->
+
+<!-- ==================== SCREEN 3: COTISATIONS ==================== -->
+<div class="screen" id="s-cotisations">
+  <div style="padding:52px 20px 14px;display:flex;align-items:center;gap:14px;" class="anim-1">
+    <div class="backbtn" onclick="navigate('home')">←</div>
+    <div>
+      <div style="font-size:11px;color:var(--teal);font-weight:600;letter-spacing:1px;">RÉSIDENCE LES PALMIERS</div>
+      <div style="font-size:20px;font-weight:800;color:#fff;">Mes Cotisations</div>
+    </div>
+  </div>
+  <div class="scroll">
+    <!-- SUMMARY CARD -->
+    <div class="anim-2" style="margin:0 16px 16px;border-radius:28px;padding:22px;
+      background:linear-gradient(145deg,#082535,#006050);
+      border:1px solid rgba(0,212,170,.2);
+      box-shadow:0 10px 32px rgba(0,212,170,.18);">
+      <div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px;margin-bottom:16px;">BILAN ANNUEL 2026</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;text-align:center;">
+        <div style="padding:0 12px;">
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:6px;font-weight:500;">Total dû</div>
+          <div style="font-size:20px;font-weight:900;color:#fff;">75K</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.4);">XOF</div>
+        </div>
+        <div style="padding:0 12px;border-left:1px solid rgba(255,255,255,.1);border-right:1px solid rgba(255,255,255,.1);">
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:6px;font-weight:500;">Payé</div>
+          <div style="font-size:20px;font-weight:900;color:var(--green);">60K</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.4);">XOF</div>
+        </div>
+        <div style="padding:0 12px;">
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:6px;font-weight:500;">Solde</div>
+          <div style="font-size:20px;font-weight:900;color:var(--orange);">15K</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.4);">XOF</div>
+        </div>
+      </div>
+      <div style="margin-top:18px;">
+        <div style="height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;">
+          <div style="width:80%;height:100%;background:linear-gradient(90deg,var(--teal),var(--green));border-radius:4px;
+            box-shadow:0 0 12px rgba(0,212,170,.4);"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:5px;">
+          <span style="font-size:10px;color:rgba(255,255,255,.4);">80% du bilan annuel payé</span>
+          <span style="font-size:10px;color:var(--teal);font-weight:600;">En bonne voie ✨</span>
+        </div>
+      </div>
+    </div>
+    <!-- MONTHS LIST -->
+    <div class="stitle anim-3">Cycles 2026</div>
+    <!-- Jan - Paid -->
+    <div class="card anim-3" style="padding:16px;cursor:pointer;margin-bottom:8px;" onclick="openModal('modal-cotis','jan')">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:46px;height:46px;border-radius:16px;flex-shrink:0;
+            background:linear-gradient(135deg,rgba(16,185,129,.25),rgba(5,150,100,.15));
+            border:1px solid rgba(16,185,129,.3);
+            display:flex;align-items:center;justify-content:center;font-size:22px;">✅</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#fff;">Janvier 2026</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;">25 000 XOF · Payé le 05/01</div>
+          </div>
+        </div>
+        <span class="badge b-green">Payé ✓</span>
+      </div>
+    </div>
+    <!-- Feb - Paid -->
+    <div class="card anim-4" style="padding:16px;cursor:pointer;margin-bottom:8px;" onclick="openModal('modal-cotis','feb')">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:46px;height:46px;border-radius:16px;flex-shrink:0;
+            background:linear-gradient(135deg,rgba(16,185,129,.25),rgba(5,150,100,.15));
+            border:1px solid rgba(16,185,129,.3);
+            display:flex;align-items:center;justify-content:center;font-size:22px;">✅</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#fff;">Février 2026</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;">25 000 XOF · Payé le 03/02</div>
+          </div>
+        </div>
+        <span class="badge b-green">Payé ✓</span>
+      </div>
+    </div>
+    <!-- Mar - Pending (featured) -->
+    <div class="anim-5" style="margin:0 16px 12px;padding:18px;cursor:pointer;border-radius:24px;
+      background:linear-gradient(145deg,#1E2A10,#2A3808);
+      border:1.5px solid rgba(245,158,11,.35);
+      box-shadow:0 6px 24px rgba(245,158,11,.12);" onclick="openModal('modal-cotis','mar')">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:46px;height:46px;border-radius:16px;flex-shrink:0;
+            background:linear-gradient(135deg,rgba(245,158,11,.25),rgba(217,119,6,.15));
+            border:1px solid rgba(245,158,11,.3);
+            display:flex;align-items:center;justify-content:center;font-size:22px;">⚠️</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#fff;">Mars 2026</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;">10 000 XOF payé sur 25 000</div>
+          </div>
+        </div>
+        <span class="badge b-yellow">En attente</span>
+      </div>
+      <div style="height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;">
+        <div style="width:40%;height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));border-radius:4px;
+          box-shadow:0 0 10px rgba(255,107,53,.35);"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;">
+        <span style="font-size:10px;color:rgba(255,255,255,.4);">40% payé</span>
+        <span style="font-size:10px;color:var(--orange);font-weight:700;">Reste 15 000 XOF →</span>
+      </div>
+    </div>
+    <!-- Apr - Late -->
+    <div class="card anim-6" style="padding:16px;cursor:pointer;margin-bottom:8px;
+      border:1px solid rgba(239,68,68,.25);box-shadow:0 4px 16px rgba(239,68,68,.08);" onclick="openModal('modal-cotis','apr')">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:46px;height:46px;border-radius:16px;flex-shrink:0;
+            background:linear-gradient(135deg,rgba(239,68,68,.25),rgba(185,28,28,.15));
+            border:1px solid rgba(239,68,68,.3);
+            display:flex;align-items:center;justify-content:center;font-size:22px;">🔴</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#fff;">Avril 2026</div>
+            <div style="font-size:11px;color:var(--red);margin-top:2px;font-weight:600;">25 000 XOF · En retard</div>
+          </div>
+        </div>
+        <span class="badge b-red">En retard</span>
+      </div>
+    </div>
+    <!-- PAYMENT HISTORY -->
+    <div class="stitle">Historique des paiements</div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="padding:15px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:22px;">🌊</span>
+          <div><div style="font-size:13px;font-weight:700;color:#fff;">Wave CI</div><div style="font-size:11px;color:var(--muted);">Mars 2026 · 03/03/2026</div></div>
+        </div>
+        <div style="font-size:15px;font-weight:800;color:var(--green);">+10 000</div>
+      </div>
+      <div style="padding:15px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:22px;">🟠</span>
+          <div><div style="font-size:13px;font-weight:700;color:#fff;">Orange Money</div><div style="font-size:11px;color:var(--muted);">Fév 2026 · 03/02/2026</div></div>
+        </div>
+        <div style="font-size:15px;font-weight:800;color:var(--green);">+25 000</div>
+      </div>
+      <div style="padding:15px 16px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:22px;">🌊</span>
+          <div><div style="font-size:13px;font-weight:700;color:#fff;">Wave CI</div><div style="font-size:11px;color:var(--muted);">Jan 2026 · 05/01/2026</div></div>
+        </div>
+        <div style="font-size:15px;font-weight:800;color:var(--green);">+25 000</div>
+      </div>
+    </div>
+  </div>
+</div><!-- end s-cotisations -->
+
+<!-- ==================== SCREEN 4: INCIDENTS ==================== -->
+<div class="screen" id="s-incidents">
+  <div style="padding:52px 20px 14px;display:flex;align-items:center;gap:14px;" class="anim-1">
+    <div class="backbtn" onclick="navigate('home')">←</div>
+    <div>
+      <div style="font-size:11px;color:var(--orange);font-weight:600;letter-spacing:1px;">SIGNALEMENT</div>
+      <div style="font-size:20px;font-weight:800;color:#fff;">Signaler un incident</div>
+    </div>
+  </div>
+  <div class="scroll" style="padding:0 16px 90px;">
+    <!-- Title -->
+    <div class="anim-2" style="margin-bottom:14px;">
+      <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:8px;letter-spacing:.5px;">📝 TITRE</label>
+      <input class="inp" type="text" placeholder="Ex: Fuite d'eau dans la cuisine" id="inc-title">
+    </div>
+    <!-- Description -->
+    <div class="anim-2" style="margin-bottom:14px;">
+      <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:8px;letter-spacing:.5px;">📋 DESCRIPTION</label>
+      <textarea class="inp" rows="3" placeholder="Décrivez l'incident en détail..." id="inc-desc"></textarea>
+    </div>
+    <!-- Category -->
+    <div class="anim-3" style="margin-bottom:16px;">
+      <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:10px;letter-spacing:.5px;">🏷️ CATÉGORIE</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;" id="cat-grid">
+        <div class="cat-btn sel" data-cat="plomberie" onclick="selectCat(this)">
+          <span style="font-size:24px;">💧</span><span style="font-size:10px;font-weight:700;">Plomberie</span>
+        </div>
+        <div class="cat-btn" data-cat="electricite" onclick="selectCat(this)">
+          <span style="font-size:24px;">⚡</span><span style="font-size:10px;font-weight:700;">Électricité</span>
+        </div>
+        <div class="cat-btn" data-cat="securite" onclick="selectCat(this)">
+          <span style="font-size:24px;">🔒</span><span style="font-size:10px;font-weight:700;">Sécurité</span>
+        </div>
+        <div class="cat-btn" data-cat="proprete" onclick="selectCat(this)">
+          <span style="font-size:24px;">🧹</span><span style="font-size:10px;font-weight:700;">Propreté</span>
+        </div>
+        <div class="cat-btn" data-cat="structure" onclick="selectCat(this)">
+          <span style="font-size:24px;">🏗️</span><span style="font-size:10px;font-weight:700;">Structure</span>
+        </div>
+        <div class="cat-btn" data-cat="autre" onclick="selectCat(this)">
+          <span style="font-size:24px;">📦</span><span style="font-size:10px;font-weight:700;">Autre</span>
+        </div>
+      </div>
+    </div>
+    <!-- Priority -->
+    <div class="anim-4" style="margin-bottom:22px;">
+      <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:10px;letter-spacing:.5px;">🎯 PRIORITÉ</label>
+      <div style="display:flex;gap:8px;" id="prio-group">
+        <div class="prio-btn prio-low" data-p="low" onclick="selectPrio(this)">🟢 Faible</div>
+        <div class="prio-btn prio-med sel" data-p="medium" onclick="selectPrio(this)">🟡 Moyen</div>
+        <div class="prio-btn prio-high" data-p="high" onclick="selectPrio(this)">🔴 Urgent</div>
+      </div>
+    </div>
+    <!-- FAB Submit button -->
+    <button class="btn btn-orange anim-5" style="width:100%;margin-bottom:24px;font-size:15px;" onclick="submitIncident()">
+      🚨 Envoyer le signalement
+    </button>
+    <!-- My incidents -->
+    <div class="stitle" style="padding:0;margin-left:0;margin-right:0;">Mes incidents
+      <span style="color:var(--muted);font-size:12px;font-weight:500;">2 actifs</span>
+    </div>
+    <div class="card card-glow-orange" style="padding:16px;margin-left:0;margin-right:0;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:48px;height:48px;border-radius:16px;flex-shrink:0;
+          background:linear-gradient(135deg,rgba(96,165,250,.2),rgba(59,130,246,.1));
+          border:1px solid rgba(96,165,250,.25);
+          display:flex;align-items:center;justify-content:center;font-size:22px;">💧</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:#fff;">Fuite d'eau salle de bain</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Plomberie · 02/04/2026</div>
+        </div>
+        <span class="badge b-blue">🔄 En cours</span>
+      </div>
+    </div>
+    <div class="card" style="padding:16px;margin-left:0;margin-right:0;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:48px;height:48px;border-radius:16px;flex-shrink:0;
+          background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(217,119,6,.1));
+          border:1px solid rgba(245,158,11,.25);
+          display:flex;align-items:center;justify-content:center;font-size:22px;">⚡</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:#fff;">Ampoule couloir cassée</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Électricité · 30/03/2026</div>
+        </div>
+        <span class="badge b-yellow">📋 Ouvert</span>
+      </div>
+    </div>
+  </div>
+</div><!-- end s-incidents -->
+
+<!-- ==================== SCREEN 5: VISITEURS ==================== -->
+<div class="screen" id="s-visiteurs">
+  <div style="padding:52px 20px 14px;display:flex;align-items:center;justify-content:space-between;" class="anim-1">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="backbtn" onclick="navigate('home')">←</div>
+      <div>
+        <div style="font-size:11px;color:#A78BFA;font-weight:600;letter-spacing:1px;">ACCÈS RÉSIDENCE</div>
+        <div style="font-size:20px;font-weight:800;color:#fff;">Codes Visiteurs</div>
+      </div>
+    </div>
+    <button class="btn btn-violet btn-sm" onclick="openModal('modal-visiteur')">+ Créer</button>
+  </div>
+  <div class="scroll">
+    <!-- Stats row -->
+    <div class="anim-2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:0 16px 16px;">
+      <div style="background:linear-gradient(145deg,#1A0D35,#200E42);border:1px solid rgba(124,58,237,.2);
+        border-radius:20px;padding:14px;text-align:center;">
+        <div style="font-size:22px;font-weight:900;color:#A78BFA;">2</div>
+        <div style="font-size:10px;color:var(--muted);font-weight:600;">Actifs</div>
+      </div>
+      <div style="background:linear-gradient(145deg,#0C2535,#0A3030);border:1px solid rgba(0,212,170,.2);
+        border-radius:20px;padding:14px;text-align:center;">
+        <div style="font-size:22px;font-weight:900;color:var(--teal);">3</div>
+        <div style="font-size:10px;color:var(--muted);font-weight:600;">Ce mois</div>
+      </div>
+      <div style="background:linear-gradient(145deg,#0D1E30,#122030);border:1px solid rgba(120,144,168,.1);
+        border-radius:20px;padding:14px;text-align:center;">
+        <div style="font-size:22px;font-weight:900;color:var(--muted);">1</div>
+        <div style="font-size:10px;color:var(--muted);font-weight:600;">Expirés</div>
+      </div>
+    </div>
+    <!-- ACTIVE CODES -->
+    <div class="stitle anim-3">Codes actifs</div>
+    <!-- Code card 1 -->
+    <div class="anim-3" style="margin:0 16px 12px;padding:20px;border-radius:24px;
+      background:linear-gradient(145deg,#180D30,#1A0F3A);
+      border:1.5px solid rgba(124,58,237,.3);
+      box-shadow:0 8px 28px rgba(124,58,237,.15);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+        <div>
+          <div style="font-size:17px;font-weight:800;color:#fff;">Kofi Mensah</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">📞 +225 07 12 34 56</div>
+          <div style="font-size:11px;color:var(--muted);">🎯 Livraison</div>
+          <div style="font-size:11px;color:var(--muted);">📅 04/04 – 05/04/2026</div>
+        </div>
+        <span class="badge b-green">✅ Actif</span>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center;">
+        <div style="width:72px;height:72px;background:#fff;border-radius:12px;padding:7px;flex-shrink:0;">
+          <canvas id="qr1" width="58" height="58"></canvas>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.5px;margin-bottom:5px;">CODE D'ACCÈS</div>
+          <div style="font-size:28px;font-weight:900;color:#A78BFA;letter-spacing:5px;">D8K2</div>
+          <button class="btn btn-sm" style="margin-top:8px;background:rgba(239,68,68,.12);color:var(--red);
+            border:1px solid rgba(239,68,68,.25);font-size:11px;" onclick="cancelCode(this,event)">
+            ✕ Annuler le code
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Code card 2 -->
+    <div class="anim-4" style="margin:0 16px 12px;padding:20px;border-radius:24px;
+      background:linear-gradient(145deg,#180D30,#1A0F3A);
+      border:1.5px solid rgba(124,58,237,.3);
+      box-shadow:0 8px 28px rgba(124,58,237,.15);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+        <div>
+          <div style="font-size:17px;font-weight:800;color:#fff;">Aya Traoré</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">📞 +225 05 67 89 01</div>
+          <div style="font-size:11px;color:var(--muted);">🎯 Visite famille</div>
+          <div style="font-size:11px;color:var(--muted);">📅 04/04 – 07/04/2026</div>
+        </div>
+        <span class="badge b-green">✅ Actif</span>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center;">
+        <div style="width:72px;height:72px;background:#fff;border-radius:12px;padding:7px;flex-shrink:0;">
+          <canvas id="qr2" width="58" height="58"></canvas>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.5px;margin-bottom:5px;">CODE D'ACCÈS</div>
+          <div style="font-size:28px;font-weight:900;color:#A78BFA;letter-spacing:5px;">P5M9</div>
+          <button class="btn btn-sm" style="margin-top:8px;background:rgba(239,68,68,.12);color:var(--red);
+            border:1px solid rgba(239,68,68,.25);font-size:11px;" onclick="cancelCode(this,event)">
+            ✕ Annuler le code
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- EXPIRED CODES -->
+    <div class="stitle anim-5">Codes expirés</div>
+    <div class="card anim-5" style="padding:16px;opacity:.55;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#fff;">Djibril Coulibaly</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">📞 +225 01 23 45 67 · 🎯 Technicien</div>
+          <div style="font-size:11px;color:var(--muted);">📅 28/03 – 29/03/2026</div>
+        </div>
+        <span class="badge b-gray">⌛ Expiré</span>
+      </div>
+    </div>
+  </div>
+</div><!-- end s-visiteurs -->
+
+<!-- ==================== SCREEN 6: PROFIL ==================== -->
+<div class="screen" id="s-profil">
+  <div class="scroll">
+    <!-- Profile hero -->
+    <div class="anim-1" style="padding:52px 20px 28px;text-align:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:260px;height:260px;border-radius:50%;
+        background:radial-gradient(circle,rgba(245,158,11,.1) 0%,transparent 70%);pointer-events:none;"></div>
+      <div style="width:90px;height:90px;border-radius:50%;margin:0 auto 14px;
+        background:linear-gradient(145deg,#F59E0B,#D97706,#FF6B35);
+        display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:900;color:#fff;
+        box-shadow:0 8px 28px rgba(245,158,11,.4),0 0 0 4px rgba(245,158,11,.15);">A</div>
+      <div style="font-size:24px;font-weight:900;color:#fff;">Adjoua Koné</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;margin-bottom:14px;">adjoua.kone@palmiers.ci</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;">
+        <span class="badge b-teal">🏠 Villa 14B</span>
+        <span class="badge b-violet">⭐ Résident Principal</span>
+      </div>
+      <!-- Tier badge -->
+      <div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;
+        background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(217,119,6,.08));
+        border:1px solid rgba(245,158,11,.3);border-radius:50px;padding:8px 18px;">
+        <span style="font-size:18px;">🏆</span>
+        <span style="font-size:13px;font-weight:800;color:var(--gold);">Résident Platine</span>
+      </div>
+    </div>
+    <!-- Stats -->
+    <div class="card anim-2" style="margin-bottom:16px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;text-align:center;">
+        <div style="padding:0 10px;">
+          <div style="font-size:28px;font-weight:900;color:var(--teal);">2</div>
+          <div style="font-size:10px;color:var(--muted);font-weight:600;line-height:1.4;">Cotisations<br>à jour</div>
+        </div>
+        <div style="padding:0 10px;border-left:1px solid rgba(255,255,255,.06);border-right:1px solid rgba(255,255,255,.06);">
+          <div style="font-size:28px;font-weight:900;color:var(--orange);">2</div>
+          <div style="font-size:10px;color:var(--muted);font-weight:600;line-height:1.4;">Incidents<br>soumis</div>
+        </div>
+        <div style="padding:0 10px;">
+          <div style="font-size:28px;font-weight:900;color:#A78BFA;">3</div>
+          <div style="font-size:10px;color:var(--muted);font-weight:600;line-height:1.4;">Visiteurs<br>reçus</div>
+        </div>
+      </div>
+    </div>
+    <!-- Menu -->
+    <div class="card anim-3" style="padding:0;overflow:hidden;margin-bottom:12px;">
+      <div class="menu-item" style="border-bottom:1px solid rgba(255,255,255,.04);">
+        <div style="width:40px;height:40px;border-radius:14px;background:rgba(96,165,250,.12);
+          display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔔</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:#fff;">Notifications</div>
+          <div style="font-size:11px;color:var(--muted);">Gérer mes alertes</div>
+        </div>
+        <span style="color:var(--muted);font-size:18px;">›</span>
+      </div>
+      <div class="menu-item" style="border-bottom:1px solid rgba(255,255,255,.04);">
+        <div style="width:40px;height:40px;border-radius:14px;background:rgba(16,185,129,.12);
+          display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔐</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:#fff;">Sécurité</div>
+          <div style="font-size:11px;color:var(--muted);">Mot de passe · Biométrie</div>
+        </div>
+        <span style="color:var(--muted);font-size:18px;">›</span>
+      </div>
+      <div class="menu-item">
+        <div style="width:40px;height:40px;border-radius:14px;background:rgba(245,158,11,.12);
+          display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">❓</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:#fff;">Aide & Support</div>
+          <div style="font-size:11px;color:var(--muted);">FAQ · Contacter le syndic</div>
+        </div>
+        <span style="color:var(--muted);font-size:18px;">›</span>
+      </div>
+    </div>
+    <div class="card anim-4" style="padding:0;overflow:hidden;margin-bottom:28px;">
+      <div class="menu-item" onclick="navigate('login')">
+        <div style="width:40px;height:40px;border-radius:14px;background:rgba(239,68,68,.12);
+          display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🚪</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:var(--red);">Se déconnecter</div>
+        </div>
+        <span style="color:var(--red);font-size:18px;">›</span>
+      </div>
+    </div>
+    <div style="text-align:center;padding-bottom:24px;">
+      <div style="font-size:11px;color:rgba(120,144,168,.4);">DOMO v1.0.0 · Abidjan, Côte d'Ivoire</div>
+    </div>
+  </div>
+<!-- ==================== SCREEN: MARKETPLACE ==================== -->
+<div class="screen" id="s-marche">
+  <div class="scroll">
+    <!-- Header -->
+    <div style="padding:52px 20px 0;display:flex;align-items:center;justify-content:space-between;" class="anim-1">
+      <div>
+        <div style="font-size:12px;color:var(--muted);font-weight:500;">Marché du Voisinage</div>
+        <div style="font-size:23px;font-weight:800;color:#fff;line-height:1.2;">Cité Les Palmiers 🛍️</div>
+      </div>
+      <div style="cursor:pointer;width:40px;height:40px;background:rgba(255,255,255,.07);
+        border-radius:14px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);">
+        <span style="font-size:20px;">⚙️</span>
+      </div>
+    </div>
+    <!-- Sell banner -->
+    <div class="anim-2" style="margin:16px 16px;border-radius:24px;padding:20px;
+      background:linear-gradient(145deg,#FF6B35,#FF4500);
+      box-shadow:0 12px 40px rgba(255,107,53,.25);position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;
+        background:rgba(255,255,255,.1);pointer-events:none;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;position:relative;">
+        <div>
+          <div style="font-size:12px;color:rgba(255,255,255,.8);font-weight:600;margin-bottom:4px;">🛍️ VENDRE DANS LA CITÉ</div>
+          <div style="font-size:14px;color:#fff;font-weight:700;">Publiez votre annonce gratuitement</div>
+        </div>
+        <button class="btn btn-orange" style="background:#fff;color:#FF6B35;font-size:12px;padding:10px 14px;" onclick="alert('Formulaire de création d'annonce')">
+          + Publier
+        </button>
+      </div>
+    </div>
+    <!-- Category filters -->
+    <div style="display:flex;gap:10px;padding:0 16px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px;-webkit-overflow-scrolling:touch;">
+      <style>
+        .cat-filter{display:none;}
+        .cat-filter::-webkit-scrollbar{display:none;}
+        .filter-btn{display:inline-flex;align-items:center;padding:8px 14px;border-radius:20px;
+          background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
+          color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;
+          transition:all .2s;}
+        .filter-btn.sel{background:var(--teal);color:#fff;border-color:var(--teal);}
+      </style>
+      <div class="filter-btn sel">Tout</div>
+      <div class="filter-btn">Services</div>
+      <div class="filter-btn">Vente</div>
+      <div class="filter-btn">Location</div>
+      <div class="filter-btn">Dons</div>
+    </div>
+    <!-- Listings -->
+    <div style="padding:0 16px;">
+      <!-- Listing 1 -->
+      <div class="card card-glow-orange" style="margin-bottom:14px;cursor:pointer;">
+        <div style="display:flex;gap:12px;">
+          <div style="width:56px;height:56px;border-radius:16px;background:rgba(255,107,53,.15);
+            display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🛵</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
+              <div style="font-size:15px;font-weight:700;color:#fff;">Cours de livraison</div>
+              <span class="badge" style="background:rgba(0,212,170,.15);color:var(--teal);font-size:10px;padding:4px 10px;">Service</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Livraison rapide dans la cité</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:11px;color:var(--muted);">👤 Kofi Mensah</div>
+              <div style="font-size:12px;font-weight:700;color:var(--teal);">Voir →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Listing 2 -->
+      <div class="card card-glow-violet" style="margin-bottom:14px;cursor:pointer;">
+        <div style="display:flex;gap:12px;">
+          <div style="width:56px;height:56px;border-radius:16px;background:rgba(124,58,237,.15);
+            display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🪑</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
+              <div style="font-size:15px;font-weight:700;color:#fff;">Chaises de fête à louer</div>
+              <span class="badge" style="background:rgba(124,58,237,.15);color:#C084FC;font-size:10px;padding:4px 10px;">Location</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">10 chaises, 500 XOF/unité</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:11px;color:var(--muted);">👤 Aya Traoré</div>
+              <div style="font-size:12px;font-weight:700;color:#C084FC;">Voir →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Listing 3 -->
+      <div class="card card-glow-orange" style="margin-bottom:14px;cursor:pointer;opacity:.95;">
+        <div style="display:flex;gap:12px;">
+          <div style="width:56px;height:56px;border-radius:16px;background:rgba(255,107,53,.15);
+            display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🥗</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
+              <div style="font-size:15px;font-weight:700;color:#fff;">Attiéké maison à commander</div>
+              <span class="badge" style="background:rgba(255,107,53,.15);color:#FF9770;font-size:10px;padding:4px 10px;">Vente</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">1500 XOF la portion, livraison incluse</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:11px;color:var(--muted);">👤 Mariam Konaté</div>
+              <div style="font-size:12px;font-weight:700;color:var(--orange);">Voir →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Listing 4 -->
+      <div class="card" style="margin-bottom:14px;cursor:pointer;background:linear-gradient(145deg,#0D2818,#0F3D2A);border:1px solid rgba(16,185,129,.1);box-shadow:0 4px 24px rgba(16,185,129,.1);">
+        <div style="display:flex;gap:12px;">
+          <div style="width:56px;height:56px;border-radius:16px;background:rgba(16,185,129,.15);
+            display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">📚</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
+              <div style="font-size:15px;font-weight:700;color:#fff;">Livres scolaires CE2</div>
+              <span class="badge" style="background:rgba(16,185,129,.15);color:#10B981;font-size:10px;padding:4px 10px;">Don</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Gratuit, à récupérer</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:11px;color:var(--muted);">👤 Ibrahim Coulibaly</div>
+              <div style="font-size:12px;font-weight:700;color:var(--green);">Voir →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- end s-profil -->
+
+<!-- Payment Screen -->
+<div class="screen" id="s-paiement">
+  <div style="padding:52px 20px 14px;display:flex;align-items:center;gap:14px;" class="anim-1">
+    <div class="backbtn" onclick="navigate('cotisations')">←</div>
+    <div>
+      <div style="font-size:11px;color:var(--teal);font-weight:600;letter-spacing:1px;">PAIEMENT COTISATION</div>
+      <div style="font-size:20px;font-weight:800;color:#fff;">💳 Payer ma cotisation</div>
+    </div>
+  </div>
+  <div class="scroll">
+    <!-- Amount Card -->
+    <div class="anim-2" style="margin:0 16px 20px;border-radius:28px;padding:24px;
+      background:linear-gradient(145deg,#0F2540,#005A4E);
+      border:1px solid rgba(0,212,170,.15);
+      box-shadow:0 12px 40px rgba(0,212,170,.2);">
+      <div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px;margin-bottom:8px;">MONTANT À PAYER</div>
+      <div style="display:flex;align-items:baseline;gap:6px;">
+        <div style="font-size:42px;font-weight:900;color:#fff;line-height:1;">15 000</div>
+        <div style="font-size:18px;font-weight:600;color:rgba(255,255,255,.6);">XOF</div>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:12px;">Mars 2026 — Résidence Les Palmiers</div>
+    </div>
+
+    <!-- Payment Method Section -->
+    <div class="anim-3" style="padding:0 16px;margin-bottom:8px;">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:14px;">Choisissez votre moyen de paiement</div>
+      
+      <!-- 2-Column Grid of Operator Cards -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        
+        <!-- Orange Money -->
+        <div class="payment-card anim-4" id="pay-orange" onclick="selectPaymentMethod('orange')" style="
+          border-radius:20px;padding:18px;text-align:center;
+          background:linear-gradient(145deg,#2A1208,#300E06);
+          border:2px solid rgba(255,107,53,.2);
+          cursor:pointer;transition:all .3s;
+          box-shadow:0 6px 16px rgba(255,107,53,.1);">
+          
+          <!-- Orange Money SVG Logo -->
+          <svg style="width:60px;height:60px;margin:0 auto 10px;filter:drop-shadow(0 2px 6px rgba(255,107,53,.4));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="orangeGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:#FF8B33;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#FF6B00;stop-opacity:1" />
+              </radialGradient>
+              <filter id="orangeGlowEffect">
+                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            <circle cx="50" cy="50" r="48" fill="url(#orangeGlow)" filter="url(#orangeGlowEffect)"/>
+            <text x="50" y="58" font-size="32" font-weight="900" fill="#fff" text-anchor="middle" font-family="Arial">OM</text>
+          </svg>
+          
+          <div style="font-size:12px;font-weight:700;color:#fff;">Orange Money</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">Rapide & simple</div>
+        </div>
+
+        <!-- MTN MoMo -->
+        <div class="payment-card anim-4" id="pay-mtn" onclick="selectPaymentMethod('mtn')" style="
+          border-radius:20px;padding:18px;text-align:center;
+          background:linear-gradient(145deg,#2A1A08,#3A2408);
+          border:2px solid rgba(255,193,0,.2);
+          cursor:pointer;transition:all .3s;
+          box-shadow:0 6px 16px rgba(255,193,0,.1);">
+          
+          <!-- MTN MoMo SVG Logo -->
+          <svg style="width:60px;height:60px;margin:0 auto 10px;filter:drop-shadow(0 2px 6px rgba(255,193,0,.4));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="mtnGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:#FFD000;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#FFC000;stop-opacity:1" />
+              </radialGradient>
+            </defs>
+            <circle cx="50" cy="50" r="48" fill="url(#mtnGlow)"/>
+            <text x="50" y="50" font-size="24" font-weight="900" fill="#000" text-anchor="middle" dominant-baseline="central" font-family="Arial">MTN</text>
+            <text x="50" y="68" font-size="12" font-weight="700" fill="#000" text-anchor="middle" font-family="Arial">MoMo</text>
+          </svg>
+          
+          <div style="font-size:12px;font-weight:700;color:#fff;">MTN MoMo</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">Mobile Money</div>
+        </div>
+
+        <!-- Wave -->
+        <div class="payment-card anim-4" id="pay-wave" onclick="selectPaymentMethod('wave')" style="
+          border-radius:20px;padding:18px;text-align:center;
+          background:linear-gradient(145deg,#0A2A35,#082A38);
+          border:2px solid rgba(0,184,217,.2);
+          cursor:pointer;transition:all .3s;
+          box-shadow:0 6px 16px rgba(0,184,217,.1);">
+          
+          <!-- Wave SVG Logo -->
+          <svg style="width:60px;height:60px;margin:0 auto 10px;filter:drop-shadow(0 2px 6px rgba(0,184,217,.4));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#00B8D9;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#0052CC;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="48" fill="url(#waveGradient)"/>
+            <text x="50" y="58" font-size="42" font-weight="900" fill="#fff" text-anchor="middle" font-family="Arial" font-style="italic">W</text>
+          </svg>
+          
+          <div style="font-size:12px;font-weight:700;color:#fff;">Wave</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">Portefeuille digital</div>
+        </div>
+
+        <!-- Moov Money -->
+        <div class="payment-card anim-4" id="pay-moov" onclick="selectPaymentMethod('moov')" style="
+          border-radius:20px;padding:18px;text-align:center;
+          background:linear-gradient(145deg,#2A0A0A,#3A0808);
+          border:2px solid rgba(227,28,57,.2);
+          cursor:pointer;transition:all .3s;
+          box-shadow:0 6px 16px rgba(227,28,57,.1);">
+          
+          <!-- Moov Money SVG Logo -->
+          <svg style="width:60px;height:60px;margin:0 auto 10px;filter:drop-shadow(0 2px 6px rgba(227,28,57,.4));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="moovGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:#FF4450;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#E31C39;stop-opacity:1" />
+              </radialGradient>
+            </defs>
+            <circle cx="50" cy="50" r="48" fill="url(#moovGlow)"/>
+            <text x="50" y="50" font-size="32" font-weight="900" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="Arial">M</text>
+            <text x="50" y="68" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial">MOOV</text>
+          </svg>
+          
+          <div style="font-size:12px;font-weight:700;color:#fff;">Moov Money</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">Paiement mobile</div>
+        </div>
+
+        <!-- SOKORA Pay (Recommended) -->
+        <div class="payment-card anim-4" id="pay-sokora" onclick="selectPaymentMethod('sokora')" style="
+          border-radius:20px;padding:18px;text-align:center;grid-column:span 2;
+          background:linear-gradient(145deg,#2A1008,#380E04);
+          border:2px solid rgba(255,107,53,.4);
+          cursor:pointer;transition:all .3s;
+          box-shadow:0 8px 24px rgba(255,107,53,.2);
+          position:relative;">
+          
+          <!-- Recommended Badge -->
+          <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+            background:linear-gradient(135deg,#FFD700,#FF8C00);
+            color:#000;padding:4px 12px;border-radius:12px;
+            font-size:10px;font-weight:800;box-shadow:0 2px 8px rgba(255,200,0,.3);">
+            ⭐ RECOMMANDÉ
+          </div>
+          
+          <!-- SOKORA Pay SVG Logo with Sparkle -->
+          <svg style="width:60px;height:60px;margin:10px auto 10px;filter:drop-shadow(0 3px 8px rgba(255,107,53,.5));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sokoraGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#FF4500;stop-opacity:1" />
+              </linearGradient>
+              <filter id="sokoraGlowEffect">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            <circle cx="50" cy="50" r="48" fill="url(#sokoraGradient)" filter="url(#sokoraGlowEffect)"/>
+            <text x="40" y="58" font-size="36" font-weight="900" fill="#fff" text-anchor="middle" font-family="Arial">S</text>
+            <!-- Sparkles -->
+            <circle cx="68" cy="32" r="2" fill="#FFD700"/>
+            <polygon points="70,30 72,32 70,34 68,32" fill="#FFD700"/>
+            <circle cx="22" cy="35" r="1.5" fill="#FFD700"/>
+            <polygon points="23,33 24.5,35 23,37 21.5,35" fill="#FFD700"/>
+          </svg>
+          
+          <div style="font-size:12px;font-weight:700;color:#fff;">SOKORA Pay</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">Votre portefeuille SOKORA</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Info Section -->
+    <div class="anim-5" style="margin:0 16px 20px;padding:14px;background:rgba(0,212,170,.08);
+      border-radius:16px;border:1px solid rgba(0,212,170,.15);">
+      <div style="font-size:12px;color:#fff;font-weight:600;margin-bottom:6px;">💡 Astuce utile</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.6);">Si vous n'avez pas de compte SOKORA, créez-en un gratuitement pour bénéficier de réductions sur vos futurs paiements.</div>
+    </div>
+
+    <!-- CTA Button -->
+    <div class="anim-6" style="padding:0 16px 88px;display:flex;flex-direction:column;gap:12px;">
+      <button class="btn btn-orange anim-6" style="width:100%;padding:16px;font-size:15px;" onclick="confirmPayment()">
+        Confirmer le paiement →
+      </button>
+      <div style="text-align:center;font-size:11px;color:rgba(255,255,255,.5);">
+        🔒 Paiement sécurisé · 💬 Reçu par SMS
+      </div>
+    </div>
+  </div>
+</div><!-- end s-paiement -->
+
+
+<!-- ==================== BOTTOM NAV ==================== -->
+<div class="nav" id="main-nav">
+  <div class="nav-item active" id="nav-home" onclick="navigate('home')">
+    <span class="ni">🏠</span><span class="nl">Accueil</span>
+  </div>
+  <div class="nav-item" id="nav-cotisations" onclick="navigate('cotisations')">
+    <span class="ni">💰</span><span class="nl">Cotisations</span>
+  </div>
+  <div class="nav-item" id="nav-incidents" onclick="navigate('incidents')">
+    <span class="ni">🚨</span><span class="nl">Incidents</span>
+  </div>
+  <div class="nav-item" id="nav-visiteurs" onclick="navigate('visiteurs')">
+    <span class="ni">🔑</span><span class="nl">Visiteurs</span>
+  </div>
+  <div class="nav-item" id="nav-marche" onclick="navigate('marche')">
+    <span class="ni">🛍️</span><span class="nl">Marché</span>
+  </div>
+</div>
+
+<!-- ==================== MODAL: COTISATION DETAIL ==================== -->
+<div class="modal-overlay" id="modal-cotis" onclick="closeModalOut(event,'modal-cotis')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;" id="cotis-title">Mars 2026</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:22px;" id="cotis-sub">Cotisation mensuelle</div>
+    <!-- Detail amounts -->
+    <div style="background:rgba(11,22,34,.7);border-radius:20px;padding:18px;margin-bottom:22px;
+      border:1px solid rgba(0,212,170,.1);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:13px;color:var(--muted);">Montant total</span>
+        <span style="font-size:14px;font-weight:700;color:#fff;">25 000 XOF</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:13px;color:var(--muted);">Déjà payé</span>
+        <span style="font-size:14px;font-weight:700;color:var(--green);" id="cotis-paid">10 000 XOF</span>
+      </div>
+      <div style="height:1px;background:rgba(255,255,255,.06);margin:10px 0;"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:14px;font-weight:700;color:#fff;">Reste à payer</span>
+        <span style="font-size:20px;font-weight:900;color:var(--orange);" id="cotis-remain">15 000 XOF</span>
+      </div>
+    </div>
+    <button class="btn btn-orange" style="width:100%;margin-bottom:10px;font-size:15px;" id="btn-pay-now" onclick="openModal('modal-paiement')">
+      💳 Payer maintenant — 15 000 XOF
+    </button>
+    <button class="btn btn-ghost" style="width:100%;font-size:14px;" onclick="closeModal('modal-cotis')">Fermer</button>
+  </div>
+</div>
+
+<!-- ==================== MODAL: PAYMENT METHOD ==================== -->
+<div class="modal-overlay" id="modal-paiement" onclick="closeModalOut(event,'modal-paiement')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;">Moyen de paiement</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:22px;">Montant : <strong style="color:var(--orange);">15 000 XOF</strong></div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px;" id="pay-methods">
+      <div class="pay-meth" onclick="selectPay(this)">
+        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#1565C0,#0D47A1);
+          display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🌊</div>
+        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">Wave CI</div>
+          <div style="font-size:11px;color:var(--muted);">Paiement mobile instantané</div></div>
+        <div class="pay-chk" style="font-size:20px;color:var(--muted);">○</div>
+      </div>
+      <div class="pay-meth" onclick="selectPay(this)">
+        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#E65100,#BF360C);
+          display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🟠</div>
+        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">Orange Money</div>
+          <div style="font-size:11px;color:var(--muted);">Orange CI</div></div>
+        <div class="pay-chk" style="font-size:20px;color:var(--muted);">○</div>
+      </div>
+      <div class="pay-meth" onclick="selectPay(this)">
+        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#F57F17,#E65100);
+          display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🟡</div>
+        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">MTN MoMo</div>
+          <div style="font-size:11px;color:var(--muted);">MTN Côte d'Ivoire</div></div>
+        <div class="pay-chk" style="font-size:20px;color:var(--muted);">○</div>
+      </div>
+      <div class="pay-meth" onclick="selectPay(this)">
+        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#1A237E,#283593);
+          display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">💳</div>
+        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">Carte bancaire</div>
+          <div style="font-size:11px;color:var(--muted);">Visa / Mastercard</div></div>
+        <div class="pay-chk" style="font-size:20px;color:var(--muted);">○</div>
+      </div>
+    </div>
+    <button class="btn btn-orange" style="width:100%;margin-bottom:10px;font-size:15px;" onclick="confirmPay()">
+      ✅ Confirmer le paiement
+    </button>
+    <button class="btn btn-ghost" style="width:100%;font-size:14px;" onclick="closeModal('modal-paiement')">Annuler</button>
+  </div>
+</div>
+
+<!-- ==================== MODAL: CREATE VISITOR ==================== -->
+<div class="modal-overlay" id="modal-visiteur" onclick="closeModalOut(event,'modal-visiteur')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;">Nouveau code visiteur</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:22px;">Accès temporaire à la résidence</div>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px;">
+      <div>
+        <label style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;display:block;margin-bottom:7px;">👤 NOM DU VISITEUR</label>
+        <input class="inp" type="text" placeholder="Ex: Marie Dupont" id="vis-nom">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;display:block;margin-bottom:7px;">📞 TÉLÉPHONE</label>
+        <input class="inp" type="tel" placeholder="+225 07 XX XX XX" id="vis-tel">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;display:block;margin-bottom:7px;">💬 MOTIF DE VISITE</label>
+        <input class="inp" type="text" placeholder="Ex: Livraison, Visite famille, Prestataire" id="vis-motif">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <label style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;display:block;margin-bottom:7px;">📅 VALIDE DU</label>
+          <input class="inp" type="date" id="vis-from" style="font-size:13px;">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;display:block;margin-bottom:7px;">📅 AU</label>
+          <input class="inp" type="date" id="vis-to" style="font-size:13px;">
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-violet" style="width:100%;margin-bottom:10px;font-size:15px;" onclick="createVisitor()">
+      ✨ Générer le code d'accès
+    </button>
+    <button class="btn btn-ghost" style="width:100%;font-size:14px;" onclick="closeModal('modal-visiteur')">Annuler</button>
+  </div>
+</div>
+
+<!-- ==================== SUCCESS MODAL ==================== -->
+<div class="modal-overlay" id="modal-success" onclick="closeModal('modal-success')">
+  <div class="modal" style="text-align:center;" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div style="font-size:64px;margin-bottom:16px;animation:scaleIn .4s ease;" id="success-icon">✅</div>
+    <div style="font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;" id="success-title">Paiement confirmé !</div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6;" id="success-desc">Votre paiement de 15 000 XOF a bien été enregistré pour Mars 2026.</div>
+    <button class="btn btn-teal" style="width:100%;font-size:15px;" onclick="closeModal('modal-success')">
+      Super, merci ! 🎉
+    </button>
+  </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div id="toast"></div>
+
+</div><!-- END PHONE -->
+
+<script>
+// ==================== NAVIGATION ====================
+const SCREENS = {
+  login:      { id:'s-login',       nav:null },
+  home:       { id:'s-home',        nav:'nav-home' },
+  cotisations:{ id:'s-cotisations', nav:'nav-cotisations' },
+  incidents:  { id:'s-incidents',   nav:'nav-incidents' },
+  visiteurs:  { id:'s-visiteurs',   nav:'nav-visiteurs' },
+  profil:     { id:'s-profil',      nav:'nav-profil' },
+  paiement:   { id:'s-paiement',    nav:null }
+};
+let currentScreen = 'login';
+
+function navigate(key) {
+  if (key === currentScreen) return;
+  const prev = SCREENS[currentScreen];
+  const next = SCREENS[key];
+  if (!next) return;
+
+  // Hide old screen
+  const prevEl = document.getElementById(prev.id);
+  if (prevEl) prevEl.classList.remove('active');
+
+  // Show new screen
+  const nextEl = document.getElementById(next.id);
+  if (nextEl) {
+    nextEl.classList.add('active');
+    // Re-trigger stagger animations
+    nextEl.querySelectorAll('[class*="anim-"]').forEach(el => {
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
+    });
+  }
+
+  // Update nav
+  const navBar = document.getElementById('main-nav');
+  if (key === 'login') {
+    navBar.style.display = 'none';
+  } else {
+    navBar.style.display = 'flex';
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (next.nav) {
+      const navItem = document.getElementById(next.nav);
+      if (navItem) navItem.classList.add('active');
+    }
+  }
+  currentScreen = key;
+}
+
+// Init
+document.getElementById('main-nav').style.display = 'none';
+
+// ==================== MODALS ====================
+function openModal(id, data) {
+  if (id === 'modal-cotis' && data) setupCotisModal(data);
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+function closeModalOut(event, id) {
+  if (event.target === document.getElementById(id)) closeModal(id);
+}
+
+function setupCotisModal(month) {
+  const configs = {
+    jan: { title:'Janvier 2026', sub:'Cotisation mensuelle — Payé intégralement', paid:'25 000 XOF', remain:'0 XOF', btnText:'Déjà payé ✅', disabled:true },
+    feb: { title:'Février 2026', sub:'Cotisation mensuelle — Payé intégralement', paid:'25 000 XOF', remain:'0 XOF', btnText:'Déjà payé ✅', disabled:true },
+    mar: { title:'Mars 2026', sub:'Cotisation mensuelle — En attente', paid:'10 000 XOF', remain:'15 000 XOF', btnText:'💳 Payer maintenant — 15 000 XOF', disabled:false },
+    apr: { title:'Avril 2026', sub:'Cotisation mensuelle — En retard ⚠️', paid:'0 XOF', remain:'25 000 XOF', btnText:'💳 Payer maintenant — 25 000 XOF', disabled:false }
+  };
+  const c = configs[month] || configs.mar;
+  document.getElementById('cotis-title').textContent = c.title;
+  document.getElementById('cotis-sub').textContent = c.sub;
+  document.getElementById('cotis-paid').textContent = c.paid;
+  document.getElementById('cotis-remain').textContent = c.remain;
+  const btn = document.getElementById('btn-pay-now');
+  btn.textContent = c.btnText;
+  btn.disabled = c.disabled;
+  btn.style.opacity = c.disabled ? '.5' : '1';
+  btn.style.cursor = c.disabled ? 'default' : 'pointer';
+}
+
+// ==================== PAYMENT ====================
+function selectPay(el) {
+  document.querySelectorAll('.pay-meth').forEach(m => {
+    m.classList.remove('sel');
+    m.querySelector('.pay-chk').textContent = '○';
+    m.querySelector('.pay-chk').style.color = 'var(--muted)';
+  });
+  el.classList.add('sel');
+  el.querySelector('.pay-chk').textContent = '●';
+  el.querySelector('.pay-chk').style.color = 'var(--teal)';
+}
+
+function confirmPay() {
+  const sel = document.querySelector('.pay-meth.sel');
+  if (!sel) { showToast('⚠️ Choisissez un moyen de paiement'); return; }
+  closeModal('modal-paiement');
+  closeModal('modal-cotis');
+  setTimeout(() => {
+    document.getElementById('success-icon').textContent = '💰';
+    document.getElementById('success-title').textContent = 'Paiement confirmé !';
+    document.getElementById('success-desc').textContent = 'Votre paiement de 15 000 XOF a bien été enregistré pour Mars 2026. Vous êtes à jour !';
+    openModal('modal-success');
+  }, 300);
+}
+
+// ==================== INCIDENTS ====================
+function selectCat(el) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function selectPrio(el) {
+  document.querySelectorAll('.prio-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function submitIncident() {
+  const title = document.getElementById('inc-title').value.trim();
+  const desc = document.getElementById('inc-desc').value.trim();
+  const cat = document.querySelector('.cat-btn.sel');
+  if (!title) { showToast('📝 Renseignez un titre'); return; }
+  if (!desc) { showToast('📋 Ajoutez une description'); return; }
+  document.getElementById('inc-title').value = '';
+  document.getElementById('inc-desc').value = '';
+  document.getElementById('success-icon').textContent = '🚨';
+  document.getElementById('success-title').textContent = 'Signalement envoyé !';
+  document.getElementById('success-desc').textContent = 'Votre incident a été transmis au syndic. Vous recevrez une réponse sous 24h.';
+  openModal('modal-success');
+}
+
+// ==================== VISITORS ====================
+function createVisitor() {
+  const nom = document.getElementById('vis-nom').value.trim();
+  const tel = document.getElementById('vis-tel').value.trim();
+  const motif = document.getElementById('vis-motif').value.trim();
+  if (!nom) { showToast('👤 Entrez le nom du visiteur'); return; }
+  if (!tel) { showToast('📞 Entrez le numéro de téléphone'); return; }
+  closeModal('modal-visiteur');
+  document.getElementById('vis-nom').value = '';
+  document.getElementById('vis-tel').value = '';
+  document.getElementById('vis-motif').value = '';
+  const code = generateCode();
+  document.getElementById('success-icon').textContent = '🔑';
+  document.getElementById('success-title').textContent = `Code créé : ${code}`;
+  document.getElementById('success-desc').textContent = `${nom} peut maintenant accéder à la résidence avec le code ${code}. Partagez-le avec votre visiteur !`;
+  setTimeout(() => openModal('modal-success'), 300);
+}
+
+function cancelCode(btn, e) {
+  e && e.stopPropagation();
+  const card = btn.closest('[style*="border-radius:24px"]') || btn.closest('.card') || btn.parentElement.parentElement.parentElement;
+  card.style.transition = 'all .3s';
+  card.style.opacity = '0';
+  card.style.transform = 'translateX(30px)';
+  setTimeout(() => { card.style.display = 'none'; showToast('✅ Code annulé avec succès'); }, 300);
+}
+
+function generateCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+// ==================== TOAST ====================
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  t.style.animation = 'fadeUp .3s ease';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transition = 'opacity .3s';
+    setTimeout(() => { t.style.display = 'none'; t.style.opacity = '1'; t.style.transition = ''; }, 300);
+  }, 2500);
+}
+</script>
+
+<script>
+// ==================== QR CODE GENERATOR ====================
+function drawQR(canvasId, data) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const size = 58;
+  const cells = 10;
+  const cell = size / cells;
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, size, size);
+  // Generate pseudo-random pattern based on data string
+  let seed = 0;
+  for (let i = 0; i < data.length; i++) seed = (seed * 31 + data.charCodeAt(i)) & 0xFFFFFF;
+  const rand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+  // Draw finder patterns (corners)
+  const drawFinder = (x, y) => {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(x * cell, y * cell, 7 * cell, 7 * cell);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect((x+1)*cell, (y+1)*cell, 5*cell, 5*cell);
+    ctx.fillStyle = '#000';
+    ctx.fillRect((x+2)*cell, (y+2)*cell, 3*cell, 3*cell);
+  };
+  drawFinder(0, 0);
+  // Draw data cells
+  for (let r = 0; r < cells; r++) {
+    for (let c = 0; c < cells; c++) {
+      if ((r < 7 && c < 7)) continue; // Skip top-left finder
+      if (rand() > 0.55) {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(c * cell, r * cell, cell - 0.5, cell - 0.5);
+      }
+    }
+  }
+}
+
+window.addEventListener('load', () => {
+  drawQR('qr1', 'DOMO-D8K2-VILLA14B-PALMIERS');
+  drawQR('qr2', 'DOMO-P5M9-VILLA14B-PALMIERS');
+});
+
+function selectPaymentMethod(method) {
+  // Remove selection from all payment cards
+  document.querySelectorAll('.payment-card').forEach(card => {
+    card.style.borderColor = '';
+    card.style.borderWidth = '';
+    card.style.boxShadow = '';
+  });
+  
+  // Add selection to clicked card
+  const card = document.getElementById('pay-' + method);
+  if (card) {
+    card.style.borderColor = 'var(--orange)';
+    card.style.borderWidth = '2px';
+    card.style.boxShadow = '0 8px 24px rgba(255,107,53,.3)';
+    
+    // Store selected method
+    window.selectedPaymentMethod = method;
+  }
+}
+
+function confirmPayment() {
+  const method = window.selectedPaymentMethod || 'sokora';
+  const methods = {
+    'orange': 'Orange Money',
+    'mtn': 'MTN MoMo',
+    'wave': 'Wave',
+    'moov': 'Moov Money',
+    'sokora': 'SOKORA Pay'
+  };
+  
+  alert('✅ Paiement initié avec ' + methods[method] + '\n\nMontant: 15 000 XOF\nVous recevrez une confirmation par SMS.');
+  navigate('cotisations');
+}
+
+</script>
+</body>
+</html>
