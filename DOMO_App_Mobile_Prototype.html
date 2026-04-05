@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DOMO — App Résidents</title>
+<title>DOMO â€” App RÃ©sidents</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
 function showToast(msg) {
   const toast = document.createElement('div');
@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const evtNoiseLevelSelect = document.getElementById('evt-noise-level');
   if (evtNoiseLevelSelect) {
     evtNoiseLevelSelect.addEventListener('change', function() {
-      if (this.value === 'élevé') {
-        showToast('⚠️ La sécurité sera notifiée de votre événement');
+      if (this.value === 'Ã©levÃ©') {
+        showToast('âš ï¸ La sÃ©curitÃ© sera notifiÃ©e de votre Ã©vÃ©nement');
       }
     });
   }
@@ -239,7 +239,7 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
 
 /* ===== WEATHER CARD ===== */
 .weather-card { background: linear-gradient(135deg, var(--navy-card), #0D2A4A); border: 1px solid var(--navy-border); border-radius: var(--radius); padding: 18px; margin: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
-.weather-left .cité { font-size: 12px; color: var(--gray); }
+.weather-left .citÃ© { font-size: 12px; color: var(--gray); }
 .weather-left .statut { font-size: 20px; font-weight: 700; margin-top: 4px; }
 .weather-right { text-align: right; }
 .weather-temp { font-size: 36px; font-weight: 300; }
@@ -326,7 +326,7 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
 .ag-date { font-size: 11px; color: var(--gray); }
 .ag-resolution { font-size: 12px; color: var(--gray-light); padding: 6px 0; border-bottom: 1px solid var(--navy-border); display: flex; align-items: flex-start; gap: 6px; }
 .ag-resolution:last-child { border-bottom: none; }
-.ag-resolution::before { content: '•'; color: var(--teal); flex-shrink: 0; }
+.ag-resolution::before { content: 'â€¢'; color: var(--teal); flex-shrink: 0; }
 
 /* ===== SECURITY BANNERS ===== */
 .security-alert-banner { background: rgba(255,152,0,0.15); border-left: 4px solid #FF9800; padding: 12px 16px; margin: 12px 16px 0; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; }
@@ -371,52 +371,52 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
     <div class="header">
       <div class="header-avatar" id="home-avatar">AK</div>
       <div class="header-info">
-        <div class="name" id="home-name">Aminata Koné</div>
-        <div class="sub" id="home-sub">Villa B-12 · Cité Les Bougainvillées</div>
+        <div class="name" id="home-name">Aminata KonÃ©</div>
+        <div class="sub" id="home-sub">Villa B-12 Â· CitÃ© Les BougainvillÃ©es</div>
       </div>
       <div class="header-right">
         <button class="notif-btn" onclick="showScreen('annonces')">
-          🔔
+          ðŸ””
           <span class="notif-badge" id="notif-count">3</span>
         </button>
       </div>
     </div>
     <div class="screen-inner">
-      <!-- Météo cité -->
+      <!-- MÃ©tÃ©o citÃ© -->
       
       <!-- Security Alert Banner (simulated) -->
       <div class="security-alert-banner" id="home-security-alert" style="display:none;">
         <div class="security-alert-text">
-          <span>⚠️ Alerte sécurité active — Restez à l'intérieur</span>
+          <span>âš ï¸ Alerte sÃ©curitÃ© active â€” Restez Ã  l'intÃ©rieur</span>
         </div>
-        <button class="security-alert-close" onclick="document.getElementById('home-security-alert').style.display='none'">×</button>
+        <button class="security-alert-close" onclick="document.getElementById('home-security-alert').style.display='none'">Ã—</button>
       </div>
 
       <!-- Vote Notification Banner -->
       <div class="vote-banner" id="home-vote-banner" style="display:none;">
         <div class="banner-text">
-          <span id="vote-banner-text">🗳️ 2 votes en attente de votre participation</span>
+          <span id="vote-banner-text">ðŸ—³ï¸ 2 votes en attente de votre participation</span>
         </div>
-        <button class="banner-close" onclick="document.getElementById('home-vote-banner').style.display='none'">×</button>
+        <button class="banner-close" onclick="document.getElementById('home-vote-banner').style.display='none'">Ã—</button>
       </div>
 
       <!-- Survey Notification Banner -->
       <div class="survey-banner" id="home-survey-banner" style="display:none;">
         <div class="banner-text">
-          <span id="survey-banner-text">📊 1 sondage disponible</span>
+          <span id="survey-banner-text">ðŸ“Š 1 sondage disponible</span>
         </div>
-        <button class="banner-close" onclick="document.getElementById('home-survey-banner').style.display='none'">×</button>
+        <button class="banner-close" onclick="document.getElementById('home-survey-banner').style.display='none'">Ã—</button>
       </div>
 
 <div class="weather-card">
         <div class="weather-left">
-          <div class="cité">Cité Les Bougainvillées</div>
-          <div class="statut" style="color: var(--teal)">🌿 Ambiance calme</div>
-          <div style="font-size:12px; color:var(--gray); margin-top:6px;">Abidjan, Côte d'Ivoire</div>
+          <div class="citÃ©">CitÃ© Les BougainvillÃ©es</div>
+          <div class="statut" style="color: var(--teal)">ðŸŒ¿ Ambiance calme</div>
+          <div style="font-size:12px; color:var(--gray); margin-top:6px;">Abidjan, CÃ´te d'Ivoire</div>
         </div>
         <div class="weather-right">
-          <div class="weather-icon">☀️</div>
-          <div class="weather-temp">28°</div>
+          <div class="weather-icon">â˜€ï¸</div>
+          <div class="weather-temp">28Â°</div>
         </div>
       </div>
 
@@ -426,26 +426,26 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
         <div id="home-tickets"></div>
       </div>
 
-      <!-- Annonces récentes -->
+      <!-- Annonces rÃ©centes -->
       <div class="card">
-        <div class="card-title">Annonces récentes <span class="see-all" onclick="showScreen('annonces')">Voir tout</span></div>
+        <div class="card-title">Annonces rÃ©centes <span class="see-all" onclick="showScreen('annonces')">Voir tout</span></div>
         <div id="home-annonces"></div>
       </div>
 
-      <!-- Événements à venir -->
-      <div class="section-label">Événements cette semaine</div>
+      <!-- Ã‰vÃ©nements Ã  venir -->
+      <div class="section-label">Ã‰vÃ©nements cette semaine</div>
       <div class="event-scroll" id="home-events"></div>
     </div>
 
     <!-- FAB -->
-    <button class="fab" onclick="openModal('modal-quick')">＋</button>
+    <button class="fab" onclick="openModal('modal-quick')">ï¼‹</button>
   </div>
 
-  <!-- ===== SCREEN 2: MARCHÉ ===== -->
+  <!-- ===== SCREEN 2: MARCHÃ‰ ===== -->
   <div class="screen" id="screen-marche">
     <div class="header">
-      <div class="header-avatar">🏪</div>
-      <div class="header-info"><div class="name">Marché des voisins</div><div class="sub">Achetez, vendez, échangez</div></div>
+      <div class="header-avatar">ðŸª</div>
+      <div class="header-info"><div class="name">MarchÃ© des voisins</div><div class="sub">Achetez, vendez, Ã©changez</div></div>
       <button class="btn btn-primary btn-sm" onclick="openModal('modal-annonce-form')">+ Annonce</button>
     </div>
     <div class="screen-inner">
@@ -463,14 +463,14 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
   <!-- ===== SCREEN 3: ANNONCES ===== -->
   <div class="screen" id="screen-annonces">
     <div class="header">
-      <div class="header-avatar">🔔</div>
-      <div class="header-info"><div class="name">Annonces</div><div class="sub">Syndic & résidence</div></div>
+      <div class="header-avatar">ðŸ””</div>
+      <div class="header-info"><div class="name">Annonces</div><div class="sub">Syndic & rÃ©sidence</div></div>
       <label class="toggle" style="margin-left:auto"><input type="checkbox" checked id="notif-toggle" onchange="toggleNotifs(this)"><span class="toggle-slider"></span></label>
     </div>
     <div class="screen-inner">
       <div class="sub-tabs">
         <button class="sub-tab active" onclick="switchAnnTab('feed',this)">Fil d'annonces</button>
-        <button class="sub-tab" onclick="switchAnnTab('ag',this)">AG & Résolutions</button>
+        <button class="sub-tab" onclick="switchAnnTab('ag',this)">AG & RÃ©solutions</button>
         <button class="sub-tab" onclick="switchAnnTab('votes',this)">Votes</button>
         <button class="sub-tab" onclick="switchAnnTab('sondages',this)">Sondages</button>
       </div>
@@ -484,29 +484,29 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
   <!-- ===== SCREEN 4: SERVICES ===== -->
   <div class="screen" id="screen-services">
     <div class="header">
-      <div class="header-avatar">🛠️</div>
+      <div class="header-avatar">ðŸ› ï¸</div>
       <div class="header-info"><div class="name">Services</div><div class="sub">Demandes & incidents</div></div>
     </div>
     <div class="screen-inner" id="services-main">
       <div style="padding:16px 16px 8px; font-size:14px; color:var(--gray)">Que souhaitez-vous faire ?</div>
       <div class="service-grid">
         <div class="service-item" onclick="showService('incidents')">
-          <div class="srv-icon">🔧</div>
+          <div class="srv-icon">ðŸ”§</div>
           <div class="srv-label">Incidents</div>
           <div class="srv-count" id="inc-count">1 en cours</div>
         </div>
         <div class="service-item" onclick="showService('espaces')">
-          <div class="srv-icon">🏛️</div>
+          <div class="srv-icon">ðŸ›ï¸</div>
           <div class="srv-label">Espaces communs</div>
-          <div class="srv-count">Réserver</div>
+          <div class="srv-count">RÃ©server</div>
         </div>
         <div class="service-item" onclick="showService('evenements')">
-          <div class="srv-icon">🎉</div>
-          <div class="srv-label">Événement chez moi</div>
+          <div class="srv-icon">ðŸŽ‰</div>
+          <div class="srv-label">Ã‰vÃ©nement chez moi</div>
           <div class="srv-count">Planifier</div>
         </div>
         <div class="service-item" onclick="showService('chat')">
-          <div class="srv-icon">💬</div>
+          <div class="srv-icon">ðŸ’¬</div>
           <div class="srv-label">Chat syndic</div>
           <div class="srv-count">2 messages</div>
         </div>
@@ -522,15 +522,15 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
   <!-- ===== SCREEN 5: SOCIAL ===== -->
   <div class="screen" id="screen-social">
     <div class="header">
-      <div class="header-avatar">👥</div>
-      <div class="header-info"><div class="name">Voisinage</div><div class="sub">Communauté résidentielle</div></div>
+      <div class="header-avatar">ðŸ‘¥</div>
+      <div class="header-info"><div class="name">Voisinage</div><div class="sub">CommunautÃ© rÃ©sidentielle</div></div>
     </div>
     <div class="screen-inner">
       <div class="sub-tabs">
         <button class="sub-tab active" onclick="switchSocTab('annuaire',this)">Annuaire</button>
         <button class="sub-tab" onclick="switchSocTab('qrcode',this)">QR Visiteur</button>
         <button class="sub-tab" onclick="switchSocTab('inviter',this)">Inviter</button>
-        <button class="sub-tab" onclick="switchSocTab('events-voisins',this)">Événements</button>
+        <button class="sub-tab" onclick="switchSocTab('events-voisins',this)">Ã‰vÃ©nements</button>
       </div>
       <div id="soc-annuaire"></div>
       <div id="soc-qrcode" style="display:none"></div>
@@ -542,8 +542,8 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
   <!-- ===== SCREEN 6: PROFIL ===== -->
   <div class="screen" id="screen-profil">
     <div class="header">
-      <div class="header-avatar">👤</div>
-      <div class="header-info"><div class="name">Mon profil</div><div class="sub">Paramètres & informations</div></div>
+      <div class="header-avatar">ðŸ‘¤</div>
+      <div class="header-info"><div class="name">Mon profil</div><div class="sub">ParamÃ¨tres & informations</div></div>
     </div>
     <div class="screen-inner" id="profil-content"></div>
   </div>
@@ -552,32 +552,32 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
   <nav class="tab-bar">
     <div class="tab-item active" onclick="showScreen('home')" id="tab-home">
       <span class="tab-dot"></span>
-      <span class="tab-icon">🏠</span>
+      <span class="tab-icon">ðŸ </span>
       <span class="tab-label">Accueil</span>
     </div>
     <div class="tab-item" onclick="showScreen('marche')" id="tab-marche">
       <span class="tab-dot"></span>
-      <span class="tab-icon">🏪</span>
-      <span class="tab-label">Marché</span>
+      <span class="tab-icon">ðŸª</span>
+      <span class="tab-label">MarchÃ©</span>
     </div>
     <div class="tab-item" onclick="showScreen('annonces')" id="tab-annonces">
       <span class="tab-dot"></span>
-      <span class="tab-icon">🔔</span>
+      <span class="tab-icon">ðŸ””</span>
       <span class="tab-label">Annonces</span>
     </div>
     <div class="tab-item" onclick="showScreen('services')" id="tab-services">
       <span class="tab-dot"></span>
-      <span class="tab-icon">🛠️</span>
+      <span class="tab-icon">ðŸ› ï¸</span>
       <span class="tab-label">Services</span>
     </div>
     <div class="tab-item" onclick="showScreen('social')" id="tab-social">
       <span class="tab-dot"></span>
-      <span class="tab-icon">👥</span>
+      <span class="tab-icon">ðŸ‘¥</span>
       <span class="tab-label">Social</span>
     </div>
     <div class="tab-item" onclick="showScreen('profil')" id="tab-profil">
       <span class="tab-dot"></span>
-      <span class="tab-icon">👤</span>
+      <span class="tab-icon">ðŸ‘¤</span>
       <span class="tab-label">Profil</span>
     </div>
   </nav>
@@ -588,12 +588,12 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
 <div class="modal-overlay" id="modal-quick" onclick="closeModalOnBg(event,'modal-quick')">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Actions rapides <button class="modal-close" onclick="closeModal('modal-quick')">×</button></div>
+    <div class="modal-title">Actions rapides <button class="modal-close" onclick="closeModal('modal-quick')">Ã—</button></div>
     <div style="display:flex;flex-direction:column;gap:10px;">
-      <button class="btn btn-primary btn-full" onclick="closeModal('modal-quick');showService('incidents');openModal('modal-incident')">🔧 Signaler un incident</button>
-      <button class="btn btn-ghost btn-full" onclick="closeModal('modal-quick');showScreen('marche');openModal('modal-annonce-form')">🏪 Soumettre au marché</button>
-      <button class="btn btn-ghost btn-full" onclick="closeModal('modal-quick');showService('espaces')">🏛️ Demander un espace</button>
-      <button class="btn btn-ghost btn-full" onclick="closeModal('modal-quick');showScreen('social');switchSocTab('inviter',null)">👥 Inviter un voisin</button>
+      <button class="btn btn-primary btn-full" onclick="closeModal('modal-quick');showService('incidents');openModal('modal-incident')">ðŸ”§ Signaler un incident</button>
+      <button class="btn btn-ghost btn-full" onclick="closeModal('modal-quick');showScreen('marche');openModal('modal-annonce-form')">ðŸª Soumettre au marchÃ©</button>
+      <button class="btn btn-ghost btn-full" onclick="closeModal('modal-quick');showService('espaces')">ðŸ›ï¸ Demander un espace</button>
+      <button class="btn btn-ghost btn-full" onclick="closeModal('modal-quick');showScreen('social');switchSocTab('inviter',null)">ðŸ‘¥ Inviter un voisin</button>
     </div>
   </div>
 </div>
@@ -602,31 +602,31 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
 <div class="modal-overlay" id="modal-incident" onclick="closeModalOnBg(event,'modal-incident')">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Déclarer un incident <button class="modal-close" onclick="closeModal('modal-incident')">×</button></div>
+    <div class="modal-title">DÃ©clarer un incident <button class="modal-close" onclick="closeModal('modal-incident')">Ã—</button></div>
     <div class="form-group">
       <label class="form-label">Type d'incident</label>
       <select class="form-input" id="inc-type">
-        <option>Plomberie</option><option>Électricité</option><option>Sécurité</option>
+        <option>Plomberie</option><option>Ã‰lectricitÃ©</option><option>SÃ©curitÃ©</option>
         <option>Espace commun</option><option>Bruit</option><option>Autre</option>
       </select>
     </div>
     <div class="form-group">
       <label class="form-label">Description</label>
-      <textarea class="form-input" id="inc-desc" placeholder="Décrivez le problème..."></textarea>
+      <textarea class="form-input" id="inc-desc" placeholder="DÃ©crivez le problÃ¨me..."></textarea>
     </div>
     <div class="form-group">
-      <label class="form-label">Priorité</label>
+      <label class="form-label">PrioritÃ©</label>
       <select class="form-input" id="inc-prio"><option>Faible</option><option>Moyen</option><option>Urgent</option></select>
     </div>
     <div class="form-group">
       <label class="form-label">Localisation</label>
       <select class="form-input" id="inc-loc">
-        <option>Couloir Bâtiment B</option><option>Parking</option><option>Jardin central</option>
-        <option>Salle commune</option><option>Terrasse</option><option>Entrée principale</option>
+        <option>Couloir BÃ¢timent B</option><option>Parking</option><option>Jardin central</option>
+        <option>Salle commune</option><option>Terrasse</option><option>EntrÃ©e principale</option>
       </select>
     </div>
     <div id="escalade-section" style="display:none;margin-top:16px;padding:12px;background:rgba(255,75,75,0.08);border-left:3px solid var(--red);border-radius:8px;">
-      <button class="btn btn-escalade btn-full" onclick="escaladeToSecurity('new')">🔒 Escalader vers Sécurité</button>
+      <button class="btn btn-escalade btn-full" onclick="escaladeToSecurity('new')">ðŸ”’ Escalader vers SÃ©curitÃ©</button>
       <div style="font-size:11px;color:var(--gray);margin-top:8px;text-align:center;">Disponible pour incidents haute/critique</div>
     </div>
 
@@ -634,7 +634,7 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
       <label class="form-label">Photos (max 3)</label>
       <div class="photo-upload-area" onclick="document.getElementById('inc-photos').click()">
         <input type="file" id="inc-photos" accept="image/*" capture="environment" multiple onchange="previewPhotos(this,'inc-preview')">
-        <div>📷 Appuyer pour photographier ou choisir</div>
+        <div>ðŸ“· Appuyer pour photographier ou choisir</div>
         <div style="font-size:12px;color:var(--gray);margin-top:4px">Max 3 photos</div>
       </div>
       <div class="photo-preview" id="inc-preview"></div>
@@ -643,17 +643,17 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
   </div>
 </div>
 
-<!-- Modal annonce marché -->
+<!-- Modal annonce marchÃ© -->
 <div class="modal-overlay" id="modal-annonce-form" onclick="closeModalOnBg(event,'modal-annonce-form')">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Nouvelle annonce <button class="modal-close" onclick="closeModal('modal-annonce-form')">×</button></div>
+    <div class="modal-title">Nouvelle annonce <button class="modal-close" onclick="closeModal('modal-annonce-form')">Ã—</button></div>
     <div class="form-group">
       <label class="form-label">Titre</label>
-      <input class="form-input" id="ann-titre" placeholder="Ex: Chaise de bureau à vendre">
+      <input class="form-input" id="ann-titre" placeholder="Ex: Chaise de bureau Ã  vendre">
     </div>
     <div class="form-group">
-      <label class="form-label">Catégorie</label>
+      <label class="form-label">CatÃ©gorie</label>
       <select class="form-input" id="ann-cat">
         <option value="vente">Vente</option><option value="service">Service</option>
         <option value="don">Don</option><option value="recherche">Recherche</option>
@@ -661,7 +661,7 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
     </div>
     <div class="form-group">
       <label class="form-label">Description</label>
-      <textarea class="form-input" id="ann-desc" placeholder="Décrivez votre article..."></textarea>
+      <textarea class="form-input" id="ann-desc" placeholder="DÃ©crivez votre article..."></textarea>
     </div>
     <div class="form-group">
       <label class="form-label">Prix (optionnel)</label>
@@ -671,7 +671,7 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
       <label class="form-label">Photos (max 3)</label>
       <div class="photo-upload-area" onclick="document.getElementById('ann-photos').click()">
         <input type="file" id="ann-photos" accept="image/*" multiple onchange="previewPhotos(this,'ann-preview')">
-        <div>📷 Choisir des photos</div>
+        <div>ðŸ“· Choisir des photos</div>
       </div>
       <div class="photo-preview" id="ann-preview"></div>
     </div>
@@ -683,12 +683,12 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
 <div class="modal-overlay" id="modal-espace" onclick="closeModalOnBg(event,'modal-espace')">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Réserver un espace <button class="modal-close" onclick="closeModal('modal-espace')">×</button></div>
+    <div class="modal-title">RÃ©server un espace <button class="modal-close" onclick="closeModal('modal-espace')">Ã—</button></div>
     <div class="form-group">
       <label class="form-label">Espace</label>
       <select class="form-input" id="esp-type">
         <option>Salle commune</option><option>Jardin central</option><option>Terrasse rooftop</option>
-        <option>Parking visiteurs</option><option>Couloir réception</option>
+        <option>Parking visiteurs</option><option>Couloir rÃ©ception</option>
       </select>
     </div>
     <div class="form-group">
@@ -697,7 +697,7 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="form-group">
       <div>
-        <label class="form-label">Heure début</label>
+        <label class="form-label">Heure dÃ©but</label>
         <input class="form-input" id="esp-debut" type="time" value="09:00">
       </div>
       <div>
@@ -711,24 +711,24 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
     </div>
     <div class="form-group">
       <label class="form-label">Motif</label>
-      <textarea class="form-input" id="esp-motif" placeholder="Décrivez votre utilisation..." rows="2"></textarea>
+      <textarea class="form-input" id="esp-motif" placeholder="DÃ©crivez votre utilisation..." rows="2"></textarea>
     </div>
     <div style="background:var(--navy);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;">
-      <div style="font-size:12px;color:var(--teal);font-weight:600;margin-bottom:8px;">📅 Disponibilités simulées</div>
+      <div style="font-size:12px;color:var(--teal);font-weight:600;margin-bottom:8px;">ðŸ“… DisponibilitÃ©s simulÃ©es</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap" id="cal-slots"></div>
     </div>
     <button class="btn btn-primary btn-full" onclick="submitEspace()">Envoyer la demande</button>
   </div>
 </div>
 
-<!-- Modal événement chez moi -->
+<!-- Modal Ã©vÃ©nement chez moi -->
 <div class="modal-overlay" id="modal-event-home" onclick="closeModalOnBg(event,'modal-event-home')">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Planifier un événement <button class="modal-close" onclick="closeModal('modal-event-home')">×</button></div>
+    <div class="modal-title">Planifier un Ã©vÃ©nement <button class="modal-close" onclick="closeModal('modal-event-home')">Ã—</button></div>
     <div class="form-group">
-      <label class="form-label">Titre de l'événement</label>
-      <input class="form-input" id="ev-titre" placeholder="Ex: Dîner en famille">
+      <label class="form-label">Titre de l'Ã©vÃ©nement</label>
+      <input class="form-input" id="ev-titre" placeholder="Ex: DÃ®ner en famille">
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="form-group">
       <div>
@@ -741,19 +741,19 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Durée estimée</label>
+      <label class="form-label">DurÃ©e estimÃ©e</label>
       <select class="form-input" id="ev-duree">
-        <option>1h</option><option>2h</option><option>3h</option><option>Toute la soirée</option>
+        <option>1h</option><option>2h</option><option>3h</option><option>Toute la soirÃ©e</option>
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">Nombre d'invités estimé</label>
+      <label class="form-label">Nombre d'invitÃ©s estimÃ©</label>
       <input class="form-input" id="ev-invites" type="number" placeholder="Ex: 8" min="1">
     </div>
     <div class="form-group">
       <label class="form-label">Niveau sonore</label>
       <select class="form-input" id="ev-son">
-        <option>🤫 Calme</option><option>🎵 Modéré</option><option>🎶 Animé</option>
+        <option>ðŸ¤« Calme</option><option>ðŸŽµ ModÃ©rÃ©</option><option>ðŸŽ¶ AnimÃ©</option>
       </select>
     </div>
     <div class="form-group">
@@ -767,15 +767,15 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
       </div>
       <label class="toggle"><input type="checkbox" id="ev-notif" checked><span class="toggle-slider"></span></label>
     </div>
-    <button class="btn btn-primary btn-full" onclick="submitEvent()">Planifier l'événement</button>
+    <button class="btn btn-primary btn-full" onclick="submitEvent()">Planifier l'Ã©vÃ©nement</button>
   </div>
 </div>
 
-<!-- Modal QR Code généré -->
+<!-- Modal QR Code gÃ©nÃ©rÃ© -->
 <div class="modal-overlay" id="modal-qr-result" onclick="closeModalOnBg(event,'modal-qr-result')">
   <div class="modal-sheet" style="text-align:center">
     <div class="modal-handle"></div>
-    <div class="modal-title" style="text-align:center">QR Code visiteur <button class="modal-close" onclick="closeModal('modal-qr-result')">×</button></div>
+    <div class="modal-title" style="text-align:center">QR Code visiteur <button class="modal-close" onclick="closeModal('modal-qr-result')">Ã—</button></div>
     <div id="qr-display" style="display:flex;justify-content:center;padding:20px"></div>
     <div id="qr-info" style="font-size:13px;color:var(--gray);margin-bottom:16px"></div>
     <button class="btn btn-ghost btn-full" onclick="closeModal('modal-qr-result')">Fermer</button>
@@ -786,7 +786,7 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
 <div id="toast" style="position:fixed;bottom:calc(var(--tab-h) + 20px);left:50%;transform:translateX(-50%) translateY(20px);background:#1A3050;border:1px solid var(--navy-border);border-radius:25px;padding:10px 20px;font-size:13px;font-weight:500;z-index:400;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center"></div>
 
 <script>
-// ===== DONNÉES SIMULÉES =====
+// ===== DONNÃ‰ES SIMULÃ‰ES =====
 const STATE = {
   currentTab: 'home',
   notifCount: 3,
@@ -803,60 +803,60 @@ const STATE = {
 };
 
 const USER = {
-  nom: 'Aminata Koné', prenom: 'Aminata', initials: 'AK',
+  nom: 'Aminata KonÃ©', prenom: 'Aminata', initials: 'AK',
   email: 'aminata.kone@email.com', tel: '+225 07 12 34 56',
-  cite: 'Cité Les Bougainvillées', batiment: 'Bâtiment B',
+  cite: 'CitÃ© Les BougainvillÃ©es', batiment: 'BÃ¢timent B',
   apt: 'Villa B-12', etage: 'RDC',
   animaux: true,
   gpsVisible: true, gpsLivreurs: true
 };
 
 const MARKET_ITEMS = [
-  { id:1, cat:'vente', emoji:'🪑', title:'Chaise de bureau ergonomique', prix:15000, auteur:'Kofi A.', apt:'A-04', date:'Il y a 2j', statut:'disponible', desc:'Chaise en bon état, tissu gris, hauteur réglable.' },
-  { id:2, cat:'service', emoji:'🎹', title:'Cours de piano – tous niveaux', prix:10000, auteur:'Marie S.', apt:'C-07', date:'Il y a 3j', statut:'disponible', desc:'Cours individuels chez vous ou à domicile, 1h par session.' },
-  { id:3, cat:'don', emoji:'📚', title:'Lot de livres – romans & BD', prix:0, auteur:'Omar T.', apt:'B-03', date:'Il y a 5j', statut:'disponible', desc:'20 livres en très bon état à donner. À récupérer chez moi.' },
+  { id:1, cat:'vente', emoji:'ðŸª‘', title:'Chaise de bureau ergonomique', prix:15000, auteur:'Kofi A.', apt:'A-04', date:'Il y a 2j', statut:'disponible', desc:'Chaise en bon Ã©tat, tissu gris, hauteur rÃ©glable.' },
+  { id:2, cat:'service', emoji:'ðŸŽ¹', title:'Cours de piano â€“ tous niveaux', prix:10000, auteur:'Marie S.', apt:'C-07', date:'Il y a 3j', statut:'disponible', desc:'Cours individuels chez vous ou Ã  domicile, 1h par session.' },
+  { id:3, cat:'don', emoji:'ðŸ“š', title:'Lot de livres â€“ romans & BD', prix:0, auteur:'Omar T.', apt:'B-03', date:'Il y a 5j', statut:'disponible', desc:'20 livres en trÃ¨s bon Ã©tat Ã  donner. Ã€ rÃ©cupÃ©rer chez moi.' },
 ];
 
 const ANNONCES_SYNDIC = [
-  { id:1, type:'urgent', icon:'⚠️', title:'Coupure eau – Maintenance réseau', body:'Une maintenance d\'urgence du réseau d\'eau est prévue demain mercredi de 8h à 14h. Merci de prévoir des réserves d\'eau.', date:'Aujourd\'hui 09:15', read: false },
-  { id:2, type:'info', icon:'ℹ️', title:'Assemblée Générale – 20 avril 2026', body:'L\'AG annuelle se tiendra le 20 avril à 18h30 en salle commune. Ordre du jour : approbation comptes, nouveaux prestataires, aménagement jardin.', date:'Hier 14:00', read: false },
-  { id:3, type:'info', icon:'📋', title:'Rappel : Respect des horaires de silence', body:'Nous rappelons que les horaires de silence sont de 22h à 7h. Merci de votre coopération.', date:'Il y a 3j', read: true },
+  { id:1, type:'urgent', icon:'âš ï¸', title:'Coupure eau â€“ Maintenance rÃ©seau', body:'Une maintenance d\'urgence du rÃ©seau d\'eau est prÃ©vue demain mercredi de 8h Ã  14h. Merci de prÃ©voir des rÃ©serves d\'eau.', date:'Aujourd\'hui 09:15', read: false },
+  { id:2, type:'info', icon:'â„¹ï¸', title:'AssemblÃ©e GÃ©nÃ©rale â€“ 20 avril 2026', body:'L\'AG annuelle se tiendra le 20 avril Ã  18h30 en salle commune. Ordre du jour : approbation comptes, nouveaux prestataires, amÃ©nagement jardin.', date:'Hier 14:00', read: false },
+  { id:3, type:'info', icon:'ðŸ“‹', title:'Rappel : Respect des horaires de silence', body:'Nous rappelons que les horaires de silence sont de 22h Ã  7h. Merci de votre coopÃ©ration.', date:'Il y a 3j', read: true },
 ];
 
 const AG_DATA = [
-  { id:1, titre:'AG Ordinaire – Avril 2025', date:'15 avril 2025', statut:'passée', resolutions: ['Approbation du budget annuel 2025 (✅ Adopté)', 'Renouvellement contrat gardiennage (✅ Adopté)', 'Rénovation fontaine centrale (❌ Rejeté – budget insuffisant)'] },
-  { id:2, titre:'AG Extraordinaire – Janvier 2025', date:'10 janvier 2025', statut:'passée', resolutions: ['Installation caméras de surveillance (✅ Adopté)', 'Modification règlement intérieur art.12 (✅ Adopté)'] },
-  { id:3, titre:'AG Ordinaire – Avril 2026', date:'20 avril 2026', statut:'à venir', resolutions: [] },
+  { id:1, titre:'AG Ordinaire â€“ Avril 2025', date:'15 avril 2025', statut:'passÃ©e', resolutions: ['Approbation du budget annuel 2025 (âœ… AdoptÃ©)', 'Renouvellement contrat gardiennage (âœ… AdoptÃ©)', 'RÃ©novation fontaine centrale (âŒ RejetÃ© â€“ budget insuffisant)'] },
+  { id:2, titre:'AG Extraordinaire â€“ Janvier 2025', date:'10 janvier 2025', statut:'passÃ©e', resolutions: ['Installation camÃ©ras de surveillance (âœ… AdoptÃ©)', 'Modification rÃ¨glement intÃ©rieur art.12 (âœ… AdoptÃ©)'] },
+  { id:3, titre:'AG Ordinaire â€“ Avril 2026', date:'20 avril 2026', statut:'Ã  venir', resolutions: [] },
 ];
 
 const VOTES_DATA = [
-  { id:1, titre:'Approbation du nouveau prestataire de nettoyage', desc:'Passer de ProClean à EcoNet Services, proposant -20% sur le tarif actuel.', deadline:'18 avril 2026', participation: 62, oui:18, non:8, abs:2, total:28, voted: null }
+  { id:1, titre:'Approbation du nouveau prestataire de nettoyage', desc:'Passer de ProClean Ã  EcoNet Services, proposant -20% sur le tarif actuel.', deadline:'18 avril 2026', participation: 62, oui:18, non:8, abs:2, total:28, voted: null }
 ];
 
 const SONDAGES_DATA = [
-  { id:1, titre:'Satisfaction – Sécurité de la cité', question:'Comment évaluez-vous le niveau de sécurité actuel ?', options:['Très satisfait','Satisfait','Neutre','Insatisfait'], resultats:[8,14,6,3], totalVotes:31, voted:null, clos:false }
+  { id:1, titre:'Satisfaction â€“ SÃ©curitÃ© de la citÃ©', question:'Comment Ã©valuez-vous le niveau de sÃ©curitÃ© actuel ?', options:['TrÃ¨s satisfait','Satisfait','Neutre','Insatisfait'], resultats:[8,14,6,3], totalVotes:31, voted:null, clos:false }
 ];
 
 const INCIDENTS_DATA = [
-  { id:1, type:'Plomberie', icon:'🚰', desc:'Fuite importante au niveau du couloir B, près de l\'appartement B-05. Sol glissant.', prio:'Urgent', loc:'Couloir Bâtiment B', date:'02/04/2026', statut:'En cours', steps:[{done:true,label:'Ouvert', date:'02/04 10:00'},{done:true,label:'Pris en charge',date:'02/04 14:30'},{done:false,label:'Résolu',date:'—'}] }
+  { id:1, type:'Plomberie', icon:'ðŸš°', desc:'Fuite importante au niveau du couloir B, prÃ¨s de l\'appartement B-05. Sol glissant.', prio:'Urgent', loc:'Couloir BÃ¢timent B', date:'02/04/2026', statut:'En cours', steps:[{done:true,label:'Ouvert', date:'02/04 10:00'},{done:true,label:'Pris en charge',date:'02/04 14:30'},{done:false,label:'RÃ©solu',date:'â€”'}] }
 ];
 
 const RESIDENTS = [
   { id:1, nom:'Kofi Asante', apt:'Villa A-04', etage:'RDC', batiment:'A', tel:'+225 05 98 76 54', visible:true, color:'#4299E1', initials:'KA' },
-  { id:2, nom:'Marie Sanogo', apt:'Villa C-07', etage:'1er étage', batiment:'C', tel:'+225 07 65 43 21', visible:true, color:'#9F7AEA', initials:'MS' },
-  { id:3, nom:'Omar Touré', apt:'Villa B-03', etage:'RDC', batiment:'B', tel:'', visible:false, color:'#F6AD55', initials:'OT' },
+  { id:2, nom:'Marie Sanogo', apt:'Villa C-07', etage:'1er Ã©tage', batiment:'C', tel:'+225 07 65 43 21', visible:true, color:'#9F7AEA', initials:'MS' },
+  { id:3, nom:'Omar TourÃ©', apt:'Villa B-03', etage:'RDC', batiment:'B', tel:'', visible:false, color:'#F6AD55', initials:'OT' },
 ];
 
 const EVENTS_DATA = [
-  { id:1, titre:'Réunion jardinage', date:'Mer 9 Avr', heure:'09:00', type:'communauté', organisateur:'Le syndic', icon:'🌱' },
-  { id:2, titre:'Tournoi de pétanque', date:'Sam 12 Avr', heure:'16:00', type:'loisir', organisateur:'Kofi A.', icon:'⚽' },
-  { id:3, titre:'Fête de quartier', date:'Dim 20 Avr', heure:'14:00', type:'fête', organisateur:'Comité fête', icon:'🎉' },
+  { id:1, titre:'RÃ©union jardinage', date:'Mer 9 Avr', heure:'09:00', type:'communautÃ©', organisateur:'Le syndic', icon:'ðŸŒ±' },
+  { id:2, titre:'Tournoi de pÃ©tanque', date:'Sam 12 Avr', heure:'16:00', type:'loisir', organisateur:'Kofi A.', icon:'âš½' },
+  { id:3, titre:'FÃªte de quartier', date:'Dim 20 Avr', heure:'14:00', type:'fÃªte', organisateur:'ComitÃ© fÃªte', icon:'ðŸŽ‰' },
 ];
 
 const CHAT_INIT = [
   { from:'syndic', text:'Bonjour Aminata, comment puis-je vous aider ?', time:'Hier 09:00', lu:true },
   { from:'user', text:'Bonjour, je voulais signaler la fuite dans le couloir B.', time:'Hier 09:15', lu:true },
-  { from:'syndic', text:'Merci pour votre signalement, notre équipe technique intervient demain matin.', time:'Hier 09:20', lu:true },
+  { from:'syndic', text:'Merci pour votre signalement, notre Ã©quipe technique intervient demain matin.', time:'Hier 09:20', lu:true },
 ];
 
 // ===== NAVIGATION =====
@@ -920,21 +920,21 @@ function renderHome() {
   const ticketContainer = document.getElementById('home-tickets');
   const allTickets = [...INCIDENTS_DATA, ...STATE.incidents];
   if (allTickets.length === 0) {
-    ticketContainer.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:4px 0">Aucun ticket actif 🎉</div>';
+    ticketContainer.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:4px 0">Aucun ticket actif ðŸŽ‰</div>';
   } else {
     ticketContainer.innerHTML = allTickets.map(t => `
       <div class="ticket-row">
         <div class="ticket-icon">${t.icon}</div>
         <div class="ticket-info">
-          <div class="ticket-title">${t.type} – ${t.loc}</div>
+          <div class="ticket-title">${t.type} â€“ ${t.loc}</div>
           <div class="ticket-meta">${t.date}</div>
         </div>
-        <span class="badge ${t.statut === 'Résolu' ? 'badge-teal' : t.statut === 'En cours' ? 'badge-orange' : 'badge-blue'}">${t.statut}</span>
+        <span class="badge ${t.statut === 'RÃ©solu' ? 'badge-teal' : t.statut === 'En cours' ? 'badge-orange' : 'badge-blue'}">${t.statut}</span>
       </div>
     `).join('');
   }
 
-  // Annonces récentes
+  // Annonces rÃ©centes
   const annContainer = document.getElementById('home-annonces');
   annContainer.innerHTML = ANNONCES_SYNDIC.slice(0,2).map(a => `
     <div class="ticket-row" onclick="showScreen('annonces')">
@@ -947,11 +947,11 @@ function renderHome() {
     </div>
   `).join('');
 
-  // Événements
+  // Ã‰vÃ©nements
   const evContainer = document.getElementById('home-events');
   evContainer.innerHTML = [...EVENTS_DATA, ...STATE.events].map(e => `
     <div class="event-card-h">
-      <div class="event-date">${e.date} · ${e.heure}</div>
+      <div class="event-date">${e.date} Â· ${e.heure}</div>
       <div class="event-title-h">${e.icon} ${e.titre}</div>
       <div class="event-detail">Par ${e.organisateur}</div>
     </div>
@@ -962,7 +962,7 @@ function renderHome() {
   document.getElementById('notif-count').textContent = unread || STATE.notifCount;
 }
 
-// ===== SCREEN 2: MARCHÉ =====
+// ===== SCREEN 2: MARCHÃ‰ =====
 function renderMarche(filter) {
   const items = filter && filter !== 'tout'
     ? [...MARKET_ITEMS, ...STATE.incidents.filter(x=>false)].filter(i => i.cat === filter)
@@ -974,7 +974,7 @@ function renderMarche(filter) {
 
   const container = document.getElementById('marche-list');
   if (allItems.length === 0) {
-    container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">Aucune annonce dans cette catégorie</div></div>';
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">ðŸ”</div><div class="empty-text">Aucune annonce dans cette catÃ©gorie</div></div>';
     return;
   }
   container.innerHTML = allItems.map(item => `
@@ -982,11 +982,11 @@ function renderMarche(filter) {
       <div class="market-img" style="background:linear-gradient(135deg,var(--navy-card),#0D2A4A)">${item.emoji}</div>
       <div class="market-info">
         <div class="market-title">${item.title}</div>
-        <div class="market-price">${item.prix === 0 ? 'Gratuit 🎁' : item.prix.toLocaleString('fr-FR') + ' FCFA'}</div>
-        <div class="market-meta">👤 ${item.auteur} · ${item.apt} · ${item.date}</div>
-        <div style="margin-top:6px"><span class="badge ${item.statut==='disponible'?'badge-teal':'badge-gray'}">${item.statut==='disponible'?'✅ Disponible':'❌ Vendu'}</span></div>
+        <div class="market-price">${item.prix === 0 ? 'Gratuit ðŸŽ' : item.prix.toLocaleString('fr-FR') + ' FCFA'}</div>
+        <div class="market-meta">ðŸ‘¤ ${item.auteur} Â· ${item.apt} Â· ${item.date}</div>
+        <div style="margin-top:6px"><span class="badge ${item.statut==='disponible'?'badge-teal':'badge-gray'}">${item.statut==='disponible'?'âœ… Disponible':'âŒ Vendu'}</span></div>
       </div>
-      <button class="market-fav" onclick="toggleFav(${item.id},this)" style="background:none;border:none;cursor:pointer;font-size:22px;color:${STATE.favoris.includes(item.id)?'#FF6B35':'var(--gray)'}">${STATE.favoris.includes(item.id)?'♥':'♡'}</button>
+      <button class="market-fav" onclick="toggleFav(${item.id},this)" style="background:none;border:none;cursor:pointer;font-size:22px;color:${STATE.favoris.includes(item.id)?'#FF6B35':'var(--gray)'}">${STATE.favoris.includes(item.id)?'â™¥':'â™¡'}</button>
     </div>
   `).join('');
 }
@@ -1000,19 +1000,19 @@ function filterMarche(cat, btn) {
 function toggleFav(id, btn) {
   if (STATE.favoris.includes(id)) {
     STATE.favoris = STATE.favoris.filter(f => f !== id);
-    btn.textContent = '♡'; btn.style.color = 'var(--gray)';
-    showToast('Retiré des favoris');
+    btn.textContent = 'â™¡'; btn.style.color = 'var(--gray)';
+    showToast('RetirÃ© des favoris');
   } else {
     STATE.favoris.push(id);
-    btn.textContent = '♥'; btn.style.color = 'var(--orange)';
-    showToast('Ajouté aux favoris', '❤️');
+    btn.textContent = 'â™¥'; btn.style.color = 'var(--orange)';
+    showToast('AjoutÃ© aux favoris', 'â¤ï¸');
   }
 }
 
 function submitAnnonce() {
   const titre = document.getElementById('ann-titre').value.trim();
-  if (!titre) { showToast('Veuillez entrer un titre', '⚠️'); return; }
-  showToast('Annonce soumise – en attente de validation', '✅');
+  if (!titre) { showToast('Veuillez entrer un titre', 'âš ï¸'); return; }
+  showToast('Annonce soumise â€“ en attente de validation', 'âœ…');
   closeModal('modal-annonce-form');
   document.getElementById('ann-titre').value = '';
   document.getElementById('ann-desc').value = '';
@@ -1027,7 +1027,7 @@ function renderAnnonces() {
     <div class="announce-card ${a.type}" id="ann-${a.id}" onclick="readAnnonce(${a.id})">
       <div class="ann-title">${a.icon} ${a.title}${(!STATE.annoncesRead[a.id] && !a.read) ? '<span class="unread-dot"></span>' : ''}</div>
       <div class="ann-body">${a.body}</div>
-      <div class="ann-meta">📅 ${a.date}</div>
+      <div class="ann-meta">ðŸ“… ${a.date}</div>
     </div>
   `).join('');
 
@@ -1036,14 +1036,14 @@ function renderAnnonces() {
   ag.innerHTML = AG_DATA.map(g => `
     <div class="ag-card">
       <div class="ag-header">
-        <div class="ag-title">📋 ${g.titre}</div>
-        <span class="badge ${g.statut==='à venir'?'badge-orange':'badge-gray'}">${g.statut}</span>
+        <div class="ag-title">ðŸ“‹ ${g.titre}</div>
+        <span class="badge ${g.statut==='Ã  venir'?'badge-orange':'badge-gray'}">${g.statut}</span>
       </div>
-      <div class="ag-date">📅 ${g.date}</div>
-      ${g.statut === 'à venir' ? `
+      <div class="ag-date">ðŸ“… ${g.date}</div>
+      ${g.statut === 'Ã  venir' ? `
         <div style="display:flex;gap:8px;margin-top:12px">
-          <button class="btn btn-teal btn-sm" onclick="rsvpAG('physique',this)">✅ Présence physique</button>
-          <button class="btn btn-ghost btn-sm" onclick="rsvpAG('ligne',this)">💻 En ligne</button>
+          <button class="btn btn-teal btn-sm" onclick="rsvpAG('physique',this)">âœ… PrÃ©sence physique</button>
+          <button class="btn btn-ghost btn-sm" onclick="rsvpAG('ligne',this)">ðŸ’» En ligne</button>
         </div>
       ` : g.resolutions.map(r => `<div class="ag-resolution">${r}</div>`).join('')}
     </div>
@@ -1070,14 +1070,14 @@ function switchAnnTab(tab, btn) {
 }
 
 function rsvpAG(mode, btn) {
-  btn.textContent = '✅ Confirmé !';
+  btn.textContent = 'âœ… ConfirmÃ© !';
   btn.classList.add('btn-teal');
-  showToast(`Présence ${mode === 'ligne' ? 'en ligne' : 'physique'} confirmée`, '🎉');
+  showToast(`PrÃ©sence ${mode === 'ligne' ? 'en ligne' : 'physique'} confirmÃ©e`, 'ðŸŽ‰');
 }
 
 function toggleNotifs(el) {
   STATE.notifications = el.checked;
-  showToast(el.checked ? 'Notifications activées' : 'Notifications désactivées', el.checked ? '🔔' : '🔕');
+  showToast(el.checked ? 'Notifications activÃ©es' : 'Notifications dÃ©sactivÃ©es', el.checked ? 'ðŸ””' : 'ðŸ”•');
 }
 
 // ===== VOTES =====
@@ -1090,15 +1090,15 @@ function renderVotes() {
         <span class="badge badge-orange">Vote actif</span>
       </div>
       <div style="font-size:12px;color:var(--gray);margin-bottom:10px">${v.desc}</div>
-      <div style="font-size:11px;color:var(--gray);margin-bottom:10px">⏰ Date limite : ${v.deadline} · 👥 ${v.participation}% de participation</div>
+      <div style="font-size:11px;color:var(--gray);margin-bottom:10px">â° Date limite : ${v.deadline} Â· ðŸ‘¥ ${v.participation}% de participation</div>
       ${!v.voted ? `
         <div class="vote-choices">
-          <button class="vote-btn oui" onclick="submitVote(${v.id},'oui',this)">✅ Oui</button>
-          <button class="vote-btn non" onclick="submitVote(${v.id},'non',this)">❌ Non</button>
-          <button class="vote-btn abs" onclick="submitVote(${v.id},'abs',this)">— Abstention</button>
+          <button class="vote-btn oui" onclick="submitVote(${v.id},'oui',this)">âœ… Oui</button>
+          <button class="vote-btn non" onclick="submitVote(${v.id},'non',this)">âŒ Non</button>
+          <button class="vote-btn abs" onclick="submitVote(${v.id},'abs',this)">â€” Abstention</button>
         </div>
       ` : `
-        <div style="margin-bottom:10px;font-size:12px;color:var(--teal)">✅ Vous avez voté : <strong>${VOTES_DATA.find(x=>x.id===v.id).voted}</strong></div>
+        <div style="margin-bottom:10px;font-size:12px;color:var(--teal)">âœ… Vous avez votÃ© : <strong>${VOTES_DATA.find(x=>x.id===v.id).voted}</strong></div>
         ${renderVoteResults(v)}
       `}
     </div>
@@ -1108,11 +1108,11 @@ function renderVotes() {
 function renderVoteResults(v) {
   const total = v.oui + v.non + v.abs;
   return `
-    <div class="vote-result-label"><span>✅ Oui</span><span>${v.oui}/${total}</span></div>
+    <div class="vote-result-label"><span>âœ… Oui</span><span>${v.oui}/${total}</span></div>
     <div class="progress-bar" style="margin-bottom:8px"><div class="progress-fill teal" style="width:${Math.round(v.oui/total*100)}%"></div></div>
-    <div class="vote-result-label"><span>❌ Non</span><span>${v.non}/${total}</span></div>
+    <div class="vote-result-label"><span>âŒ Non</span><span>${v.non}/${total}</span></div>
     <div class="progress-bar" style="margin-bottom:8px"><div class="progress-fill red" style="width:${Math.round(v.non/total*100)}%"></div></div>
-    <div class="vote-result-label"><span>— Abstention</span><span>${v.abs}/${total}</span></div>
+    <div class="vote-result-label"><span>â€” Abstention</span><span>${v.abs}/${total}</span></div>
     <div class="progress-bar"><div class="progress-fill" style="width:${Math.round(v.abs/total*100)}%;background:var(--gray)"></div></div>
   `;
 }
@@ -1127,7 +1127,7 @@ function submitVote(id, choice, btn) {
   vote.participation = Math.min(100, vote.participation + 2);
   document.querySelectorAll(`#ann-votes .vote-btn`).forEach(b => b.classList.remove('voted'));
   btn.classList.add('voted');
-  showToast('Vote enregistré !', '✅');
+  showToast('Vote enregistrÃ© !', 'âœ…');
   setTimeout(() => renderVotes(), 400);
 }
 
@@ -1136,7 +1136,7 @@ function renderSondages() {
   const container = document.getElementById('ann-sondages');
   container.innerHTML = SONDAGES_DATA.map(s => `
     <div class="vote-card">
-      <div style="font-size:14px;font-weight:600;margin-bottom:6px">📊 ${s.titre}</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px">ðŸ“Š ${s.titre}</div>
       <div style="font-size:13px;margin-bottom:12px;color:var(--gray-light)">${s.question}</div>
       ${!s.voted ? `
         <div style="display:flex;flex-direction:column;gap:8px">
@@ -1145,7 +1145,7 @@ function renderSondages() {
           `).join('')}
         </div>
       ` : `
-        <div style="font-size:11px;color:var(--teal);margin-bottom:12px">✅ Merci pour votre réponse !</div>
+        <div style="font-size:11px;color:var(--teal);margin-bottom:12px">âœ… Merci pour votre rÃ©ponse !</div>
         ${s.options.map((opt,i) => {
           const total = s.resultats.reduce((a,b)=>a+b,0);
           const pct = total > 0 ? Math.round(s.resultats[i]/total*100) : 0;
@@ -1156,7 +1156,7 @@ function renderSondages() {
             </div>
           `;
         }).join('')}
-        <div style="font-size:11px;color:var(--gray)">👥 ${s.totalVotes} réponses</div>
+        <div style="font-size:11px;color:var(--gray)">ðŸ‘¥ ${s.totalVotes} rÃ©ponses</div>
       `}
     </div>
   `).join('');
@@ -1168,7 +1168,7 @@ function submitSondage(id, choice, btn) {
   s.voted = choice;
   s.resultats[choice]++;
   s.totalVotes++;
-  showToast('Réponse enregistrée !', '📊');
+  showToast('RÃ©ponse enregistrÃ©e !', 'ðŸ“Š');
   setTimeout(() => renderSondages(), 300);
 }
 
@@ -1193,9 +1193,9 @@ function renderIncidents() {
   const allInc = [...INCIDENTS_DATA, ...STATE.incidents];
   container.innerHTML = `
     <div class="header" style="position:sticky;top:0;z-index:50">
-      <button onclick="resetServicesView()" style="font-size:20px;background:none;border:none;color:var(--white);cursor:pointer;padding:4px">←</button>
+      <button onclick="resetServicesView()" style="font-size:20px;background:none;border:none;color:var(--white);cursor:pointer;padding:4px">â†</button>
       <div class="header-info"><div class="name">Incidents</div><div class="sub">${allInc.length} signalement(s)</div></div>
-      <button class="btn btn-primary btn-sm" onclick="openModal('modal-incident')">+ Déclarer</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-incident')">+ DÃ©clarer</button>
     </div>
     <div style="padding:16px">
     ${allInc.map(inc => `
@@ -1205,10 +1205,10 @@ function renderIncidents() {
             <span style="font-size:22px">${inc.icon}</span>
             <div>
               <div style="font-size:14px;font-weight:600">${inc.type}</div>
-              <div style="font-size:11px;color:var(--gray)">${inc.loc} · ${inc.date}</div>
+              <div style="font-size:11px;color:var(--gray)">${inc.loc} Â· ${inc.date}</div>
             </div>
           </div>
-          <span class="badge ${inc.statut==='Résolu'?'badge-teal':inc.statut==='En cours'?'badge-orange':'badge-blue'}">${inc.statut}</span>
+          <span class="badge ${inc.statut==='RÃ©solu'?'badge-teal':inc.statut==='En cours'?'badge-orange':'badge-blue'}">${inc.statut}</span>
         </div>
         <div style="font-size:13px;color:var(--gray-light);margin-bottom:12px">${inc.desc}</div>
         <div class="timeline">
@@ -1221,28 +1221,28 @@ function renderIncidents() {
         </div>
       </div>
     `).join('')}
-    ${allInc.length === 0 ? '<div class="empty-state"><div class="empty-icon">🎉</div><div class="empty-text">Aucun incident en cours</div></div>' : ''}
+    ${allInc.length === 0 ? '<div class="empty-state"><div class="empty-icon">ðŸŽ‰</div><div class="empty-text">Aucun incident en cours</div></div>' : ''}
     </div>
   `;
-  document.getElementById('inc-count').textContent = allInc.filter(i=>i.statut!=='Résolu').length + ' en cours';
+  document.getElementById('inc-count').textContent = allInc.filter(i=>i.statut!=='RÃ©solu').length + ' en cours';
 }
 
 function submitIncident() {
   const type = document.getElementById('inc-type').value;
   const desc = document.getElementById('inc-desc').value.trim();
-  if (!desc) { showToast('Veuillez décrire l\'incident', '⚠️'); return; }
+  if (!desc) { showToast('Veuillez dÃ©crire l\'incident', 'âš ï¸'); return; }
   const prio = document.getElementById('inc-prio').value;
   const loc = document.getElementById('inc-loc').value;
-  const icons = { Plomberie:'🚰', Électricité:'⚡', Sécurité:'🔒', 'Espace commun':'🏛️', Bruit:'📢', Autre:'🔧' };
+  const icons = { Plomberie:'ðŸš°', Ã‰lectricitÃ©:'âš¡', SÃ©curitÃ©:'ðŸ”’', 'Espace commun':'ðŸ›ï¸', Bruit:'ðŸ“¢', Autre:'ðŸ”§' };
   const newInc = {
-    id: Date.now(), type, icon: icons[type] || '🔧', desc, prio, loc,
+    id: Date.now(), type, icon: icons[type] || 'ðŸ”§', desc, prio, loc,
     date: new Date().toLocaleDateString('fr-FR'), statut: 'Ouvert',
-    steps: [{done:true,label:'Ouvert',date: new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})},{done:false,label:'En cours',date:'—'},{done:false,label:'Résolu',date:'—'}]
+    steps: [{done:true,label:'Ouvert',date: new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})},{done:false,label:'En cours',date:'â€”'},{done:false,label:'RÃ©solu',date:'â€”'}]
   };
   STATE.incidents.push(newInc);
   closeModal('modal-incident');
   document.getElementById('inc-desc').value = '';
-  showToast('Incident signalé avec succès !', '✅');
+  showToast('Incident signalÃ© avec succÃ¨s !', 'âœ…');
   renderIncidents();
   renderHome();
 }
@@ -1256,7 +1256,7 @@ function populateCalSlots() {
   container.innerHTML = slots.map((d,i) => `
     <div style="padding:8px 12px;border-radius:8px;font-size:12px;text-align:center;background:${avail[i]?'rgba(0,212,170,0.15)':'rgba(255,75,75,0.1)'};color:${avail[i]?'var(--teal)':'var(--gray)'};border:1px solid ${avail[i]?'var(--teal)':'transparent'}">
       <div style="font-weight:600">${d}</div>
-      <div>${avail[i]?'✅ Libre':'❌ Occupé'}</div>
+      <div>${avail[i]?'âœ… Libre':'âŒ OccupÃ©'}</div>
     </div>
   `).join('');
 }
@@ -1265,17 +1265,17 @@ function renderEspaces() {
   const container = document.getElementById('sub-espaces');
   container.innerHTML = `
     <div class="header" style="position:sticky;top:0;z-index:50">
-      <button onclick="resetServicesView()" style="font-size:20px;background:none;border:none;color:var(--white);cursor:pointer;padding:4px">←</button>
-      <div class="header-info"><div class="name">Espaces communs</div><div class="sub">Réserver un espace</div></div>
-      <button class="btn btn-primary btn-sm" onclick="openModal('modal-espace')">+ Réserver</button>
+      <button onclick="resetServicesView()" style="font-size:20px;background:none;border:none;color:var(--white);cursor:pointer;padding:4px">â†</button>
+      <div class="header-info"><div class="name">Espaces communs</div><div class="sub">RÃ©server un espace</div></div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-espace')">+ RÃ©server</button>
     </div>
     <div style="padding:16px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-        ${[{icon:'🏛️',nom:'Salle commune',dispo:true},{icon:'🌿',nom:'Jardin central',dispo:true},{icon:'🏠',nom:'Terrasse rooftop',dispo:false},{icon:'🅿️',nom:'Parking visiteurs',dispo:true}].map(e => `
+        ${[{icon:'ðŸ›ï¸',nom:'Salle commune',dispo:true},{icon:'ðŸŒ¿',nom:'Jardin central',dispo:true},{icon:'ðŸ ',nom:'Terrasse rooftop',dispo:false},{icon:'ðŸ…¿ï¸',nom:'Parking visiteurs',dispo:true}].map(e => `
           <div style="background:var(--navy-card);border:1px solid var(--navy-border);border-radius:var(--radius);padding:14px;text-align:center;cursor:pointer" onclick="openModal('modal-espace')">
             <div style="font-size:28px;margin-bottom:6px">${e.icon}</div>
             <div style="font-size:13px;font-weight:600">${e.nom}</div>
-            <div style="margin-top:6px"><span class="badge ${e.dispo?'badge-teal':'badge-red'}">${e.dispo?'Disponible':'Occupé'}</span></div>
+            <div style="margin-top:6px"><span class="badge ${e.dispo?'badge-teal':'badge-red'}">${e.dispo?'Disponible':'OccupÃ©'}</span></div>
           </div>
         `).join('')}
       </div>
@@ -1286,13 +1286,13 @@ function renderEspaces() {
             <div style="display:flex;justify-content:space-between">
               <div>
                 <div style="font-size:14px;font-weight:600">${e.espace}</div>
-                <div style="font-size:12px;color:var(--gray);margin-top:4px">📅 ${e.date} · ⏰ ${e.debut}–${e.fin}</div>
+                <div style="font-size:12px;color:var(--gray);margin-top:4px">ðŸ“… ${e.date} Â· â° ${e.debut}â€“${e.fin}</div>
               </div>
               <span class="badge badge-orange">En attente</span>
             </div>
           </div>
         `).join('')}
-      ` : '<div class="empty-state" style="padding:30px 20px"><div class="empty-icon">🏛️</div><div class="empty-text">Aucune réservation en cours</div></div>'}
+      ` : '<div class="empty-state" style="padding:30px 20px"><div class="empty-icon">ðŸ›ï¸</div><div class="empty-text">Aucune rÃ©servation en cours</div></div>'}
     </div>
   `;
 }
@@ -1302,50 +1302,50 @@ function submitEspace() {
   const date = document.getElementById('esp-date').value;
   const debut = document.getElementById('esp-debut').value;
   const fin = document.getElementById('esp-fin').value;
-  if (!date) { showToast('Veuillez choisir une date', '⚠️'); return; }
+  if (!date) { showToast('Veuillez choisir une date', 'âš ï¸'); return; }
   STATE.espaces.push({ espace, date, debut, fin });
   closeModal('modal-espace');
-  showToast('Demande envoyée au syndic !', '✅');
+  showToast('Demande envoyÃ©e au syndic !', 'âœ…');
   renderEspaces();
 }
 
-// ===== ÉVÉNEMENTS =====
+// ===== Ã‰VÃ‰NEMENTS =====
 function renderEvenements() {
   const container = document.getElementById('sub-evenements');
   const myEvents = STATE.events.filter(e => e.mine);
   container.innerHTML = `
     <div class="header" style="position:sticky;top:0;z-index:50">
-      <button onclick="resetServicesView()" style="font-size:20px;background:none;border:none;color:var(--white);cursor:pointer;padding:4px">←</button>
-      <div class="header-info"><div class="name">Événements</div><div class="sub">Chez moi & voisinage</div></div>
+      <button onclick="resetServicesView()" style="font-size:20px;background:none;border:none;color:var(--white);cursor:pointer;padding:4px">â†</button>
+      <div class="header-info"><div class="name">Ã‰vÃ©nements</div><div class="sub">Chez moi & voisinage</div></div>
       <button class="btn btn-primary btn-sm" onclick="openModal('modal-event-home')">+ Planifier</button>
     </div>
     <div style="padding:16px">
-      <div class="sub-section-title" style="padding:0 0 8px">Événements de la cité</div>
+      <div class="sub-section-title" style="padding:0 0 8px">Ã‰vÃ©nements de la citÃ©</div>
       ${EVENTS_DATA.map(e => `
         <div class="card" style="margin:0 0 10px">
           <div style="display:flex;align-items:center;gap:12px">
             <span style="font-size:28px">${e.icon}</span>
             <div style="flex:1">
               <div style="font-size:14px;font-weight:600">${e.titre}</div>
-              <div style="font-size:12px;color:var(--gray);margin-top:4px">📅 ${e.date} · ⏰ ${e.heure} · 👤 ${e.organisateur}</div>
+              <div style="font-size:12px;color:var(--gray);margin-top:4px">ðŸ“… ${e.date} Â· â° ${e.heure} Â· ðŸ‘¤ ${e.organisateur}</div>
             </div>
             <button class="btn btn-teal btn-sm" onclick="rsvpEvent(this)">RSVP</button>
           </div>
         </div>
       `).join('')}
       ${myEvents.length > 0 ? `
-        <div class="sub-section-title" style="padding:16px 0 8px">Mes événements planifiés</div>
+        <div class="sub-section-title" style="padding:16px 0 8px">Mes Ã©vÃ©nements planifiÃ©s</div>
         ${myEvents.map(e => `
           <div class="card" style="margin:0 0 10px;border-color:var(--orange)">
             <div style="display:flex;justify-content:space-between">
               <div>
                 <div style="font-size:14px;font-weight:600">${e.icon} ${e.titre}</div>
-                <div style="font-size:12px;color:var(--gray);margin-top:4px">📅 ${e.date} · ⏰ ${e.heure} · 👥 ~${e.invites} invités</div>
-                <div style="font-size:12px;color:var(--gray);margin-top:2px">🔊 ${e.son}</div>
+                <div style="font-size:12px;color:var(--gray);margin-top:4px">ðŸ“… ${e.date} Â· â° ${e.heure} Â· ðŸ‘¥ ~${e.invites} invitÃ©s</div>
+                <div style="font-size:12px;color:var(--gray);margin-top:2px">ðŸ”Š ${e.son}</div>
               </div>
-              <span class="badge badge-orange">Planifié</span>
+              <span class="badge badge-orange">PlanifiÃ©</span>
             </div>
-            ${e.notifVoisins ? '<div style="font-size:11px;color:var(--teal);margin-top:8px">✅ Voisins notifiés</div>' : ''}
+            ${e.notifVoisins ? '<div style="font-size:11px;color:var(--teal);margin-top:8px">âœ… Voisins notifiÃ©s</div>' : ''}
           </div>
         `).join('')}
       ` : ''}
@@ -1354,28 +1354,28 @@ function renderEvenements() {
 }
 
 function rsvpEvent(btn) {
-  btn.textContent = '✅ Inscrit !';
+  btn.textContent = 'âœ… Inscrit !';
   btn.classList.remove('btn-teal'); btn.classList.add('btn-ghost');
   btn.disabled = true;
-  showToast('RSVP confirmé !', '🎉');
+  showToast('RSVP confirmÃ© !', 'ðŸŽ‰');
 }
 
 function submitEvent() {
   const titre = document.getElementById('ev-titre').value.trim();
-  if (!titre) { showToast('Veuillez entrer un titre', '⚠️'); return; }
+  if (!titre) { showToast('Veuillez entrer un titre', 'âš ï¸'); return; }
   const date = document.getElementById('ev-date').value;
   const heure = document.getElementById('ev-heure').value;
   const son = document.getElementById('ev-son').value;
   const invites = document.getElementById('ev-invites').value;
   const notifVoisins = document.getElementById('ev-notif').checked;
   const newEv = {
-    id: Date.now(), titre, date: date || 'Date à définir', heure, son, invites,
-    notifVoisins, mine: true, icon: '🏠', organisateur: USER.nom, type: 'perso'
+    id: Date.now(), titre, date: date || 'Date Ã  dÃ©finir', heure, son, invites,
+    notifVoisins, mine: true, icon: 'ðŸ ', organisateur: USER.nom, type: 'perso'
   };
   STATE.events.push(newEv);
   closeModal('modal-event-home');
   document.getElementById('ev-titre').value = '';
-  showToast(notifVoisins ? 'Événement planifié – voisins notifiés !' : 'Événement planifié !', '🎉');
+  showToast(notifVoisins ? 'Ã‰vÃ©nement planifiÃ© â€“ voisins notifiÃ©s !' : 'Ã‰vÃ©nement planifiÃ© !', 'ðŸŽ‰');
   renderEvenements();
   renderHome();
 }
@@ -1389,21 +1389,21 @@ function renderChat() {
   container.style.height = '100%';
   container.innerHTML = `
     <div class="header" style="position:sticky;top:0;z-index:50">
-      <button onclick="resetServicesView()" style="font-size:20px;background:none;border:none;color:var(--white);cursor:pointer;padding:4px">←</button>
+      <button onclick="resetServicesView()" style="font-size:20px;background:none;border:none;color:var(--white);cursor:pointer;padding:4px">â†</button>
       <div class="header-avatar" style="width:34px;height:34px;font-size:13px;background:linear-gradient(135deg,var(--teal),#00B894)">SY</div>
-      <div class="header-info"><div class="name">Syndic DOMO</div><div class="sub" style="color:var(--teal)">● En ligne</div></div>
+      <div class="header-info"><div class="name">Syndic DOMO</div><div class="sub" style="color:var(--teal)">â— En ligne</div></div>
     </div>
     <div class="chat-messages" id="chat-msgs">
       ${STATE.chatMessages.map(m => `
         <div>
           <div class="msg-bubble ${m.from === 'user' ? 'sent' : 'recv'}">${m.text}</div>
-          <div class="msg-meta" style="text-align:${m.from==='user'?'right':'left'}">${m.time} ${m.from==='user'?'· ✓✓':''}</div>
+          <div class="msg-meta" style="text-align:${m.from==='user'?'right':'left'}">${m.time} ${m.from==='user'?'Â· âœ“âœ“':''}</div>
         </div>
       `).join('')}
     </div>
     <div class="chat-input-bar">
-      <textarea class="form-input" id="chat-input" placeholder="Écrire un message..." rows="1" onkeydown="chatKeydown(event)"></textarea>
-      <button class="btn btn-primary" style="padding:10px 16px;border-radius:10px;flex-shrink:0" onclick="sendChat()">➤</button>
+      <textarea class="form-input" id="chat-input" placeholder="Ã‰crire un message..." rows="1" onkeydown="chatKeydown(event)"></textarea>
+      <button class="btn btn-primary" style="padding:10px 16px;border-radius:10px;flex-shrink:0" onclick="sendChat()">âž¤</button>
     </div>
   `;
   scrollChatBottom();
@@ -1422,7 +1422,7 @@ function sendChat() {
   input.value = '';
   renderChat();
   setTimeout(() => {
-    const replies = ['Merci, nous prenons note.', 'Bien reçu ! Nous reviendrons vers vous.', 'Votre demande a été enregistrée.', 'Notre équipe s\'en occupe, merci de votre patience.'];
+    const replies = ['Merci, nous prenons note.', 'Bien reÃ§u ! Nous reviendrons vers vous.', 'Votre demande a Ã©tÃ© enregistrÃ©e.', 'Notre Ã©quipe s\'en occupe, merci de votre patience.'];
     STATE.chatMessages.push({ from:'syndic', text: replies[Math.floor(Math.random()*replies.length)], time: now, lu:true });
     renderChat();
   }, 1200);
@@ -1464,15 +1464,15 @@ function hasActiveSurveys() {
 
 // Escalade incident to security
 function escaladeToSecurity(incidentId) {
-  if (!confirm('Transmettre cet incident à l'équipe de sécurité ?')) return;
+  if (!confirm('Transmettre cet incident Ã  l'Ã©quipe de sÃ©curitÃ© ?')) return;
   
   // Simulate escalation
-  showToast('✓ Incident transmis à la sécurité — un agent va être dépêché');
+  showToast('âœ“ Incident transmis Ã  la sÃ©curitÃ© â€” un agent va Ãªtre dÃ©pÃªchÃ©');
   
   // Update the badge
   const badge = document.getElementById('incident-status-' + incidentId);
   if (badge) {
-    badge.innerHTML = '<span class="badge badge-red">Escaladé → Sécurité</span>';
+    badge.innerHTML = '<span class="badge badge-red">EscaladÃ© â†’ SÃ©curitÃ©</span>';
   }
 }
 
@@ -1504,30 +1504,30 @@ function submitAGQuestion(agId) {
   newQuestion.className = 'question-item pending';
   newQuestion.innerHTML = `
     <strong>Votre question:</strong> ${question}
-    <div class="question-meta">En attente de modération</div>
+    <div class="question-meta">En attente de modÃ©ration</div>
   `;
   
   questionsList.appendChild(newQuestion);
   textarea.value = '';
-  showToast('✓ Question soumise et en attente de modération');
+  showToast('âœ“ Question soumise et en attente de modÃ©ration');
 }
 
 // Notify security for events with high noise level
 function notifySecurityForEvent() {
   const noiseLevelSelect = document.getElementById('evt-noise-level');
-  if (noiseLevelSelect && noiseLevelSelect.value === 'élevé') {
-    showToast('La sécurité a été notifiée de votre événement');
+  if (noiseLevelSelect && noiseLevelSelect.value === 'Ã©levÃ©') {
+    showToast('La sÃ©curitÃ© a Ã©tÃ© notifiÃ©e de votre Ã©vÃ©nement');
   }
 }
 
  
 <!-- Template for AG Online Participation -->
 <div class="online-participation" style="display:none;" id="ag-online-template">
-  <div style="font-size:14px;font-weight:600;margin-bottom:12px;">🖥️ Participation en ligne</div>
+  <div style="font-size:14px;font-weight:600;margin-bottom:12px;">ðŸ–¥ï¸ Participation en ligne</div>
   <div style="background:var(--navy);padding:12px;border-radius:10px;margin-bottom:12px;">
     <div style="font-size:12px;color:var(--gray);margin-bottom:8px;">Questions en direct:</div>
     <div class="question-item" style="margin-bottom:8px;">
-      <strong>Question actuelle:</strong> Quand débuteront les travaux?
+      <strong>Question actuelle:</strong> Quand dÃ©buteront les travaux?
       <div class="question-meta">Question de M. Kouassi</div>
     </div>
   </div>
@@ -1553,19 +1553,19 @@ function renderProfil() {
     <div class="profile-hero">
       <div class="profile-avatar-lg">${USER.initials}</div>
       <div class="profile-name">${USER.nom}</div>
-      <div class="profile-apt">${USER.cite} · ${USER.apt}</div>
+      <div class="profile-apt">${USER.cite} Â· ${USER.apt}</div>
     </div>
 
     <!-- Informations personnelles -->
     <div class="sub-section-title">Mes informations</div>
     <div class="card" style="margin:0 16px 12px">
-      <div class="info-row"><span class="info-label">Prénom</span><span class="info-val">${USER.prenom}</span></div>
+      <div class="info-row"><span class="info-label">PrÃ©nom</span><span class="info-val">${USER.prenom}</span></div>
       <div class="info-row"><span class="info-label">Email</span><span class="info-val" style="color:var(--teal)">${USER.email}</span></div>
-      <div class="info-row"><span class="info-label">Téléphone</span><span class="info-val">${USER.tel}</span></div>
-      <div class="info-row"><span class="info-label">Résidence</span><span class="info-val">${USER.cite}</span></div>
-      <div class="info-row"><span class="info-label">Bâtiment</span><span class="info-val">${USER.batiment}</span></div>
+      <div class="info-row"><span class="info-label">TÃ©lÃ©phone</span><span class="info-val">${USER.tel}</span></div>
+      <div class="info-row"><span class="info-label">RÃ©sidence</span><span class="info-val">${USER.cite}</span></div>
+      <div class="info-row"><span class="info-label">BÃ¢timent</span><span class="info-val">${USER.batiment}</span></div>
       <div class="info-row"><span class="info-label">Appartement/Villa</span><span class="info-val">${USER.apt}</span></div>
-      <div class="info-row"><span class="info-label">Étage</span><span class="info-val">${USER.etage}</span></div>
+      <div class="info-row"><span class="info-label">Ã‰tage</span><span class="info-val">${USER.etage}</span></div>
     </div>
 
     <!-- Animaux de compagnie -->
@@ -1581,82 +1581,82 @@ function renderProfil() {
       <div id="animaux-list" style="${USER.animaux?'':'display:none'}">
         <div style="padding:10px 0;border-bottom:1px solid var(--navy-border)">
           <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:24px">🐕</span>
-            <div><div style="font-size:13px;font-weight:500">Labrador</div><div style="font-size:11px;color:var(--gray)">Chien · Prénom : Max</div></div>
+            <span style="font-size:24px">ðŸ•</span>
+            <div><div style="font-size:13px;font-weight:500">Labrador</div><div style="font-size:11px;color:var(--gray)">Chien Â· PrÃ©nom : Max</div></div>
           </div>
         </div>
         <div style="padding:10px 0">
           <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:24px">🐈</span>
-            <div><div style="font-size:13px;font-weight:500">Siamois</div><div style="font-size:11px;color:var(--gray)">Chat · Prénom : Luna</div></div>
+            <span style="font-size:24px">ðŸˆ</span>
+            <div><div style="font-size:13px;font-weight:500">Siamois</div><div style="font-size:11px;color:var(--gray)">Chat Â· PrÃ©nom : Luna</div></div>
           </div>
         </div>
-        <button class="btn btn-ghost btn-full btn-sm" style="margin-top:10px" onclick="showToast('Formulaire d\'ajout en cours de déploiement', '🚧')">+ Ajouter un animal</button>
+        <button class="btn btn-ghost btn-full btn-sm" style="margin-top:10px" onclick="showToast('Formulaire d\'ajout en cours de dÃ©ploiement', 'ðŸš§')">+ Ajouter un animal</button>
       </div>
     </div>
 
-    <!-- Informations particulières -->
+    <!-- Informations particuliÃ¨res -->
     <div class="sub-section-title">Informations pour le syndic</div>
     <div class="card" style="margin:0 16px 12px">
-      <textarea class="form-input" rows="3" placeholder="Besoins spéciaux, préférences, informations utiles pour le syndic...">Accès PMR nécessaire pour livraisons. Horaires de présence : souvent absente le matin.</textarea>
-      <button class="btn btn-primary btn-sm" style="margin-top:10px;width:auto" onclick="showToast('Informations sauvegardées', '✅')">Sauvegarder</button>
+      <textarea class="form-input" rows="3" placeholder="Besoins spÃ©ciaux, prÃ©fÃ©rences, informations utiles pour le syndic...">AccÃ¨s PMR nÃ©cessaire pour livraisons. Horaires de prÃ©sence : souvent absente le matin.</textarea>
+      <button class="btn btn-primary btn-sm" style="margin-top:10px;width:auto" onclick="showToast('Informations sauvegardÃ©es', 'âœ…')">Sauvegarder</button>
     </div>
 
     <!-- Localisation GPS -->
     <div class="sub-section-title">Ma localisation</div>
     <div class="card" style="margin:0 16px 12px">
       <div class="form-group">
-        <label class="form-label">Adresse précise</label>
-        <input class="form-input" value="Cité Les Bougainvillées, Villa B-12, Abidjan" readonly>
+        <label class="form-label">Adresse prÃ©cise</label>
+        <input class="form-input" value="CitÃ© Les BougainvillÃ©es, Villa B-12, Abidjan" readonly>
       </div>
       <div class="form-group">
-        <label class="form-label">Coordonnées GPS (simulées)</label>
-        <input class="form-input" value="5.3600° N, 4.0083° W" readonly>
+        <label class="form-label">CoordonnÃ©es GPS (simulÃ©es)</label>
+        <input class="form-input" value="5.3600Â° N, 4.0083Â° W" readonly>
       </div>
       <div class="toggle-row">
         <div class="toggle-info">
           <div class="toggle-title">Visible par mes voisins</div>
         </div>
-        <label class="toggle"><input type="checkbox" ${USER.gpsVisible?'checked':''} onchange="USER.gpsVisible=this.checked;showToast('Préférence mise à jour','✅')"><span class="toggle-slider"></span></label>
+        <label class="toggle"><input type="checkbox" ${USER.gpsVisible?'checked':''} onchange="USER.gpsVisible=this.checked;showToast('PrÃ©fÃ©rence mise Ã  jour','âœ…')"><span class="toggle-slider"></span></label>
       </div>
       <div class="toggle-row">
         <div class="toggle-info">
           <div class="toggle-title">Accessible aux visiteurs/livreurs</div>
         </div>
-        <label class="toggle"><input type="checkbox" ${USER.gpsLivreurs?'checked':''} onchange="USER.gpsLivreurs=this.checked;showToast('Préférence mise à jour','✅')"><span class="toggle-slider"></span></label>
+        <label class="toggle"><input type="checkbox" ${USER.gpsLivreurs?'checked':''} onchange="USER.gpsLivreurs=this.checked;showToast('PrÃ©fÃ©rence mise Ã  jour','âœ…')"><span class="toggle-slider"></span></label>
       </div>
       <div style="display:flex;gap:10px;margin-top:12px">
-        <button class="btn btn-teal" style="flex:1" onclick="window.open('https://www.google.com/maps/search/Cité+Les+Bougainvillées+Abidjan','_blank')">🗺️ Mon itinéraire</button>
-        <button class="btn btn-ghost" style="flex:1" onclick="copyAccessLink()">🔗 Partager l'accès</button>
+        <button class="btn btn-teal" style="flex:1" onclick="window.open('https://www.google.com/maps/search/CitÃ©+Les+BougainvillÃ©es+Abidjan','_blank')">ðŸ—ºï¸ Mon itinÃ©raire</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="copyAccessLink()">ðŸ”— Partager l'accÃ¨s</button>
       </div>
     </div>
 
-    <!-- Paramètres notifications -->
-    <div class="sub-section-title">Paramètres notifications</div>
+    <!-- ParamÃ¨tres notifications -->
+    <div class="sub-section-title">ParamÃ¨tres notifications</div>
     <div class="card" style="margin:0 16px 32px">
       <div class="toggle-row">
-        <div class="toggle-info"><div class="toggle-title">🚨 Annonces urgentes</div></div>
-        <label class="toggle"><input type="checkbox" checked onchange="showToast('Préférence mise à jour','🔔')"><span class="toggle-slider"></span></label>
+        <div class="toggle-info"><div class="toggle-title">ðŸš¨ Annonces urgentes</div></div>
+        <label class="toggle"><input type="checkbox" checked onchange="showToast('PrÃ©fÃ©rence mise Ã  jour','ðŸ””')"><span class="toggle-slider"></span></label>
       </div>
       <div class="toggle-row">
-        <div class="toggle-info"><div class="toggle-title">⚠️ Incidents de la cité</div></div>
-        <label class="toggle"><input type="checkbox" checked onchange="showToast('Préférence mise à jour','🔔')"><span class="toggle-slider"></span></label>
+        <div class="toggle-info"><div class="toggle-title">âš ï¸ Incidents de la citÃ©</div></div>
+        <label class="toggle"><input type="checkbox" checked onchange="showToast('PrÃ©fÃ©rence mise Ã  jour','ðŸ””')"><span class="toggle-slider"></span></label>
       </div>
       <div class="toggle-row">
-        <div class="toggle-info"><div class="toggle-title">🗳️ Nouveaux votes</div></div>
-        <label class="toggle"><input type="checkbox" checked onchange="showToast('Préférence mise à jour','🔔')"><span class="toggle-slider"></span></label>
+        <div class="toggle-info"><div class="toggle-title">ðŸ—³ï¸ Nouveaux votes</div></div>
+        <label class="toggle"><input type="checkbox" checked onchange="showToast('PrÃ©fÃ©rence mise Ã  jour','ðŸ””')"><span class="toggle-slider"></span></label>
       </div>
       <div class="toggle-row">
-        <div class="toggle-info"><div class="toggle-title">🎉 Événements voisinage</div></div>
-        <label class="toggle"><input type="checkbox" checked onchange="showToast('Préférence mise à jour','🔔')"><span class="toggle-slider"></span></label>
+        <div class="toggle-info"><div class="toggle-title">ðŸŽ‰ Ã‰vÃ©nements voisinage</div></div>
+        <label class="toggle"><input type="checkbox" checked onchange="showToast('PrÃ©fÃ©rence mise Ã  jour','ðŸ””')"><span class="toggle-slider"></span></label>
       </div>
       <div class="toggle-row">
-        <div class="toggle-info"><div class="toggle-title">💬 Messages du syndic</div></div>
-        <label class="toggle"><input type="checkbox" checked onchange="showToast('Préférence mise à jour','🔔')"><span class="toggle-slider"></span></label>
+        <div class="toggle-info"><div class="toggle-title">ðŸ’¬ Messages du syndic</div></div>
+        <label class="toggle"><input type="checkbox" checked onchange="showToast('PrÃ©fÃ©rence mise Ã  jour','ðŸ””')"><span class="toggle-slider"></span></label>
       </div>
       <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--navy-border);text-align:center">
-        <div style="font-size:12px;color:var(--gray);margin-bottom:12px">Version DOMO App 2.0.0 · Prototype UI</div>
-        <button class="btn btn-ghost btn-sm" onclick="showToast('Déconnexion simulée','👋')">🚪 Se déconnecter</button>
+        <div style="font-size:12px;color:var(--gray);margin-bottom:12px">Version DOMO App 2.0.0 Â· Prototype UI</div>
+        <button class="btn btn-ghost btn-sm" onclick="showToast('DÃ©connexion simulÃ©e','ðŸ‘‹')">ðŸšª Se dÃ©connecter</button>
       </div>
     </div>
   `;
@@ -1666,12 +1666,12 @@ function toggleAnimaux(checkbox) {
   USER.animaux = checkbox.checked;
   const list = document.getElementById('animaux-list');
   if (list) list.style.display = checkbox.checked ? '' : 'none';
-  showToast(checkbox.checked ? 'Animaux enregistrés' : 'Section masquée', '🐾');
+  showToast(checkbox.checked ? 'Animaux enregistrÃ©s' : 'Section masquÃ©e', 'ðŸ¾');
 }
 
 function copyAccessLink() {
   const link = 'https://domo-app.ci/acces/villa-b12';
-  navigator.clipboard?.writeText(link).then(() => showToast('Lien copié !', '📋')).catch(() => showToast('Lien : ' + link, '🔗'));
+  navigator.clipboard?.writeText(link).then(() => showToast('Lien copiÃ© !', 'ðŸ“‹')).catch(() => showToast('Lien : ' + link, 'ðŸ”—'));
 }
 
 // ===== INITIALISATION =====
