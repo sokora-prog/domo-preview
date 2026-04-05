@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DOMO Admin — Gestion Syndic</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0F1E35;--orange:#FF6B35;--teal:#00D4AA;--bg:#F4F6F9;
+  --s50:#F8FAFC;--s100:#F1F5F9;--s200:#E2E8F0;--s300:#CBD5E1;
+  --s400:#94A3B8;--s500:#64748B;--s700:#334155;--s900:#0F172A;
+  --success:#10B981;--warning:#F59E0B;--danger:#EF4444;--info:#3B82F6;
+  --r:16px;--sh:0 2px 12px rgba(0,0,0,.08);
+}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--s900);display:flex;height:100vh;overflow:hidden;}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-thumb{background:var(--s200);border-radius:4px;}
+/* ── SIDEBAR ── */
+.sidebar{width:240px;min-width:240px;background:var(--navy);display:flex;flex-direction:column;height:100vh;overflow-y:auto;}
+.sidebar-logo{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.08);}
+.logo-mark{font-size:22px;font-weight:700;color:var(--orange);}
+.logo-tag{font-size:10px;color:rgba(255,255,255,.35);margin-top:2px;letter-spacing:.5px;}
+.sidebar-nav{padding:12px 0;flex:1;}
+.nav-label{font-size:10px;font-weight:600;color:rgba(255,255,255,.28);letter-spacing:1.2px;text-transform:uppercase;padding:12px 20px 4px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;cursor:pointer;border-radius:10px;margin:2px 8px;transition:all .2s;color:rgba(255,255,255,.6);font-size:13.5px;}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff;}
+.nav-item.active{background:var(--orange);color:#fff;font-weight:600;}
+.nav-item .icon{font-size:17px;min-width:22px;}
+.nav-badge{background:var(--danger);color:#fff;font-size:10px;font-weight:700;border-radius:9999px;padding:1px 6px;margin-left:auto;}
+.sidebar-footer{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;}
+.sf-avatar{width:36px;height:36px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;}
+.sf-name{font-size:13px;font-weight:600;color:#fff;}.sf-role{font-size:11px;color:rgba(255,255,255,.35);}
+/* ── MAIN / HEADER ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.header{background:#fff;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--s100);box-shadow:0 1px 4px rgba(0,0,0,.05);flex-shrink:0;}
+.page-title{font-size:20px;font-weight:700;}.page-sub{font-size:12px;color:var(--s400);margin-top:1px;}
+.header-right{display:flex;align-items:center;gap:16px;}
+.cite-selector{background:var(--s50);border:1px solid var(--s200);border-radius:8px;padding:7px 14px;font-family:'Poppins',sans-serif;font-size:13px;color:var(--s700);cursor:pointer;}
+.header-avatar{width:38px;height:38px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;cursor:pointer;}
+.content{flex:1;overflow-y:auto;padding:28px;}
+.screen{display:none;}.screen.active{display:block;}
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:16px;margin-bottom:24px;}
+.kpi-card{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);}
+.kpi-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;}
+.kpi-icon.orange{background:rgba(255,107,53,.1);}.kpi-icon.teal{background:rgba(0,212,170,.1);}
+.kpi-icon.navy{background:rgba(15,30,53,.08);}.kpi-icon.success{background:rgba(16,185,129,.1);}
+.kpi-icon.danger{background:rgba(239,68,68,.1);}
+.kpi-label{font-size:12px;color:var(--s400);font-weight:500;margin-bottom:8px;}
+.kpi-value{font-size:26px;font-weight:700;}.kpi-sub{font-size:11px;color:var(--s400);margin-top:4px;}
+/* ── CARDS ── */
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:20px;}
+.card-header{padding:18px 20px;border-bottom:1px solid var(--s100);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:15px;font-weight:600;}.card-body{padding:20px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+/* ── TABLES ── */
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{background:var(--s50);padding:12px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--s400);letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--s100);}
+tbody tr{border-bottom:1px solid var(--s100);transition:background .15s;cursor:pointer;}
+tbody tr:hover{background:var(--s50);}
+tbody tr:nth-child(even){background:#FAFBFC;}tbody tr:nth-child(even):hover{background:var(--s50);}
+tbody td{padding:12px 14px;color:var(--s700);}
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:9999px;font-size:11px;font-weight:600;white-space:nowrap;}
+.badge-success{background:rgba(16,185,129,.12);color:#059669;}
+.badge-danger{background:rgba(239,68,68,.12);color:#DC2626;}
+.badge-warning{background:rgba(245,158,11,.12);color:#B45309;}
+.badge-info{background:rgba(59,130,246,.12);color:#2563EB;}
+.badge-gray{background:rgba(100,116,139,.12);color:#475569;}
+.badge-orange{background:rgba(255,107,53,.12);color:#C94A17;}
+.badge-teal{background:rgba(0,212,170,.12);color:#00896D;}
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;white-space:nowrap;}
+.btn-primary{background:var(--navy);color:#fff;}.btn-primary:hover{background:#1a3050;}
+.btn-orange{background:var(--orange);color:#fff;}.btn-orange:hover{background:#E55A25;}
+.btn-teal{background:var(--teal);color:#fff;}.btn-teal:hover{background:#00B89A;}
+.btn-outline{background:#fff;color:var(--s700);border:1.5px solid var(--s300);}.btn-outline:hover{background:var(--s50);}
+.btn-sm{padding:5px 12px;font-size:12px;}
+/* ── FILTERS ── */
+.filters-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.filter-select{background:#fff;border:1.5px solid var(--s200);border-radius:8px;padding:7px 12px;font-family:'Poppins',sans-serif;font-size:13px;color:var(--s700);cursor:pointer;}
+/* ── MODALS ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:#fff;border-radius:var(--r);width:540px;max-width:95vw;max-height:90vh;overflow-y:auto;transform:translateY(-20px);transition:transform .2s;box-shadow:0 24px 64px rgba(0,0,0,.22);}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--s100);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-size:17px;font-weight:700;}
+.modal-close{cursor:pointer;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--s100);font-size:20px;color:var(--s500);border:none;line-height:1;}
+.modal-close:hover{background:var(--s200);}
+.modal-body{padding:24px;}.modal-footer{padding:16px 24px;border-top:1px solid var(--s100);display:flex;justify-content:flex-end;gap:10px;}
+/* ── FORMS ── */
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--s500);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px;}
+.form-control{width:100%;border:1.5px solid var(--s200);border-radius:8px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:13px;color:var(--s900);background:#fff;outline:none;transition:border-color .2s;}
+.form-control:focus{border-color:var(--navy);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+textarea.form-control{resize:vertical;min-height:80px;}
+/* ── MISC ── */
+.section-title{font-size:18px;font-weight:700;margin-bottom:4px;}
+.section-sub{font-size:13px;color:var(--s400);margin-bottom:20px;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+.color-swatch{width:36px;height:36px;border-radius:8px;border:2px solid var(--s200);cursor:pointer;}
+.color-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.bar-chart{display:flex;align-items:flex-end;justify-content:space-around;height:160px;padding:0 8px;gap:6px;}
+.chart-legend{display:flex;gap:20px;justify-content:center;margin-top:20px;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--s500);}
+.legend-dot{width:10px;height:10px;border-radius:3px;}
+.action-btn{background:none;border:none;cursor:pointer;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Poppins',sans-serif;}
+.action-btn.pay{background:rgba(16,185,129,.1);color:#059669;}
+</style>
+</head>
+<body>
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">🏘 DOMO</div>
+    <div class="logo-tag">GESTION SYNDIC · CÔTE D'IVOIRE</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Principal</div>
+    <div class="nav-item active" onclick="showScreen('dashboard')"><span class="icon">📊</span>Dashboard</div>
+    <div class="nav-item" onclick="showScreen('cites')"><span class="icon">🏙️</span>Cités</div>
+    <div class="nav-item" onclick="showScreen('residences')"><span class="icon">🏠</span>Résidences</div>
+    <div class="nav-item" onclick="showScreen('cotisations')"><span class="icon">💰</span>Cotisations</div>
+    <div class="nav-label">Opérations</div>
+    <div class="nav-item" onclick="showScreen('incidents')"><span class="icon">⚠️</span>Incidents<span class="nav-badge">4</span></div>
+    <div class="nav-item" onclick="showScreen('visiteurs')"><span class="icon">🚪</span>Visiteurs</div>
+    <div class="nav-label">Administration</div>
+    <div class="nav-item" onclick="showScreen('utilisateurs')"><span class="icon">👥</span>Utilisateurs</div>
+    <div class="nav-item" onclick="showScreen('communication')"><span class="icon">📣</span>Communication</div>
+    <div class="nav-item" onclick="showScreen('marche')"><span class="icon">🛍️</span>Marché</div>
+    <div class="nav-item" onclick="showScreen('parametres')"><span class="icon">⚙️</span>Paramètres</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sf-avatar">KM</div>
+    <div><div class="sf-name">Koné Mamadou</div><div class="sf-role">SYNDIC_ADMIN</div></div>
+  </div>
+</aside>
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div class="main">
+  <header class="header">
+    <div>
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="page-sub" id="page-sub">Vue d'ensemble · Cité Les Palmiers</div>
+    </div>
+    <div class="header-right">
+      <select class="cite-selector">
+        <option>Cité Les Palmiers</option>
+        <option>Résidence Bonhoure</option>
+        <option>Cité Divo</option>
+      </select>
+      <div class="header-avatar" title="Koné Mamadou">KM</div>
+    </div>
+  </header>
+  <div class="content">
+
+  <!-- ══ DASHBOARD ══ -->
+  <div class="screen active" id="screen-dashboard">
+    <div class="kpi-grid" id="kpi-dashboard"></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="card-title">📈 Cotisations — 6 derniers mois</span></div>
+        <div class="card-body">
+          <div class="bar-chart" id="bar-chart"></div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Payées</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--orange);opacity:.8"></div>En attente</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">💼 Résumé financier — Avril 2026</span></div>
+        <div class="card-body" id="fin-summary"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🔔 Derniers incidents ouverts</span>
+        <button class="btn btn-outline btn-sm" onclick="showScreen('incidents')">Voir tout →</button>
+      </div>
+      <div><table><thead><tr><th>Titre</th><th>Catégorie</th><th>Priorité</th><th>Résidence</th><th>Date</th></tr></thead>
+      <tbody id="dash-incidents"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- ══ CITÉS ══ -->
+  <div class="screen" id="screen-cites">
+    <div class="page-header">
+      <div><div class="section-title">Cités</div><div class="section-sub">Gestion de vos résidences fermées</div></div>
+      <button class="btn btn-primary" onclick="openModal('modal-cite')">+ Nouvelle cité</button>
+    </div>
+    <div class="card">
+      <table><thead><tr><th>Nom</th><th>Ville</th><th>Quartier</th><th>Résidences</th><th>Devise</th><th>Statut</th><th>Créée le</th></tr></thead>
+      <tbody id="tbl-cites"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ══ RÉSIDENCES ══ -->
+  <div class="screen" id="screen-residences">
+    <div class="page-header">
+      <div><div class="section-title">Résidences</div><div class="section-sub">Gestion des unités de logement</div></div>
+      <button class="btn btn-primary" onclick="openModal('modal-residence')">+ Nouvelle résidence</button>
+    </div>
+    <div class="filters-bar">
+      <select class="filter-select" onchange="filterRes(this,'cite')">
+        <option value="">Toutes les cités</option>
+        <option>Les Palmiers</option><option>Bonhoure</option><option>Divo</option>
+      </select>
+      <select class="filter-select" onchange="filterRes(this,'statut')">
+        <option value="">Tous statuts</option><option>Occupé</option><option>Vacant</option>
+      </select>
+    </div>
+    <div class="card">
+      <table><thead><tr><th>Code</th><th>Type</th><th>Étage</th><th>Surface</th><th>Statut</th><th>Cité</th></tr></thead>
+      <tbody id="tbl-residences"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ══ COTISATIONS ══ -->
+  <div class="screen" id="screen-cotisations">
+    <div class="page-header">
+      <div><div class="section-title">Cotisations</div><div class="section-sub">Suivi des paiements et cycles</div></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-outline" onclick="openModal('modal-cycle')">📅 Générer un cycle</button>
+        <button class="btn btn-outline" onclick="alert('Export PDF en cours de génération…')">📄 Exporter PDF</button>
+        <button class="btn btn-primary" onclick="openModal('modal-paiement')">+ Enregistrer paiement</button>
+      </div>
+    </div>
+    <div class="filters-bar">
+      <select class="filter-select"><option>Cité Les Palmiers</option><option>Résidence Bonhoure</option><option>Cité Divo</option></select>
+      <select class="filter-select"><option>Avril 2026</option><option>Mars 2026</option><option>Février 2026</option></select>
+    </div>
+    <div class="kpi-grid" id="kpi-cotisations"></div>
+    <div class="card">
+      <table><thead><tr><th>Résidence</th><th>Résident</th><th>Échéance</th><th>Montant dû</th><th>Payé</th><th>Solde</th><th>Statut</th><th>Action</th></tr></thead>
+      <tbody id="tbl-cotisations"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ══ INCIDENTS ══ -->
+  <div class="screen" id="screen-incidents">
+    <div class="page-header">
+      <div><div class="section-title">Incidents</div><div class="section-sub">Suivi et résolution des signalements</div></div>
+      <button class="btn btn-primary" onclick="openModal('modal-incident')">+ Nouveau signalement</button>
+    </div>
+    <div class="filters-bar">
+      <select class="filter-select"><option>Toutes cités</option><option>Les Palmiers</option><option>Bonhoure</option></select>
+      <select class="filter-select" onchange="filterIncidents(this,'statut')">
+        <option value="">Tous statuts</option><option value="open">Ouvert</option><option value="in_progress">En cours</option><option value="resolved">Résolu</option><option value="closed">Fermé</option>
+      </select>
+      <select class="filter-select" onchange="filterIncidents(this,'priorite')">
+        <option value="">Toutes priorités</option><option value="urgent">Urgent</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
+      </select>
+    </div>
+    <div class="card">
+      <table><thead><tr><th>Titre</th><th>Catégorie</th><th>Priorité</th><th>Statut</th><th>Résidence</th><th>Date</th></tr></thead>
+      <tbody id="tbl-incidents"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ══ VISITEURS ══ -->
+  <div class="screen" id="screen-visiteurs">
+    <div class="page-header">
+      <div><div class="section-title">Visiteurs</div><div class="section-sub">Codes d'accès et autorisations</div></div>
+      <button class="btn btn-primary" onclick="openModal('modal-visiteur')">+ Créer un code visiteur</button>
+    </div>
+    <div class="card">
+      <table><thead><tr><th>Visiteur</th><th>Téléphone</th><th>Résidence hôte</th><th>Motif</th><th>Valide du</th><th>Au</th><th>Statut</th></tr></thead>
+      <tbody id="tbl-visiteurs"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ══ UTILISATEURS ══ -->
+  <div class="screen" id="screen-utilisateurs">
+    <div class="page-header">
+      <div><div class="section-title">Utilisateurs</div><div class="section-sub">Gestion des accès et rôles</div></div>
+      <button class="btn btn-primary" onclick="openModal('modal-user')">+ Inviter un utilisateur</button>
+    </div>
+    <div class="card">
+      <table><thead><tr><th>Nom</th><th>Email</th><th>Rôle</th><th>Statut</th><th>Cité</th></tr></thead>
+      <tbody id="tbl-utilisateurs"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ══ COMMUNICATION ══ -->
+  <div class="screen" id="screen-communication">
+    <div class="page-header">
+      <div><div class="section-title">Communication</div><div class="section-sub">Messagerie et notifications aux résidents</div></div>
+      <button class="btn btn-primary" onclick="openModal('modal-message')">+ Nouvelle communication</button>
+    </div>
+    <div class="card">
+      <table><thead><tr><th>Objet</th><th>Destinataires</th><th>Date envoi</th><th>Canal</th><th>Statut</th></tr></thead>
+      <tbody id="tbl-messages"></tbody></table>
+    </div>
+  </div>
+
+
+  <!-- ══ MARCHÉ ══ -->
+  <div class="screen" id="screen-marche">
+    <div class="page-header">
+      <div><div class="section-title">Marché du Voisinage</div><div class="section-sub">Modération des annonces résidents</div></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-outline" onclick="openModal('modal-marche-settings')">⚙️ Paramètres abonnement</button>
+        <button class="btn btn-primary" onclick="openModal('modal-marche-new')">+ Nouvelle annonce</button>
+      </div>
+    </div>
+    <div class="kpi-grid" style="margin-bottom:24px;">
+      <div class="kpi-card">
+        <div class="kpi-icon orange">📊</div>
+        <div class="kpi-label">Annonces actives</div>
+        <div class="kpi-value">12</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon warning">⏳</div>
+        <div class="kpi-label">En attente validation</div>
+        <div class="kpi-value">3<span style="display:inline-block;margin-left:8px;background:var(--warning);color:#fff;font-size:10px;padding:2px 7px;border-radius:9999px;">●</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon teal">👥</div>
+        <div class="kpi-label">Résidents abonnés</div>
+        <div class="kpi-value">8</div>
+      </div>
+    </div>
+    <div class="filters-bar">
+      <button class="filter-select" style="background:var(--navy);color:#fff;border:1px solid var(--navy);" onclick="filterMarche('all')">Toutes</button>
+      <button class="filter-select" style="background:#fff;color:var(--s700);border:1.5px solid var(--s300);" onclick="filterMarche('pending')">En attente</button>
+      <button class="filter-select" style="background:#fff;color:var(--s700);border:1.5px solid var(--s300);" onclick="filterMarche('active')">Actives</button>
+      <button class="filter-select" style="background:#fff;color:var(--s700);border:1.5px solid var(--s300);" onclick="filterMarche('rejected')">Refusées</button>
+    </div>
+    <div class="card">
+      <table><thead><tr><th>Annonce</th><th>Vendeur</th><th>Catégorie</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;">Cours de livraison</td>
+          <td>Kofi Mensah (A-101)</td>
+          <td>Service</td>
+          <td><span class="badge badge-warning">En attente</span></td>
+          <td>03/04/2026</td>
+          <td><button class="action-btn" style="background:rgba(16,185,129,.1);color:#059669;">✓ Valider</button> <button class="action-btn" style="background:rgba(239,68,68,.1);color:#DC2626;">✗ Refuser</button></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Chaises de fête à louer</td>
+          <td>Aya Traoré (B-102)</td>
+          <td>Location</td>
+          <td><span class="badge badge-success">✓ Active</span></td>
+          <td>01/04/2026</td>
+          <td><button class="action-btn" style="background:#fff;border:1px solid var(--s300);">Voir</button> <button class="action-btn" style="background:#fff;border:1px solid var(--s300);">Désactiver</button></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Attiéké maison</td>
+          <td>Mariam Konaté (C-101)</td>
+          <td>Vente</td>
+          <td><span class="badge badge-success">✓ Active</span></td>
+          <td>28/03/2026</td>
+          <td><button class="action-btn" style="background:#fff;border:1px solid var(--s300);">Voir</button> <button class="action-btn" style="background:#fff;border:1px solid var(--s300);">Désactiver</button></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Livres scolaires CE2</td>
+          <td>Ibrahim Coulibaly (A-202)</td>
+          <td>Don</td>
+          <td><span class="badge badge-success">✓ Active</span></td>
+          <td>25/03/2026</td>
+          <td><button class="action-btn" style="background:#fff;border:1px solid var(--s300);">Voir</button> <button class="action-btn" style="background:#fff;border:1px solid var(--s300);">Désactiver</button></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Cours de danse</td>
+          <td>Fatou Diallo (D-201)</td>
+          <td>Service</td>
+          <td><span class="badge badge-danger">✗ Refusée</span></td>
+          <td>20/03/2026</td>
+          <td><button class="action-btn" style="background:#fff;border:1px solid var(--s300);">Voir</button></td>
+        </tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">⚙️ Paramètres Abonnement</span></div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 100px;gap:16px;align-items:center;margin-bottom:20px;">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--s900);margin-bottom:4px;">Marché gratuit pour tous les résidents</div>
+            <div style="font-size:12px;color:var(--s400);">Tous peuvent publier sans restriction</div>
+          </div>
+          <input type="checkbox" checked style="width:40px;height:24px;cursor:pointer;">
+        </div>
+        <div style="height:1px;background:var(--s100);margin-bottom:20px;"></div>
+        <div style="display:grid;grid-template-columns:1fr 100px;gap:16px;align-items:center;margin-bottom:20px;">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--s900);margin-bottom:4px;">Abonnement requis pour publier</div>
+            <div style="font-size:12px;color:var(--s400);">Activez pour générer des revenus</div>
+          </div>
+          <input type="checkbox" style="width:40px;height:24px;cursor:pointer;">
+        </div>
+        <div style="height:1px;background:var(--s100);margin-bottom:20px;"></div>
+        <div class="form-group">
+          <label class="form-label">💰 Tarif abonnement mensuel</label>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input class="form-control" type="number" value="3000" style="max-width:150px;">
+            <span style="font-weight:600;color:var(--s500);">XOF/mois</span>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:16px;">💾 Sauvegarder</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- ══ PARAMÈTRES ══ -->
+  <div class="screen" id="screen-parametres">
+    <div class="section-title">Paramètres</div>
+    <div class="section-sub">Configuration de votre espace DOMO</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="card-title">🎨 Branding</span></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Logo de la cité</label>
+            <div style="border:2px dashed var(--s200);border-radius:12px;padding:24px;text-align:center;cursor:pointer;color:var(--s400);font-size:13px">
+              <div style="font-size:32px;margin-bottom:8px">📁</div>Cliquez pour uploader un logo
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Couleur principale</label>
+            <div class="color-row">
+              <div class="color-swatch" style="background:#0F1E35"></div>
+              <div class="color-swatch" style="background:#FF6B35;box-shadow:0 0 0 3px rgba(255,107,53,.3)"></div>
+              <div class="color-swatch" style="background:#00D4AA"></div>
+              <div class="color-swatch" style="background:#6366F1"></div>
+              <div class="color-swatch" style="background:#10B981"></div>
+              <input type="color" value="#FF6B35" style="width:36px;height:36px;border-radius:8px;border:2px solid var(--s200);cursor:pointer;padding:2px">
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Nom affiché</label><input class="form-control" value="Cité Les Palmiers — DOMO"></div>
+          <button class="btn btn-primary">Sauvegarder</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">👤 Mon Profil</span></div>
+        <div class="card-body">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding:16px;background:var(--s50);border-radius:12px">
+            <div style="width:52px;height:52px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0">KM</div>
+            <div><div style="font-weight:600;font-size:15px">Koné Mamadou</div><div style="font-size:12px;color:var(--s400);margin-top:2px">SYNDIC_ADMIN · Cité Les Palmiers</div></div>
+          </div>
+          <div class="form-group"><label class="form-label">Nom complet</label><input class="form-control" value="Koné Mamadou"></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-control" type="email" value="k.mamadou@domosyndic.ci"></div>
+          <div class="form-group"><label class="form-label">Nouveau mot de passe</label><input class="form-control" type="password" placeholder="••••••••"></div>
+          <button class="btn btn-primary">Mettre à jour</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- end .content -->
+</div><!-- end .main -->
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+
+<!-- Modal: Nouvelle Cité -->
+<div class="modal-overlay" id="modal-cite" onclick="closeModal('modal-cite')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><span class="modal-title">🏙️ Nouvelle cité</span><button class="modal-close" onclick="closeModal('modal-cite')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Nom *</label><input class="form-control" placeholder="Ex: Cité Les Bougainvilliers"></div>
+        <div class="form-group"><label class="form-label">Slug *</label><input class="form-control" placeholder="cite-bougainvilliers"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ville *</label><input class="form-control" value="Abidjan"></div>
+        <div class="form-group"><label class="form-label">Quartier *</label><input class="form-control" placeholder="Cocody, Marcory, Yopougon…"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Adresse complète</label><input class="form-control" placeholder="Rue / Avenue / BP…"></div>
+      <div class="form-group"><label class="form-label">Devise</label>
+        <select class="form-control"><option value="XOF">XOF — Franc CFA (UEMOA)</option><option>EUR — Euro</option><option>USD — Dollar américain</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-cite')">Annuler</button>
+      <button class="btn btn-primary" onclick="alert('✅ Cité créée avec succès !');closeModal('modal-cite')">Créer la cité</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nouvelle Résidence -->
+<div class="modal-overlay" id="modal-residence" onclick="closeModal('modal-residence')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><span class="modal-title">🏠 Nouvelle résidence</span><button class="modal-close" onclick="closeModal('modal-residence')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Code résidence *</label><input class="form-control" placeholder="Ex: A-105"></div>
+        <div class="form-group"><label class="form-label">Type *</label>
+          <select class="form-control"><option>Appartement</option><option>Villa</option><option>Studio</option><option>Duplex</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Étage</label><input class="form-control" type="number" placeholder="0 = RDC" min="0"></div>
+        <div class="form-group"><label class="form-label">Surface (m²)</label><input class="form-control" type="number" placeholder="75"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Cité *</label>
+        <select class="form-control"><option>Cité Les Palmiers</option><option>Résidence Bonhoure</option><option>Cité Divo</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Statut</label>
+        <select class="form-control"><option>Vacant</option><option>Occupé</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-residence')">Annuler</button>
+      <button class="btn btn-primary" onclick="alert('✅ Résidence ajoutée !');closeModal('modal-residence')">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Générer Cycle -->
+<div class="modal-overlay" id="modal-cycle" onclick="closeModal('modal-cycle')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><span class="modal-title">📅 Générer un cycle de cotisations</span><button class="modal-close" onclick="closeModal('modal-cycle')">×</button></div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--s500);background:var(--s50);border-radius:10px;padding:12px 14px;margin-bottom:20px">Ceci créera des lignes de cotisation pour toutes les résidences occupées de la cité sélectionnée pour la période choisie.</p>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Année *</label><input class="form-control" type="number" value="2026"></div>
+        <div class="form-group"><label class="form-label">Mois *</label>
+          <select class="form-control"><option>01 — Janvier</option><option>02 — Février</option><option>03 — Mars</option><option selected>04 — Avril</option><option>05 — Mai</option><option>06 — Juin</option><option>07 — Juillet</option><option>08 — Août</option><option>09 — Septembre</option><option>10 — Octobre</option><option>11 — Novembre</option><option>12 — Décembre</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Cité *</label>
+        <select class="form-control"><option>Cité Les Palmiers (24 résidences occupées)</option><option>Résidence Bonhoure (14 résidences occupées)</option><option>Cité Divo (8 résidences occupées)</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Montant par résidence (XOF)</label><input class="form-control" type="number" value="50000"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-cycle')">Annuler</button>
+      <button class="btn btn-orange" onclick="alert('✅ Cycle généré ! 24 lignes de cotisation créées pour Avril 2026.');closeModal('modal-cycle')">⚡ Générer le cycle</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Paiement Manuel -->
+<div class="modal-overlay" id="modal-paiement" onclick="closeModal('modal-paiement')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><span class="modal-title">💳 Enregistrer un paiement</span><button class="modal-close" onclick="closeModal('modal-paiement')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Résidence *</label>
+        <select class="form-control">
+          <option>A-101 — Touré Aïcha</option><option>A-102 — Bamba Seydou</option>
+          <option>A-202 — Konaté Rokia</option><option>B-101 — Coulibaly Ibrahim</option>
+          <option>C-101 — Diallo Fatou</option><option>E-001 — Ouattara Mariam</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Montant (XOF) *</label><input class="form-control" type="number" placeholder="50 000"></div>
+        <div class="form-group"><label class="form-label">Date paiement *</label><input class="form-control" type="date" value="2026-04-04"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Mode de paiement *</label>
+        <select class="form-control">
+          <option>📱 Wave</option><option>📱 MTN Mobile Money</option><option>📱 Orange Money</option>
+          <option>💵 Espèces</option><option>💳 Carte bancaire</option><option>🏦 Virement</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Référence / Note</label><input class="form-control" placeholder="Ex: TXN-2026040401 ou note libre"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-paiement')">Annuler</button>
+      <button class="btn btn-teal" onclick="alert('✅ Paiement enregistré avec succès !');closeModal('modal-paiement')">✓ Valider le paiement</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nouveau Signalement Incident -->
+<div class="modal-overlay" id="modal-incident" onclick="closeModal('modal-incident')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><span class="modal-title">⚠️ Nouveau signalement</span><button class="modal-close" onclick="closeModal('modal-incident')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Titre *</label><input class="form-control" placeholder="Ex: Fuite d'eau dans le couloir Bloc A"></div>
+      <div class="form-group"><label class="form-label">Description</label><textarea class="form-control" placeholder="Décrivez l'incident en détail : localisation précise, impact, urgence…"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Catégorie *</label>
+          <select class="form-control"><option>Plomberie</option><option>Électricité</option><option>Sécurité</option><option>Ascenseur</option><option>Nettoyage</option><option>Nuisance</option><option>Internet/Réseau</option><option>Autre</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Priorité *</label>
+          <select class="form-control"><option>🔵 Low</option><option selected>🟡 Medium</option><option>🟠 High</option><option>🔴 Urgent</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Résidence concernée</label>
+        <select class="form-control"><option>A-101</option><option>A-102</option><option>A-201</option><option>A-202</option><option>B-101</option><option>B-102</option><option>C-101</option><option>Parties communes</option><option>Entrée principale</option><option>Parking</option><option>Piscine</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-incident')">Annuler</button>
+      <button class="btn btn-primary" onclick="alert('✅ Signalement créé et assigné !');closeModal('modal-incident')">Créer le signalement</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Détail Incident -->
+<div class="modal-overlay" id="modal-incident-detail" onclick="closeModal('modal-incident-detail')">
+  <div class="modal" style="width:580px" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title" id="inc-detail-title">Détail de l'incident</span>
+      <button class="modal-close" onclick="closeModal('modal-incident-detail')">×</button>
+    </div>
+    <div class="modal-body" id="inc-detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-incident-detail')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Créer Code Visiteur -->
+<div class="modal-overlay" id="modal-visiteur" onclick="closeModal('modal-visiteur')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><span class="modal-title">🚪 Créer un code visiteur</span><button class="modal-close" onclick="closeModal('modal-visiteur')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Nom du visiteur *</label><input class="form-control" placeholder="Prénom Nom"></div>
+        <div class="form-group"><label class="form-label">Téléphone</label><input class="form-control" placeholder="+225 07 XX XX XX XX"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Résidence hôte *</label>
+        <select class="form-control"><option>A-101 — Touré Aïcha</option><option>A-102 — Bamba Seydou</option><option>A-202 — Konaté Rokia</option><option>B-101 — Coulibaly Ibrahim</option><option>C-102 — Gbagbo Affoué</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Motif de la visite</label><input class="form-control" placeholder="Ex: Visite familiale, Livraison, Prestataire…"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Date de début *</label><input class="form-control" type="date" value="2026-04-04"></div>
+        <div class="form-group"><label class="form-label">Date de fin *</label><input class="form-control" type="date" value="2026-04-05"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-visiteur')">Annuler</button>
+      <button class="btn btn-primary" onclick="alert('✅ Code visiteur généré ! QR code envoyé par SMS au résident hôte.');closeModal('modal-visiteur')">Générer le code</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Inviter Utilisateur -->
+<div class="modal-overlay" id="modal-user" onclick="closeModal('modal-user')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><span class="modal-title">👥 Inviter un utilisateur</span><button class="modal-close" onclick="closeModal('modal-user')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Prénom *</label><input class="form-control" placeholder="Prénom"></div>
+        <div class="form-group"><label class="form-label">Nom *</label><input class="form-control" placeholder="Nom de famille"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Adresse email *</label><input class="form-control" type="email" placeholder="prenom.nom@example.ci"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Rôle *</label>
+          <select class="form-control"><option>SYNDIC_ADMIN</option><option>RESIDENT_PRIMARY</option><option>SECURITY_AGENT</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Cité *</label>
+          <select class="form-control"><option>Cité Les Palmiers</option><option>Résidence Bonhoure</option><option>Cité Divo</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Résidence assignée</label>
+        <select class="form-control"><option>— Aucune (Admin / Agent) —</option><option>A-101</option><option>A-102</option><option>A-201</option><option>A-202</option><option>B-101</option><option>C-101</option></select>
+      </div>
+      <div style="background:rgba(59,130,246,.07);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--s500)">📧 Un email d'invitation sera envoyé à l'adresse renseignée avec un lien d'activation valable 48h.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-user')">Annuler</button>
+      <button class="btn btn-primary" onclick="alert('✅ Invitation envoyée par email !');closeModal('modal-user')">Envoyer l'invitation</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nouvelle Communication -->
+<div class="modal-overlay" id="modal-message" onclick="closeModal('modal-message')">
+  <div class="modal" style="width:580px" onclick="event.stopPropagation()">
+    <div class="modal-header"><span class="modal-title">📣 Nouvelle communication</span><button class="modal-close" onclick="closeModal('modal-message')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Objet *</label><input class="form-control" placeholder="Ex: Maintenance ascenseur — Bloc B — Samedi 5 avril"></div>
+      <div class="form-group"><label class="form-label">Destinataires *</label>
+        <select class="form-control">
+          <option>👥 Tous les résidents (47)</option>
+          <option>🏘 Cité Les Palmiers (24 résidents)</option>
+          <option>🏢 Résidents Bloc A (12 résidents)</option>
+          <option>🏢 Résidents Bloc B (8 résidents)</option>
+          <option>🏢 Résidents Bloc C (7 résidents)</option>
+          <option>🛡 Agents de sécurité (3)</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Corps du message *</label>
+        <textarea class="form-control" style="min-height:120px" placeholder="Chers résidents,&#10;&#10;Nous vous informons que…&#10;&#10;Cordialement,&#10;La Direction — Syndic DOMO"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Canaux d'envoi</label>
+        <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer"><input type="checkbox" checked>📱 SMS</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer"><input type="checkbox" checked>📧 Email</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer"><input type="checkbox">🔔 Notification app</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-message')">Annuler</button>
+      <button class="btn btn-primary" onclick="alert('✅ Message envoyé à 47 résidents !');closeModal('modal-message')">📤 Envoyer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════ DATA ═══════════════
+const cites = [
+  {nom:'Cité Les Palmiers',ville:'Abidjan',quartier:'Cocody',residences:24,devise:'XOF',statut:'active',date:'12/01/2024'},
+  {nom:'Résidence Bonhoure',ville:'Abidjan',quartier:'Marcory',residences:16,devise:'XOF',statut:'active',date:'03/06/2024'},
+  {nom:'Cité Divo',ville:'Divo',quartier:'Centre-ville',residences:8,devise:'XOF',statut:'draft',date:'15/02/2025'},
+];
+const residences = [
+  {code:'A-101',type:'Appartement',etage:1,surface:'85 m²',statut:'Occupé',cite:'Les Palmiers'},
+  {code:'A-102',type:'Appartement',etage:1,surface:'85 m²',statut:'Occupé',cite:'Les Palmiers'},
+  {code:'A-201',type:'Appartement',etage:2,surface:'90 m²',statut:'Vacant',cite:'Les Palmiers'},
+  {code:'A-202',type:'Appartement',etage:2,surface:'90 m²',statut:'Occupé',cite:'Les Palmiers'},
+  {code:'B-101',type:'Villa',etage:0,surface:'150 m²',statut:'Occupé',cite:'Les Palmiers'},
+  {code:'B-102',type:'Villa',etage:0,surface:'150 m²',statut:'Vacant',cite:'Les Palmiers'},
+  {code:'C-101',type:'Studio',etage:1,surface:'35 m²',statut:'Occupé',cite:'Bonhoure'},
+  {code:'C-102',type:'Studio',etage:1,surface:'35 m²',statut:'Occupé',cite:'Bonhoure'},
+  {code:'D-201',type:'Duplex',etage:2,surface:'120 m²',statut:'Vacant',cite:'Bonhoure'},
+  {code:'E-001',type:'Villa',etage:0,surface:'200 m²',statut:'Occupé',cite:'Divo'},
+];
+const cotisations = [
+  {residence:'A-101',resident:'Touré Aïcha',echeance:'30/04/2026',du:50000,paye:50000,statut:'paid'},
+  {residence:'A-102',resident:'Bamba Seydou',echeance:'30/04/2026',du:50000,paye:25000,statut:'partial'},
+  {residence:'A-202',resident:'Konaté Rokia',echeance:'30/04/2026',du:50000,paye:0,statut:'pending'},
+  {residence:'B-101',resident:'Coulibaly Ibrahim',echeance:'30/04/2026',du:75000,paye:75000,statut:'paid'},
+  {residence:'C-101',resident:'Diallo Fatou',echeance:'30/04/2026',du:35000,paye:0,statut:'overdue'},
+  {residence:'C-102',resident:'Gbagbo Affoué',echeance:'30/04/2026',du:35000,paye:35000,statut:'paid'},
+  {residence:'D-201',resident:'Assi Jean-Marc',echeance:'30/04/2026',du:60000,paye:0,statut:'pending'},
+  {residence:'E-001',resident:'Ouattara Mariam',echeance:'30/04/2026',du:90000,paye:45000,statut:'partial'},
+];
+const incidents = [
+  {titre:"Fuite d'eau — couloir Bloc A",categorie:'Plomberie',priorite:'urgent',statut:'open',residence:'A-101',date:'02/04/2026'},
+  {titre:'Panne ascenseur Bloc B',categorie:'Ascenseur',priorite:'high',statut:'in_progress',residence:'Parties communes',date:'01/04/2026'},
+  {titre:'Éclairage défectueux — parking souterrain',categorie:'Électricité',priorite:'medium',statut:'in_progress',residence:'Parking',date:'31/03/2026'},
+  {titre:'Porte de sécurité forcée — entrée principale',categorie:'Sécurité',priorite:'urgent',statut:'open',residence:'Entrée principale',date:'03/04/2026'},
+  {titre:'Wifi parties communes — connexion instable',categorie:'Internet/Réseau',priorite:'low',statut:'open',residence:'Parties communes',date:'28/03/2026'},
+  {titre:'Nettoyage piscine en retard',categorie:'Nettoyage',priorite:'medium',statut:'resolved',residence:'Piscine',date:'25/03/2026'},
+  {titre:'Nuisances sonores — A-202',categorie:'Nuisance',priorite:'medium',statut:'closed',residence:'A-202',date:'20/03/2026'},
+];
+const visiteurs = [
+  {nom:'Diomandé Marcellin',tel:'+225 07 45 23 11',hote:'A-101 — Touré Aïcha',motif:'Visite familiale',du:'04/04/2026',au:'05/04/2026',statut:'actif'},
+  {nom:'Kouamé Brice',tel:'+225 05 67 89 34',hote:'B-101 — Coulibaly Ibrahim',motif:'Livraison colis',du:'04/04/2026',au:'04/04/2026',statut:'utilisé'},
+  {nom:'Guédé Céline',tel:'+225 01 23 45 67',hote:'C-102 — Gbagbo Affoué',motif:'Prestataire ménage',du:'01/04/2026',au:'07/04/2026',statut:'actif'},
+  {nom:'Yao Emmanuel',tel:'+225 07 11 22 33',hote:'A-202 — Konaté Rokia',motif:'Visite amicale',du:'28/03/2026',au:'30/03/2026',statut:'utilisé'},
+  {nom:'Assouman Patricia',tel:'+225 05 98 76 54',hote:'E-001 — Ouattara Mariam',motif:'Visite familiale',du:'10/04/2026',au:'12/04/2026',statut:'actif'},
+  {nom:'Dembélé Kévin',tel:'+225 07 66 55 44',hote:'A-102 — Bamba Seydou',motif:'Technicien internet',du:'06/04/2026',au:'06/04/2026',statut:'actif'},
+];
+const utilisateurs = [
+  {nom:'Koné Mamadou',email:'k.mamadou@domosyndic.ci',role:'SYNDIC_ADMIN',statut:'Actif',cite:'Toutes'},
+  {nom:'Touré Aïcha',email:'toure.aicha@gmail.com',role:'RESIDENT_PRIMARY',statut:'Actif',cite:'Les Palmiers'},
+  {nom:'Bamba Seydou',email:'s.bamba@outlook.com',role:'RESIDENT_PRIMARY',statut:'Actif',cite:'Les Palmiers'},
+  {nom:'Coulibaly Ibrahim',email:'ibrahim.c@yahoo.fr',role:'RESIDENT_PRIMARY',statut:'Actif',cite:'Les Palmiers'},
+  {nom:'Assoa René',email:'r.assoa@gmail.com',role:'SECURITY_AGENT',statut:'Actif',cite:'Les Palmiers'},
+  {nom:'Diallo Fatou',email:'fatou.d@gmail.com',role:'RESIDENT_PRIMARY',statut:'Inactif',cite:'Bonhoure'},
+  {nom:'Gnahoré Stéphane',email:'s.gnahore@domo.ci',role:'SYNDIC_ADMIN',statut:'Actif',cite:'Bonhoure'},
+  {nom:'N\'Goran Arlette',email:'arlette.ng@gmail.com',role:'RESIDENT_PRIMARY',statut:'Actif',cite:'Divo'},
+];
+const messages = [
+  {objet:"Assemblée générale — Mai 2026",dest:'Tous les résidents (47)',date:'01/04/2026',canal:'SMS + Email',statut:'Envoyé'},
+  {objet:'Maintenance piscine — Sam. 5 avril',dest:'Les Palmiers (24)',date:'31/03/2026',canal:'SMS + Email',statut:'Envoyé'},
+  {objet:'Panne électrique résolue — Bloc B',dest:'Résidents Bloc B (8)',date:'28/03/2026',canal:'SMS',statut:'Envoyé'},
+  {objet:'Rappel cotisations Mars 2026',dest:'Tous les résidents (47)',date:'25/03/2026',canal:'Email',statut:'Envoyé'},
+  {objet:'Bienvenue à nos nouveaux résidents',dest:'Nouveaux résidents (3)',date:'20/03/2026',canal:'Email',statut:'Envoyé'},
+];
+
+// ═══════════════ HELPERS ═══════════════
+function fmt(n){return Number(n).toLocaleString('fr-FR')+' F CFA';}
+
+function prioBadge(p){
+  const cfg={urgent:['badge-danger','🔴 Urgent'],high:['badge-warning','🟠 High'],medium:['badge-warning','🟡 Medium'],low:['badge-gray','⚪ Low']};
+  const [cls,lbl]=cfg[p]||['badge-gray',p];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+function statutIncBadge(s){
+  const cfg={open:['badge-info','Ouvert'],in_progress:['badge-orange','En cours'],resolved:['badge-success','✓ Résolu'],closed:['badge-gray','Fermé']};
+  const [cls,lbl]=cfg[s]||['badge-gray',s];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+function statutCotBadge(s){
+  const cfg={paid:['badge-success','✓ Payé'],partial:['badge-warning','Partiel'],pending:['badge-gray','En attente'],overdue:['badge-danger','⚠ En retard']};
+  const [cls,lbl]=cfg[s]||['badge-gray',s];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+function roleBadge(r){
+  if(r==='SYNDIC_ADMIN') return `<span class="badge badge-orange">SYNDIC_ADMIN</span>`;
+  if(r==='RESIDENT_PRIMARY') return `<span class="badge badge-info">RÉSIDENT</span>`;
+  return `<span class="badge badge-gray">SÉCURITÉ</span>`;
+}
+
+// ═══════════════ NAVIGATION ═══════════════
+const TITLES={
+  dashboard:{t:'Dashboard',s:"Vue d'ensemble · Cité Les Palmiers"},
+  cites:{t:'Cités',s:'Gestion de vos résidences fermées'},
+  residences:{t:'Résidences',s:'Gestion des unités de logement'},
+  cotisations:{t:'Cotisations',s:'Suivi des paiements et cycles'},
+  incidents:{t:'Incidents',s:'Signalements et résolution'},
+  visiteurs:{t:'Visiteurs',s:'Accès et autorisations'},
+  utilisateurs:{t:'Utilisateurs',s:'Gestion des accès et rôles'},
+  communication:{t:'Communication',s:'Messagerie aux résidents'},
+  parametres:{t:'Paramètres',s:'Configuration de votre espace'},
+};
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  const ni=document.querySelector(`.nav-item[onclick="showScreen('${id}')"]`);
+  if(ni) ni.classList.add('active');
+  const info=TITLES[id];
+  if(info){document.getElementById('page-title').textContent=info.t;document.getElementById('page-sub').textContent=info.s;}
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// ═══════════════ RENDER: DASHBOARD ═══════════════
+function renderDashKPIs(){
+  const kpis=[
+    {icon:'🏙️',lbl:'Cités actives',val:'3',sub:'dont 1 en draft',col:'orange'},
+    {icon:'🏠',lbl:'Total résidences',val:'48',sub:'3 cités confondues',col:'teal'},
+    {icon:'👤',lbl:'Résidents actifs',val:'41',sub:'sur 48 résidences',col:'navy'},
+    {icon:'✅',lbl:'Résidences occupées',val:'38',sub:'79% du parc',col:'success'},
+    {icon:'🔲',lbl:'Résidences vacantes',val:'10',sub:'21% du parc',col:'danger'},
+  ];
+  document.getElementById('kpi-dashboard').innerHTML=kpis.map(k=>`
+    <div class="kpi-card"><div class="kpi-icon ${k.col}">${k.icon}</div>
+    <div class="kpi-label">${k.lbl}</div><div class="kpi-value">${k.val}</div>
+    <div class="kpi-sub">${k.sub}</div></div>`).join('');
+}
+function renderBarChart(){
+  const months=['Nov','Déc','Jan','Fév','Mar','Avr'];
+  const data=[{p:820000,a:180000},{p:950000,a:50000},{p:750000,a:250000},{p:880000,a:120000},{p:1020000,a:80000},{p:670000,a:430000}];
+  const max=Math.max(...data.map(d=>d.p+d.a));
+  document.getElementById('bar-chart').innerHTML=data.map((d,i)=>{
+    const ph=Math.round(d.p/max*150);const ah=Math.round(d.a/max*150);
+    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center">
+      <div style="display:flex;gap:4px;align-items:flex-end;height:150px">
+        <div style="width:22px;height:${ph}px;background:var(--navy);border-radius:4px 4px 0 0" title="Payé: ${fmt(d.p)}"></div>
+        <div style="width:22px;height:${ah}px;background:var(--orange);border-radius:4px 4px 0 0;opacity:.8" title="En attente: ${fmt(d.a)}"></div>
+      </div>
+      <div style="font-size:10px;color:var(--s400);margin-top:7px">${months[i]}</div>
+    </div>`;
+  }).join('');
+}
+function renderFinancial(){
+  const tot=cotisations.reduce((a,c)=>a+c.du,0);
+  const pay=cotisations.reduce((a,c)=>a+c.paye,0);
+  const pct=Math.round(pay/tot*100);
+  document.getElementById('fin-summary').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+      <div style="text-align:center;background:var(--s50);border-radius:12px;padding:18px">
+        <div style="font-size:10px;color:var(--s400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Total attendu</div>
+        <div style="font-size:17px;font-weight:700">${fmt(tot)}</div>
+      </div>
+      <div style="text-align:center;background:rgba(16,185,129,.08);border-radius:12px;padding:18px">
+        <div style="font-size:10px;color:var(--s400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Encaissé</div>
+        <div style="font-size:17px;font-weight:700;color:#059669">${fmt(pay)}</div>
+      </div>
+      <div style="text-align:center;background:rgba(239,68,68,.07);border-radius:12px;padding:18px">
+        <div style="font-size:10px;color:var(--s400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Solde</div>
+        <div style="font-size:17px;font-weight:700;color:#DC2626">${fmt(tot-pay)}</div>
+      </div>
+    </div>
+    <div style="background:var(--s50);border-radius:8px;height:8px;overflow:hidden;margin-bottom:8px">
+      <div style="height:100%;width:${pct}%;background:var(--success);border-radius:8px;transition:width .5s"></div>
+    </div>
+    <div style="font-size:12px;color:var(--s400);text-align:center">Taux de recouvrement : <strong style="color:var(--success)">${pct}%</strong> — Cycle Avril 2026</div>`;
+}
+function renderDashIncidents(){
+  const open=incidents.filter(i=>i.statut!='closed'&&i.statut!='resolved').slice(0,5);
+  document.getElementById('dash-incidents').innerHTML=open.map(i=>`
+    <tr onclick="openIncidentDetail(${incidents.indexOf(i)})">
+      <td><strong>${i.titre}</strong></td><td>${i.categorie}</td>
+      <td>${prioBadge(i.priorite)}</td><td>${i.residence}</td>
+      <td style="color:var(--s400)">${i.date}</td>
+    </tr>`).join('');
+}
+
+// ═══════════════ RENDER: TABLES ═══════════════
+function renderCites(){
+  document.getElementById('tbl-cites').innerHTML=cites.map(c=>`
+    <tr>
+      <td><strong>${c.nom}</strong></td><td>${c.ville}</td><td>${c.quartier}</td>
+      <td style="font-weight:600">${c.residences}</td><td>${c.devise}</td>
+      <td><span class="badge ${c.statut==='active'?'badge-success':'badge-gray'}">${c.statut==='active'?'✓ Active':'Draft'}</span></td>
+      <td style="color:var(--s400)">${c.date}</td>
+    </tr>`).join('');
+}
+
+let resFilter={cite:'',statut:''};
+function filterRes(el,key){resFilter[key]=el.value;renderResidences();}
+function renderResidences(){
+  let data=residences;
+  if(resFilter.cite) data=data.filter(r=>r.cite.includes(resFilter.cite));
+  if(resFilter.statut) data=data.filter(r=>r.statut===resFilter.statut);
+  document.getElementById('tbl-residences').innerHTML=data.map(r=>`
+    <tr>
+      <td><strong>${r.code}</strong></td><td>${r.type}</td>
+      <td>${r.etage===0?'RDC':'Étage '+r.etage}</td><td>${r.surface}</td>
+      <td><span class="badge ${r.statut==='Occupé'?'badge-teal':'badge-gray'}">${r.statut}</span></td>
+      <td>${r.cite}</td>
+    </tr>`).join('');
+}
+
+function renderCotisationsKPIs(){
+  const tot=cotisations.reduce((a,c)=>a+c.du,0);
+  const pay=cotisations.reduce((a,c)=>a+c.paye,0);
+  const retard=cotisations.filter(c=>c.statut==='overdue').length;
+  const kpis=[
+    {icon:'📋',lbl:'Total dû',val:fmt(tot),sub:'Avril 2026',col:'navy'},
+    {icon:'✅',lbl:'Encaissé',val:fmt(pay),sub:`${Math.round(pay/tot*100)}% du total`,col:'success'},
+    {icon:'⏳',lbl:'Solde restant',val:fmt(tot-pay),sub:'à recouvrer',col:'orange'},
+    {icon:'❌',lbl:'En retard',val:String(retard),sub:'résidence(s)',col:'danger'},
+  ];
+  document.getElementById('kpi-cotisations').innerHTML=kpis.map(k=>`
+    <div class="kpi-card"><div class="kpi-icon ${k.col}">${k.icon}</div>
+    <div class="kpi-label">${k.lbl}</div><div class="kpi-value" style="font-size:20px">${k.val}</div>
+    <div class="kpi-sub">${k.sub}</div></div>`).join('');
+}
+function renderCotisations(){
+  document.getElementById('tbl-cotisations').innerHTML=cotisations.map(c=>`
+    <tr>
+      <td><strong>${c.residence}</strong></td><td>${c.resident}</td>
+      <td style="color:var(--s400)">${c.echeance}</td>
+      <td style="font-weight:600">${fmt(c.du)}</td>
+      <td style="color:var(--success)">${fmt(c.paye)}</td>
+      <td style="color:${c.du-c.paye>0?'var(--danger)':'var(--s400)'};font-weight:${c.du-c.paye>0?600:400}">${fmt(c.du-c.paye)}</td>
+      <td>${statutCotBadge(c.statut)}</td>
+      <td>${c.statut!=='paid'?`<button class="action-btn pay" onclick="openModal('modal-paiement');event.stopPropagation()">Payer</button>`:''}</td>
+    </tr>`).join('');
+}
+
+let incFilter={statut:'',priorite:''};
+function filterIncidents(el,key){incFilter[key]=el.value;renderIncidents();}
+function renderIncidents(){
+  let data=incidents;
+  if(incFilter.statut) data=data.filter(i=>i.statut===incFilter.statut);
+  if(incFilter.priorite) data=data.filter(i=>i.priorite===incFilter.priorite);
+  document.getElementById('tbl-incidents').innerHTML=data.map(i=>`
+    <tr onclick="openIncidentDetail(${incidents.indexOf(i)})">
+      <td><strong>${i.titre}</strong></td><td>${i.categorie}</td>
+      <td>${prioBadge(i.priorite)}</td><td>${statutIncBadge(i.statut)}</td>
+      <td>${i.residence}</td><td style="color:var(--s400)">${i.date}</td>
+    </tr>`).join('');
+}
+function openIncidentDetail(idx){
+  const i=incidents[idx];
+  document.getElementById('inc-detail-title').textContent=i.titre;
+  document.getElementById('inc-detail-body').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+      <div style="background:var(--s50);border-radius:10px;padding:14px">
+        <div style="font-size:10px;color:var(--s400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Catégorie</div>
+        <div style="font-weight:600">${i.categorie}</div>
+      </div>
+      <div style="background:var(--s50);border-radius:10px;padding:14px">
+        <div style="font-size:10px;color:var(--s400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Priorité</div>
+        ${prioBadge(i.priorite)}
+      </div>
+      <div style="background:var(--s50);border-radius:10px;padding:14px">
+        <div style="font-size:10px;color:var(--s400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Résidence</div>
+        <div style="font-weight:600">${i.residence}</div>
+      </div>
+      <div style="background:var(--s50);border-radius:10px;padding:14px">
+        <div style="font-size:10px;color:var(--s400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Date signalement</div>
+        <div style="color:var(--s400)">${i.date}</div>
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:10px;color:var(--s400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Statut actuel</div>
+      ${statutIncBadge(i.statut)}
+    </div>
+    <div style="font-size:11px;font-weight:600;color:var(--s500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Changer le statut</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-sm" style="background:rgba(59,130,246,.1);color:#2563EB;border:none" onclick="changeIncStat(${idx},'open')">Ouvert</button>
+      <button class="btn btn-sm" style="background:rgba(255,107,53,.1);color:var(--orange);border:none" onclick="changeIncStat(${idx},'in_progress')">En cours</button>
+      <button class="btn btn-sm" style="background:rgba(0,212,170,.1);color:var(--teal);border:none" onclick="changeIncStat(${idx},'resolved')">Résolu</button>
+      <button class="btn btn-sm" style="background:var(--s100);color:var(--s500);border:none" onclick="changeIncStat(${idx},'closed')">Fermé</button>
+    </div>`;
+  openModal('modal-incident-detail');
+}
+function changeIncStat(idx,s){
+  incidents[idx].statut=s;
+  renderIncidents();renderDashIncidents();
+  closeModal('modal-incident-detail');
+}
+
+function renderVisiteurs(){
+  document.getElementById('tbl-visiteurs').innerHTML=visiteurs.map(v=>`
+    <tr>
+      <td><strong>${v.nom}</strong></td><td style="color:var(--s400)">${v.tel}</td>
+      <td>${v.hote}</td><td>${v.motif}</td>
+      <td style="color:var(--s400)">${v.du}</td><td style="color:var(--s400)">${v.au}</td>
+      <td><span class="badge ${v.statut==='actif'?'badge-success':v.statut==='annulé'?'badge-danger':'badge-gray'}">${v.statut}</span></td>
+    </tr>`).join('');
+}
+function renderUtilisateurs(){
+  document.getElementById('tbl-utilisateurs').innerHTML=utilisateurs.map(u=>`
+    <tr>
+      <td><strong>${u.nom}</strong></td>
+      <td style="color:var(--s400)">${u.email}</td>
+      <td>${roleBadge(u.role)}</td>
+      <td><span class="badge ${u.statut==='Actif'?'badge-success':'badge-gray'}">${u.statut}</span></td>
+      <td>${u.cite}</td>
+    </tr>`).join('');
+}
+function renderMessages(){
+  document.getElementById('tbl-messages').innerHTML=messages.map(m=>`
+    <tr>
+      <td><strong>${m.objet}</strong></td>
+      <td style="color:var(--s400)">${m.dest}</td>
+      <td style="color:var(--s400)">${m.date}</td>
+      <td><span class="badge badge-info" style="font-size:10px">${m.canal}</span></td>
+      <td><span class="badge badge-success">${m.statut}</span></td>
+    </tr>`).join('');
+}
+
+// ═══════════════ INIT ═══════════════
+function init(){
+  renderDashKPIs();
+  renderBarChart();
+  renderFinancial();
+  renderDashIncidents();
+  renderCites();
+  renderResidences();
+  renderCotisationsKPIs();
+  renderCotisations();
+  renderIncidents();
+  renderVisiteurs();
+  renderUtilisateurs();
+  renderMessages();
+}
+init();
+</script>
+</body>
+</html>
