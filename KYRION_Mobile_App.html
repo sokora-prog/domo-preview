@@ -438,7 +438,7 @@ body {
 <section class="page" id="page-markets">
 
   <div style="margin-bottom:16px">
-    <input type="text" id="market-search" placeholder="&#55357;&#56589;  Rechercher une paire..."
+    <input type="text" id="market-search" placeholder="&#128269;  Rechercher une paire..."
       style="width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:10px;
              padding:10px 14px;color:var(--text-primary);font-size:14px;outline:none;">
   </div>
@@ -447,8 +447,8 @@ body {
     <button class="tab-btn active" onclick="filterMarket('all',this)">Tout</button>
     <button class="tab-btn" onclick="filterMarket('crypto',this)">Crypto</button>
     <button class="tab-btn" onclick="filterMarket('forex',this)">Forex</button>
-    <button class="tab-btn" onclick="filterMarket('buy',this)">&#55357;&#57314; BUY</button>
-    <button class="tab-btn" onclick="filterMarket('sell',this)">&#55357;&#56628; SELL</button>
+    <button class="tab-btn" onclick="filterMarket('buy',this)">&#128994; BUY</button>
+    <button class="tab-btn" onclick="filterMarket('sell',this)">&#128308; SELL</button>
     <button class="tab-btn" onclick="filterMarket('fav',this)">&#11088; Favoris</button>
   </div>
 
@@ -591,11 +591,11 @@ body {
      &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
 <nav class="nav">
   <div class="nav-item active" onclick="switchPage('dashboard')" id="nav-dashboard">
-    <span class="nav-icon">&#55357;&#56522;</span>
+    <span class="nav-icon">&#128202;</span>
     <span class="nav-label">Dashboard</span>
   </div>
   <div class="nav-item" onclick="switchPage('markets')" id="nav-markets">
-    <span class="nav-icon">&#55357;&#56520;</span>
+    <span class="nav-icon">&#128200;</span>
     <span class="nav-label">March&#233;s</span>
   </div>
   <div class="nav-item" onclick="switchPage('signals')" id="nav-signals">
@@ -603,11 +603,11 @@ body {
     <span class="nav-label">Signaux</span>
   </div>
   <div class="nav-item" onclick="switchPage('positions')" id="nav-positions">
-    <span class="nav-icon">&#55357;&#56508;</span>
+    <span class="nav-icon">&#128188;</span>
     <span class="nav-label">Positions</span>
   </div>
   <div class="nav-item" onclick="switchPage('performance')" id="nav-performance">
-    <span class="nav-icon">&#55356;&#57286;</span>
+    <span class="nav-icon">&#127942;</span>
     <span class="nav-label">Perf</span>
   </div>
 </nav>
@@ -621,7 +621,7 @@ body {
 <div class="modal-overlay" id="scan-modal" onclick="closeModalOnOverlay(event,'scan-modal')">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">&#55357;&#56589; Scanner le march&#233;</div>
+    <div class="modal-title">&#128269; Scanner le march&#233;</div>
     <p style="color:var(--text-sec);font-size:13px;margin-bottom:20px">
       Lance un scan imm&#233;diat sur toutes les paires crypto + forex avec le moteur multi-strat&#233;gie KYRION.
     </p>
@@ -873,7 +873,7 @@ function renderSignalCard(s, compact=false) {
           <div class="val green num">${formatPrice(s.tp, s.asset_type)}</div>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--text-sec);margin-top:8px">&#55357;&#56524; ${s.signal_detail}</div>
+      <div style="font-size:11px;color:var(--text-sec);margin-top:8px">&#128204; ${s.signal_detail}</div>
       ` : ''}
     </div>
   `;
@@ -981,7 +981,7 @@ function renderSignals() {
   const container = document.getElementById('signal-feed');
   if (sigs.length === 0) {
     container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-sec)">
-      <div style="font-size:32px;margin-bottom:12px">&#55357;&#56557;</div>
+      <div style="font-size:32px;margin-bottom:12px">&#128237;</div>
       <div>Aucun signal actif pour ce filtre</div>
     </div>`;
     return;
