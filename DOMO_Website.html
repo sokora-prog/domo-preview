@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DOMO &#226;&#8364;&#8221; Plateforme de gestion de r&#195;&#169;sidences en Afrique</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0F1E35;
+      --navy-light: #1a2f4a;
+      --orange: #FF6B35;
+      --orange-dark: #e55a25;
+      --teal: #00D4AA;
+      --white: #FFFFFF;
+      --gray-bg: #F4F7FF;
+      --gray-text: #6B7A99;
+      --gray-border: #E2E8F0;
+      --text-dark: #1A2438;
+      --text-muted: #8896AB;
+      --shadow-sm: 0 2px 8px rgba(15,30,53,0.08);
+      --shadow-md: 0 8px 30px rgba(15,30,53,0.12);
+      --shadow-lg: 0 20px 60px rgba(15,30,53,0.18);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text-dark);
+      background: var(--white);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ===== UTILITIES ===== */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 96px 0; }
+    .section-alt { background: var(--gray-bg); }
+    .section-dark { background: var(--navy); color: var(--white); }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,107,53,0.12); color: var(--orange);
+      font-size: 12px; font-weight: 700; letter-spacing: 1.2px;
+      text-transform: uppercase; padding: 6px 14px; border-radius: 50px;
+      margin-bottom: 20px;
+    }
+    .badge-teal {
+      background: rgba(0,212,170,0.12); color: var(--teal);
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 44px); font-weight: 800;
+      line-height: 1.2; color: var(--text-dark); margin-bottom: 16px;
+    }
+    .section-title-white { color: var(--white); }
+    .section-subtitle {
+      font-size: 18px; color: var(--gray-text); max-width: 600px; margin-bottom: 56px;
+    }
+    .section-subtitle-white { color: rgba(255,255,255,0.7); }
+    .text-center { text-align: center; }
+    .text-center .section-subtitle { margin-left: auto; margin-right: auto; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 12px;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      transition: var(--transition); border: 2px solid transparent;
+    }
+    .btn-primary {
+      background: var(--orange); color: var(--white);
+      box-shadow: 0 4px 20px rgba(255,107,53,0.35);
+    }
+    .btn-primary:hover {
+      background: var(--orange-dark); transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255,107,53,0.45);
+    }
+    .btn-outline {
+      background: transparent; color: var(--white);
+      border-color: rgba(255,255,255,0.4);
+    }
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.7);
+      transform: translateY(-2px);
+    }
+    .btn-outline-dark {
+      background: transparent; color: var(--navy); border-color: var(--gray-border);
+    }
+    .btn-outline-dark:hover { border-color: var(--orange); color: var(--orange); }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 16px 0; transition: var(--transition);
+    }
+    .navbar.scrolled {
+      background: rgba(15,30,53,0.97); backdrop-filter: blur(20px);
+      padding: 12px 0; box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+    }
+    .navbar-inner {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      font-size: 26px; font-weight: 800; color: var(--white); letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--orange); }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 600;
+      transition: var(--transition);
+    }
+    .nav-links a:hover { color: var(--orange); }
+    .nav-cta { display: flex; gap: 12px; }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      width: 24px; height: 2px; background: var(--white); border-radius: 2px;
+      transition: var(--transition);
+    }
+    .mobile-menu {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--navy); z-index: 999; flex-direction: column;
+      align-items: center; justify-content: center; gap: 32px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: var(--white); font-size: 24px; font-weight: 700;
+      transition: var(--transition);
+    }
+    .mobile-menu a:hover { color: var(--orange); }
+    .mobile-menu-close {
+      position: absolute; top: 20px; right: 24px; cursor: pointer;
+      color: var(--white); font-size: 32px; font-weight: 300;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: var(--navy);
+      background-image: radial-gradient(ellipse at 70% 50%, rgba(0,212,170,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(255,107,53,0.08) 0%, transparent 50%);
+      padding: 160px 0 96px; min-height: 100vh;
+      display: flex; align-items: center; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -50%; left: -20%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(255,107,53,0.05) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,212,170,0.12); border: 1px solid rgba(0,212,170,0.25);
+      color: var(--teal); font-size: 12px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 6px 16px; border-radius: 50px; margin-bottom: 24px;
+    }
+    .hero-eyebrow::before {
+      content: ''; width: 6px; height: 6px; background: var(--teal);
+      border-radius: 50%; animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    .hero-title {
+      font-size: clamp(36px, 5vw, 62px); font-weight: 800;
+      color: var(--white); line-height: 1.1; margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+    .hero-title .highlight { color: var(--orange); }
+    .hero-subtitle {
+      font-size: 18px; color: rgba(255,255,255,0.7); margin-bottom: 40px;
+      max-width: 480px; line-height: 1.7;
+    }
+    .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 48px; }
+    .hero-trust {
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 8px;
+      color: rgba(255,255,255,0.5); font-size: 13px;
+    }
+    .trust-item svg { color: var(--teal); }
+
+    /* ===== PHONE MOCKUP ===== */
+    .hero-visual { display: flex; justify-content: center; align-items: center; }
+    .phone-frame {
+      width: 260px; height: 520px;
+      background: linear-gradient(145deg, #1a2f4a, #0d1b2e);
+      border-radius: 40px; border: 2px solid rgba(255,255,255,0.15);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1);
+      position: relative; overflow: hidden; padding: 20px 14px;
+    }
+    .phone-notch {
+      width: 80px; height: 8px; background: rgba(255,255,255,0.1);
+      border-radius: 4px; margin: 0 auto 16px;
+    }
+    .phone-status { display: flex; justify-content: space-between; margin-bottom: 14px; padding: 0 4px; }
+    .phone-status span { color: rgba(255,255,255,0.5); font-size: 10px; }
+    .phone-app-header {
+      background: var(--orange); border-radius: 12px; padding: 12px;
+      margin-bottom: 12px; color: white;
+    }
+    .phone-app-header h4 { font-size: 13px; font-weight: 700; }
+    .phone-app-header p { font-size: 10px; opacity: 0.8; margin-top: 2px; }
+    .phone-card {
+      background: rgba(255,255,255,0.07); border-radius: 10px; padding: 10px;
+      margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.08);
+    }
+    .phone-card-row { display: flex; align-items: center; gap: 8px; }
+    .phone-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .phone-icon-orange { background: rgba(255,107,53,0.2); }
+    .phone-icon-teal { background: rgba(0,212,170,0.2); }
+    .phone-icon-blue { background: rgba(100,150,255,0.2); }
+    .phone-text h5 { color: white; font-size: 11px; font-weight: 600; }
+    .phone-text p { color: rgba(255,255,255,0.5); font-size: 9px; margin-top: 1px; }
+    .phone-badge {
+      margin-left: auto; background: var(--teal); color: var(--navy);
+      font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 20px;
+    }
+    .phone-badge-orange { background: var(--orange); color: white; }
+    .phone-bottom-bar {
+      position: absolute; bottom: 16px; left: 14px; right: 14px;
+      display: flex; justify-content: space-around;
+    }
+    .phone-tab {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      font-size: 8px; color: rgba(255,255,255,0.4);
+    }
+    .phone-tab.active { color: var(--orange); }
+    .phone-tab-icon { font-size: 14px; }
+    .floating-badge {
+      position: absolute; background: var(--white); border-radius: 12px;
+      padding: 10px 14px; box-shadow: var(--shadow-lg);
+      display: flex; align-items: center; gap: 10px; font-size: 12px;
+      font-weight: 600; color: var(--text-dark);
+    }
+    .floating-badge-1 { top: 40px; right: -40px; animation: float1 3s ease-in-out infinite; }
+    .floating-badge-2 { bottom: 120px; left: -50px; animation: float2 3.5s ease-in-out infinite; }
+    .floating-badge .fb-icon { font-size: 20px; }
+    @keyframes float1 { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+    @keyframes float2 { 0%,100%{transform:translateY(0);} 50%{transform:translateY(8px);} }
+
+    /* ===== STATS ===== */
+    .stats-section {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-border);
+      padding: 56px 0;
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; text-align: center;
+    }
+    .stat-item { padding: 24px 16px; }
+    .stat-number {
+      font-size: 44px; font-weight: 800; color: var(--navy); line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-number span { color: var(--orange); }
+    .stat-label { font-size: 14px; color: var(--gray-text); font-weight: 500; }
+    .stat-sublabel { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+    /* ===== PROBLEM SECTION ===== */
+    .problem-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start;
+    }
+    .problem-col { border-radius: var(--radius); padding: 32px; }
+    .problem-col-before {
+      background: #FFF5F3; border: 1px solid #FFD5C8;
+    }
+    .problem-col-after {
+      background: #F0FDF9; border: 1px solid #C0F5E8;
+    }
+    .problem-col-title {
+      font-size: 18px; font-weight: 800; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .problem-col-title.before { color: #C0392B; }
+    .problem-col-title.after { color: #00875A; }
+    .problem-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .problem-item:last-child { border-bottom: none; }
+    .problem-item-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+    .problem-item-text h4 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+    .problem-item-text p { font-size: 13px; color: var(--gray-text); }
+
+    /* ===== INTERFACES ===== */
+    .interfaces-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .interface-card {
+      background: var(--white); border-radius: var(--radius);
+      border: 2px solid var(--gray-border);
+      padding: 36px 28px; transition: var(--transition);
+      position: relative; overflow: hidden;
+    }
+    .interface-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    }
+    .interface-card.card-resident::before { background: var(--orange); }
+    .interface-card.card-syndic::before { background: var(--navy); }
+    .interface-card.card-security::before { background: var(--teal); }
+    .interface-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: transparent; }
+    .interface-emoji { font-size: 40px; margin-bottom: 16px; }
+    .interface-title { font-size: 20px; font-weight: 800; margin-bottom: 8px; color: var(--text-dark); }
+    .interface-desc { font-size: 14px; color: var(--gray-text); margin-bottom: 20px; line-height: 1.6; }
+    .interface-features { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .interface-features li {
+      font-size: 13px; color: var(--text-dark); display: flex; align-items: center; gap: 8px;
+    }
+    .interface-features li::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+    }
+    .card-resident .interface-features li::before { background: var(--orange); }
+    .card-syndic .interface-features li::before { background: var(--navy); }
+    .card-security .interface-features li::before { background: var(--teal); }
+
+    /* ===== FEATURES GRID ===== */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .feature-card {
+      background: var(--white); border-radius: var(--radius); padding: 28px;
+      border: 1px solid var(--gray-border); transition: var(--transition);
+    }
+    .feature-card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); border-color: rgba(255,107,53,0.3); }
+    .feature-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: var(--gray-bg); display: flex; align-items: center;
+      justify-content: center; font-size: 24px; margin-bottom: 16px;
+    }
+    .feature-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--text-dark); }
+    .feature-desc { font-size: 14px; color: var(--gray-text); line-height: 1.6; }
+
+    /* ===== HOW IT WORKS ===== */
+    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; position: relative; }
+    .steps-grid::before {
+      content: ''; position: absolute; top: 40px; left: 16.66%;
+      width: 66.66%; height: 2px;
+      background: linear-gradient(90deg, var(--orange), var(--teal));
+    }
+    .step-card { text-align: center; padding: 0 16px; }
+    .step-number {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--navy); color: var(--white);
+      font-size: 28px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px; border: 4px solid var(--gray-bg);
+      position: relative; z-index: 1;
+      box-shadow: 0 0 0 6px var(--gray-bg);
+    }
+    .step-number.step-2 { background: var(--orange); }
+    .step-number.step-3 { background: var(--teal); color: var(--navy); }
+    .step-title { font-size: 18px; font-weight: 800; margin-bottom: 10px; }
+    .step-desc { font-size: 14px; color: var(--gray-text); line-height: 1.7; }
+
+    /* ===== DEVIS SECTION ===== */
+    .devis-section { background: var(--navy); }
+    .devis-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: start; }
+    .devis-info { padding-top: 16px; }
+    .devis-points { list-style: none; display: flex; flex-direction: column; gap: 16px; margin-top: 32px; }
+    .devis-points li {
+      display: flex; align-items: flex-start; gap: 14px;
+      color: rgba(255,255,255,0.8); font-size: 15px;
+    }
+    .devis-points li .dp-icon {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(0,212,170,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .devis-form {
+      background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius); padding: 36px;
+    }
+    .form-title { font-size: 22px; font-weight: 800; color: var(--white); margin-bottom: 24px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: rgba(255,255,255,0.6); margin-bottom: 6px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 12px 16px; border-radius: 10px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: var(--white); font-size: 14px; font-family: inherit;
+      transition: var(--transition); outline: none;
+    }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,0.35); }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--orange); background: rgba(255,255,255,0.12);
+    }
+    .form-group select option { background: var(--navy); color: var(--white); }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-submit { width: 100%; padding: 16px; font-size: 16px; margin-top: 8px; }
+    .form-success {
+      display: none; background: rgba(0,212,170,0.15); border: 1px solid rgba(0,212,170,0.3);
+      border-radius: 12px; padding: 24px; text-align: center; color: var(--teal);
+    }
+    .form-success .fs-icon { font-size: 48px; margin-bottom: 12px; }
+    .form-success h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; color: var(--white); }
+    .form-success p { font-size: 14px; opacity: 0.8; }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .testimonial-card {
+      background: var(--white); border-radius: var(--radius); padding: 32px;
+      border: 1px solid var(--gray-border);
+      transition: var(--transition);
+    }
+    .testimonial-card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); }
+    .testimonial-stars { color: #F59E0B; font-size: 18px; margin-bottom: 16px; letter-spacing: 2px; }
+    .testimonial-text {
+      font-size: 15px; color: var(--text-dark); line-height: 1.8;
+      margin-bottom: 24px; font-style: italic;
+    }
+    .testimonial-author { display: flex; align-items: center; gap: 14px; }
+    .testimonial-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 800; color: var(--white); flex-shrink: 0;
+    }
+    .avatar-1 { background: linear-gradient(135deg, var(--orange), #ff9f70); }
+    .avatar-2 { background: linear-gradient(135deg, var(--navy), #2d4a6e); }
+    .avatar-3 { background: linear-gradient(135deg, var(--teal), #00a887); }
+    .testimonial-name { font-size: 14px; font-weight: 700; color: var(--text-dark); }
+    .testimonial-role { font-size: 12px; color: var(--gray-text); margin-top: 2px; }
+
+    /* ===== FAQ ===== */
+    .faq-list { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .faq-item {
+      background: var(--white); border-radius: var(--radius-sm);
+      border: 1px solid var(--gray-border); overflow: hidden;
+    }
+    .faq-question {
+      padding: 20px 24px; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 16px; font-weight: 600; color: var(--text-dark);
+      transition: var(--transition);
+    }
+    .faq-question:hover { background: var(--gray-bg); }
+    .faq-arrow {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--gray-bg); display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0; transition: var(--transition);
+    }
+    .faq-item.open .faq-arrow { background: var(--orange); transform: rotate(180deg); }
+    .faq-arrow svg { width: 14px; height: 14px; color: var(--gray-text); }
+    .faq-item.open .faq-arrow svg { color: white; }
+    .faq-answer {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.3s ease;
+      font-size: 15px; color: var(--gray-text); line-height: 1.8;
+      padding: 0 24px;
+    }
+    .faq-item.open .faq-answer { max-height: 200px; padding-bottom: 20px; }
+
+    /* ===== FOOTER ===== */
+    .footer { background: var(--navy); border-top: 1px solid rgba(255,255,255,0.08); padding: 64px 0 32px; }
+    .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-brand p { color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 12px; max-width: 280px; line-height: 1.7; }
+    .footer-col h4 { color: var(--white); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { color: rgba(255,255,255,0.5); font-size: 14px; transition: var(--transition); }
+    .footer-col ul a:hover { color: var(--orange); }
+    .footer-social { display: flex; gap: 12px; margin-top: 20px; }
+    .social-btn {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: rgba(255,255,255,0.08); display: flex; align-items: center;
+      justify-content: center; color: rgba(255,255,255,0.6);
+      font-size: 16px; transition: var(--transition);
+    }
+    .social-btn:hover { background: var(--orange); color: white; transform: translateY(-2px); }
+    .footer-bottom {
+      padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 13px; color: rgba(255,255,255,0.35); flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom a { color: rgba(255,255,255,0.35); transition: var(--transition); }
+    .footer-bottom a:hover { color: var(--orange); }
+    .footer-sokora {
+      display: inline-flex; align-items: center; gap: 6px; color: var(--teal);
+      font-weight: 700;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 48px; text-align: center; }
+      .hero-subtitle { margin-left: auto; margin-right: auto; }
+      .hero-ctas { justify-content: center; }
+      .hero-trust { justify-content: center; }
+      .hero-visual { order: -1; }
+      .floating-badge-1 { right: -20px; top: 20px; }
+      .floating-badge-2 { left: -20px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .problem-grid { grid-template-columns: 1fr; }
+      .interfaces-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .devis-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .steps-grid::before { display: none; }
+    }
+    @media (max-width: 768px) {
+      .section { padding: 64px 0; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; gap: 40px; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .phone-frame { width: 220px; height: 440px; }
+    }
+    @media (max-width: 480px) {
+      .hero-ctas { flex-direction: column; align-items: center; }
+      .btn { width: 100%; justify-content: center; }
+      .stat-number { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <div class="navbar-inner">
+        <a href="#" class="logo">DO<span>MO</span></a>
+        <ul class="nav-links">
+          <li><a href="#fonctionnalites">Fonctionnalit&#195;&#169;s</a></li>
+          <li><a href="#interfaces">Interfaces</a></li>
+          <li><a href="#comment">Comment &#195;&#167;a marche</a></li>
+          <li><a href="#devis">Tarifs</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+        <div class="nav-cta">
+          <a href="#devis" class="btn btn-primary">Demander un devis</a>
+        </div>
+        <div class="hamburger" id="hamburger" role="button" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <span class="mobile-menu-close" id="mobileClose">&times;</span>
+    <a href="#fonctionnalites" class="mobile-link">Fonctionnalit&#195;&#169;s</a>
+    <a href="#interfaces" class="mobile-link">Interfaces</a>
+    <a href="#comment" class="mobile-link">Comment &#195;&#167;a marche</a>
+    <a href="#devis" class="mobile-link">Tarifs</a>
+    <a href="#faq" class="mobile-link">FAQ</a>
+    <a href="#devis" class="btn btn-primary">Demander un devis</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <div class="hero-eyebrow">&#240;&#376;&#338;&#141; Con&#195;&#167;u pour l'Afrique francophone</div>
+          <h1 class="hero-title">
+            La gestion de votre r&#195;&#169;sidence,<br/>
+            <span class="highlight">enfin simple.</span>
+          </h1>
+          <p class="hero-subtitle">
+            Incidents, cotisations, s&#195;&#169;curit&#195;&#169;, votes &#226;&#8364;&#8221; tout en un seul outil.
+            DOMO connecte r&#195;&#169;sidents, syndics et agents de s&#195;&#169;curit&#195;&#169; pour une vie de cit&#195;&#169; sans friction.
+          </p>
+          <div class="hero-ctas">
+            <a href="#devis" class="btn btn-primary">
+              &#226;&#339;&#8240;&#239;&#184;&#143; Demander un devis gratuit
+            </a>
+            <a href="#comment" class="btn btn-outline">
+              &#226;&#8211;&#182; Voir comment &#195;&#167;a marche
+            </a>
+          </div>
+          <div class="hero-trust">
+            <div class="trust-item">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              D&#195;&#169;ploiement en 48h
+            </div>
+            <div class="trust-item">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Aucune installation serveur
+            </div>
+            <div class="trust-item">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              iOS &amp; Android
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div style="position:relative; display:inline-block;">
+            <div class="phone-frame">
+              <div class="phone-notch"></div>
+              <div class="phone-status">
+                <span>9:41</span><span>&#240;&#376;&#8220;&#182; &#240;&#376;&#8221;&#8249;</span>
+              </div>
+              <div class="phone-app-header">
+                <h4>&#240;&#376;&#143;&#732;&#239;&#184;&#143; R&#195;&#169;sidence Les Cocotiers</h4>
+                <p>Bonjour, Aminata &#226;&#339;&#168;</p>
+              </div>
+              <div class="phone-card">
+                <div class="phone-card-row">
+                  <div class="phone-icon phone-icon-orange">&#240;&#376;&#8217;&#179;</div>
+                  <div class="phone-text">
+                    <h5>Cotisation du mois</h5>
+                    <p>Payer via SOKORA Wallet</p>
+                  </div>
+                  <div class="phone-badge-orange" style="margin-left:auto;background:var(--orange);color:white;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;">D&#195;&#8250;</div>
+                </div>
+              </div>
+              <div class="phone-card">
+                <div class="phone-card-row">
+                  <div class="phone-icon phone-icon-teal">&#240;&#376;&#8221;&#8221;</div>
+                  <div class="phone-text">
+                    <h5>Annonce urgente</h5>
+                    <p>Coupure eau &#226;&#8364;&#8221; 14h-17h</p>
+                  </div>
+                  <div class="phone-badge">NEW</div>
+                </div>
+              </div>
+              <div class="phone-card">
+                <div class="phone-card-row">
+                  <div class="phone-icon phone-icon-blue">&#240;&#376;&#353;&#8212;</div>
+                  <div class="phone-text">
+                    <h5>QR Visiteur g&#195;&#169;n&#195;&#169;r&#195;&#169;</h5>
+                    <p>Valide jusqu'&#195;&#160; 20h00</p>
+                  </div>
+                </div>
+              </div>
+              <div class="phone-card">
+                <div class="phone-card-row">
+                  <div class="phone-icon phone-icon-orange">&#240;&#376;&#8212;&#179;&#239;&#184;&#143;</div>
+                  <div class="phone-text">
+                    <h5>Vote en cours</h5>
+                    <p>Installation cam&#195;&#169;ras &#226;&#8364;&#8221; AG</p>
+                  </div>
+                  <div class="phone-badge">VOTE</div>
+                </div>
+              </div>
+              <div class="phone-bottom-bar">
+                <div class="phone-tab active"><span class="phone-tab-icon">&#240;&#376;&#143;&#160;</span>Accueil</div>
+                <div class="phone-tab"><span class="phone-tab-icon">&#240;&#376;&#8220;&#8249;</span>Incidents</div>
+                <div class="phone-tab"><span class="phone-tab-icon">&#240;&#376;&#143;&#170;</span>March&#195;&#169;</div>
+                <div class="phone-tab"><span class="phone-tab-icon">&#240;&#376;&#8216;&#164;</span>Profil</div>
+              </div>
+            </div>
+            <div class="floating-badge floating-badge-1">
+              <span class="fb-icon">&#226;&#339;&#8230;</span>
+              <div>
+                <div style="font-size:13px;font-weight:800;color:#0F1E35">Paiement re&#195;&#167;u</div>
+                <div style="font-size:11px;color:#6B7A99">SOKORA Wallet &#194;&#183; 15 000 FCFA</div>
+              </div>
+            </div>
+            <div class="floating-badge floating-badge-2">
+              <span class="fb-icon">&#240;&#376;&#8250;&#161;&#239;&#184;&#143;</span>
+              <div>
+                <div style="font-size:13px;font-weight:800;color:#0F1E35">Ronde effectu&#195;&#169;e</div>
+                <div style="font-size:11px;color:#6B7A99">Agent Kon&#195;&#169; &#194;&#183; 23:45</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item reveal">
+          <div class="stat-number"><span class="counter" data-target="3">0</span>+</div>
+          <div class="stat-label">Interfaces d&#195;&#169;di&#195;&#169;es</div>
+          <div class="stat-sublabel">R&#195;&#169;sidents &#194;&#183; Syndic &#194;&#183; S&#195;&#169;curit&#195;&#169;</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-1">
+          <div class="stat-number"><span class="counter" data-target="100">0</span>%</div>
+          <div class="stat-label">Cloud & Mobile</div>
+          <div class="stat-sublabel">iOS, Android, Web &#226;&#8364;&#8221; aucun serveur</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-2">
+          <div class="stat-number"><span style="color:var(--teal)">SOKORA</span></div>
+          <div class="stat-label">Wallet int&#195;&#169;gr&#195;&#169;</div>
+          <div class="stat-sublabel">Paiements NFC & QR Code</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-3">
+          <div class="stat-number"><span class="counter" data-target="24">0</span>/7</div>
+          <div class="stat-label">Support disponible</div>
+          <div class="stat-sublabel">&#195;&#8240;quipe d&#195;&#169;di&#195;&#169;e en Afrique</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section class="section section-alt" id="probleme">
+    <div class="container">
+      <div class="text-center reveal">
+        <div class="badge">Le probl&#195;&#168;me</div>
+        <h2 class="section-title">La gestion de r&#195;&#169;sidence sans DOMO,<br/>c'est le chaos quotidien.</h2>
+        <p class="section-subtitle">Voici ce que vivent les syndics et r&#195;&#169;sidents chaque jour &#226;&#8364;&#8221; et comment DOMO change tout.</p>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-col problem-col-before reveal">
+          <div class="problem-col-title before">&#226;&#157;&#338; Avant DOMO</div>
+          <div class="problem-item">
+            <div class="problem-item-icon">&#240;&#376;&#8220;&#8220;</div>
+            <div class="problem-item-text">
+              <h4>Cahiers et tableaux perdus</h4>
+              <p>Aucune tra&#195;&#167;abilit&#195;&#169; des cotisations, des incidents ou des visiteurs. Les informations se perdent.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-item-icon">&#240;&#376;&#8220;&#174;</div>
+            <div class="problem-item-text">
+              <h4>Courriers et coursiers pour les avis</h4>
+              <p>Pr&#195;&#169;venir les 200 r&#195;&#169;sidents d'une r&#195;&#169;union prend des jours, du papier, et des jambes.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-item-icon">&#240;&#376;&#8217;&#184;</div>
+            <div class="problem-item-text">
+              <h4>Impay&#195;&#169;s inconnus et contest&#195;&#169;s</h4>
+              <p>Le syndic ne sait pas qui a pay&#195;&#169;, qui doit combien. Les conflits sont in&#195;&#169;vitables.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-item-icon">&#240;&#376;&#732;&#164;</div>
+            <div class="problem-item-text">
+              <h4>Vigile d&#195;&#169;bord&#195;&#169; et isol&#195;&#169;</h4>
+              <p>L'agent de s&#195;&#169;curit&#195;&#169; n'a aucun outil. Pas de registre, pas de support, pas de tra&#195;&#167;abilit&#195;&#169;.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-item-icon">&#240;&#376;&#8212;&#8220;&#239;&#184;&#143;</div>
+            <div class="problem-item-text">
+              <h4>Assembl&#195;&#169;es g&#195;&#169;n&#195;&#169;rales d&#195;&#169;sorganis&#195;&#169;es</h4>
+              <p>Quorum jamais atteint, d&#195;&#169;cisions contest&#195;&#169;es, PV non partag&#195;&#169;s. Frustration g&#195;&#169;n&#195;&#169;rale.</p>
+            </div>
+          </div>
+        </div>
+        <div class="problem-col problem-col-after reveal reveal-delay-2">
+          <div class="problem-col-title after">&#226;&#339;&#8230; Avec DOMO</div>
+          <div class="problem-item">
+            <div class="problem-item-icon">&#240;&#376;&#8217;&#190;</div>
+            <div class="problem-item-text">
+              <h4>Historique 100% digital</h4>
+              <p>Chaque action est enregistr&#195;&#169;e, horodat&#195;&#169;e et accessible &#195;&#160; tout moment depuis l'app ou le dashboard.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-item-icon">&#240;&#376;&#8221;&#8221;</div>
+            <div class="problem-item-text">
+              <h4>Notifications push instantan&#195;&#169;es</h4>
+              <p>Un message urgent atteint tous les r&#195;&#169;sidents en quelques secondes, avec priorit&#195;&#169; configurable.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-item-icon">&#240;&#376;&#8220;&#352;</div>
+            <div class="problem-item-text">
+              <h4>Tableau de bord financier en temps r&#195;&#169;el</h4>
+              <p>Recettes, d&#195;&#169;penses, impay&#195;&#169;s automatiquement calcul&#195;&#169;s. Relances envoy&#195;&#169;es sans effort.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-item-icon">&#240;&#376;&#8250;&#161;&#239;&#184;&#143;</div>
+            <div class="problem-item-text">
+              <h4>App d&#195;&#169;di&#195;&#169;e &#195;&#160; chaque agent</h4>
+              <p>Rondes digitales, contr&#195;&#180;le d'acc&#195;&#168;s QR, bouton SOS, badge num&#195;&#169;rique. La s&#195;&#169;curit&#195;&#169; enfin connect&#195;&#169;e.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-item-icon">&#240;&#376;&#8212;&#179;&#239;&#184;&#143;</div>
+            <div class="problem-item-text">
+              <h4>AG 100% digitales</h4>
+              <p>Votes s&#195;&#169;curis&#195;&#169;s, r&#195;&#169;sultats instantan&#195;&#169;s, PV g&#195;&#169;n&#195;&#169;r&#195;&#169;s automatiquement. D&#195;&#169;mocratie r&#195;&#169;sidentielle simplifi&#195;&#169;e.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERFACES -->
+  <section class="section" id="interfaces">
+    <div class="container">
+      <div class="text-center reveal">
+        <div class="badge">3 interfaces DOMO</div>
+        <h2 class="section-title">Un outil con&#195;&#167;u pour chaque acteur<br/>de votre r&#195;&#169;sidence</h2>
+        <p class="section-subtitle">Chaque profil dispose d'une interface pens&#195;&#169;e pour ses besoins sp&#195;&#169;cifiques, connect&#195;&#169;e en temps r&#195;&#169;el.</p>
+      </div>
+      <div class="interfaces-grid">
+        <div class="interface-card card-resident reveal">
+          <div class="interface-emoji">&#240;&#376;&#143;&#732;&#239;&#184;&#143;</div>
+          <div class="interface-title">App R&#195;&#169;sident</div>
+          <div class="interface-desc">L'application mobile pour les habitants. Intuitive, rapide, disponible sur iOS et Android. Votre r&#195;&#169;sidence dans votre poche.</div>
+          <ul class="interface-features">
+            <li>Paiement des cotisations via SOKORA Pay</li>
+            <li>Signalement d'incidents avec photos</li>
+            <li>Participation aux votes et AG</li>
+            <li>G&#195;&#169;n&#195;&#169;ration de QR Code visiteur</li>
+            <li>March&#195;&#169; interne de la cit&#195;&#169;</li>
+            <li>Acc&#195;&#168;s aux annonces prioritaires</li>
+          </ul>
+        </div>
+        <div class="interface-card card-syndic reveal reveal-delay-1">
+          <div class="interface-emoji">&#240;&#376;&#8211;&#165;&#239;&#184;&#143;</div>
+          <div class="interface-title">Dashboard Syndic</div>
+          <div class="interface-desc">Le tableau de bord web pour les gestionnaires et syndics. Pilotez l'ensemble de votre r&#195;&#169;sidence depuis un seul &#195;&#169;cran.</div>
+          <ul class="interface-features">
+            <li>Comptabilit&#195;&#169; et suivi des impay&#195;&#169;s</li>
+            <li>Organisation des AG et sondages</li>
+            <li>Gestion des incidents et r&#195;&#169;solutions</li>
+            <li>Supervision de la s&#195;&#169;curit&#195;&#169; en temps r&#195;&#169;el</li>
+            <li>Annonces et communications globales</li>
+            <li>Rapports et exports financiers</li>
+          </ul>
+        </div>
+        <div class="interface-card card-security reveal reveal-delay-2">
+          <div class="interface-emoji">&#240;&#376;&#8250;&#161;&#239;&#184;&#143;</div>
+          <div class="interface-title">App Agent de S&#195;&#169;curit&#195;&#169;</div>
+          <div class="interface-desc">L'outil terrain pour vos vigiles et gardiens. Con&#195;&#167;u pour &#195;&#170;tre utilisable m&#195;&#170;me en mobilit&#195;&#169; r&#195;&#169;duite ou basse connexion.</div>
+          <ul class="interface-features">
+            <li>Enregistrement des rondes GPS</li>
+            <li>Contr&#195;&#180;le d'acc&#195;&#168;s par scan QR Code</li>
+            <li>Bouton SOS d'urgence</li>
+            <li>Badge num&#195;&#169;rique de l'agent</li>
+            <li>Journal de bord digital</li>
+            <li>Notifications d'incidents entrants</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section section-alt" id="fonctionnalites">
+    <div class="container">
+      <div class="text-center reveal">
+        <div class="badge">Fonctionnalit&#195;&#169;s</div>
+        <h2 class="section-title">Tout ce dont votre r&#195;&#169;sidence a besoin,<br/>dans un seul outil.</h2>
+        <p class="section-subtitle">DOMO couvre l'ensemble des besoins d'une r&#195;&#169;sidence moderne &#226;&#8364;&#8221; de la finance &#195;&#160; la s&#195;&#169;curit&#195;&#169;.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon">&#240;&#376;&#8217;&#179;</div>
+          <div class="feature-title">SOKORA Wallet int&#195;&#169;gr&#195;&#169;</div>
+          <div class="feature-desc">Les r&#195;&#169;sidents paient leurs cotisations en NFC ou QR Code via SOKORA Pay. Z&#195;&#169;ro esp&#195;&#168;ces, z&#195;&#169;ro litige, suivi automatique.</div>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon">&#240;&#376;&#8212;&#179;&#239;&#184;&#143;</div>
+          <div class="feature-title">Votes &amp; Assembl&#195;&#169;es G&#195;&#169;n&#195;&#169;rales</div>
+          <div class="feature-desc">Organisez vos AG enti&#195;&#168;rement en ligne. Votes s&#195;&#169;curis&#195;&#169;s, quorum calcul&#195;&#169; automatiquement, PV g&#195;&#169;n&#195;&#169;r&#195;&#169; instantan&#195;&#169;ment.</div>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon">&#240;&#376;&#8221;&#144;</div>
+          <div class="feature-title">S&#195;&#169;curit&#195;&#169; connect&#195;&#169;e</div>
+          <div class="feature-desc">Rondes enregistr&#195;&#169;es, contr&#195;&#180;le d'acc&#195;&#168;s par QR, alertes SOS, et suivi des incidents en temps r&#195;&#169;el pour vos agents.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">&#240;&#376;&#143;&#170;</div>
+          <div class="feature-title">March&#195;&#169; de la cit&#195;&#169;</div>
+          <div class="feature-desc">Un espace de petites annonces entre r&#195;&#169;sidents : ventes, services, locations. Cr&#195;&#169;ez du lien au sein de votre communaut&#195;&#169;.</div>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon">&#240;&#376;&#8220;&#352;</div>
+          <div class="feature-title">Comptabilit&#195;&#169; simplifi&#195;&#169;e</div>
+          <div class="feature-desc">Tableau de bord financier complet : recettes, d&#195;&#169;penses, impay&#195;&#169;s, relances automatiques. Votre tr&#195;&#169;sorerie toujours &#195;&#160; jour.</div>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon">&#240;&#376;&#8220;&#141;</div>
+          <div class="feature-title">Localisation GPS &amp; Itin&#195;&#169;raire</div>
+          <div class="feature-desc">Partagez l'acc&#195;&#168;s exact &#195;&#160; votre r&#195;&#169;sidence aux visiteurs et livreurs. Plus de "je suis perdu, o&#195;&#185; est l'entr&#195;&#169;e ?".</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">&#240;&#376;&#8220;&#184;</div>
+          <div class="feature-title">Incidents avec photos</div>
+          <div class="feature-desc">Signalez un probl&#195;&#168;me en 3 clics avec photo, localisation et description. Le syndic re&#195;&#167;oit une notification imm&#195;&#169;diate.</div>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon">&#240;&#376;&#8221;&#8221;</div>
+          <div class="feature-title">Annonces prioritaires</div>
+          <div class="feature-desc">3 niveaux d'urgence : Info, Urgent, Critique. Les notifications push atteignent tous les r&#195;&#169;sidents en quelques secondes.</div>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon">&#240;&#376;&#8216;&#129;&#239;&#184;&#143;</div>
+          <div class="feature-title">QR Code visiteur</div>
+          <div class="feature-desc">G&#195;&#169;n&#195;&#169;rez un code d'acc&#195;&#168;s temporaire pour un invit&#195;&#169; ou un livreur. L'agent de s&#195;&#169;curit&#195;&#169; valide l'acc&#195;&#168;s en un scan.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="comment">
+    <div class="container">
+      <div class="text-center reveal">
+        <div class="badge">D&#195;&#169;ploiement express</div>
+        <h2 class="section-title">Op&#195;&#169;rationnel en 3 &#195;&#169;tapes,<br/>en moins de 48 heures.</h2>
+        <p class="section-subtitle">Nous prenons tout en charge. Vous vous concentrez sur votre r&#195;&#169;sidence, nous g&#195;&#169;rons la technologie.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card reveal">
+          <div class="step-number step-1">1</div>
+          <div class="step-title">Nous configurons votre cit&#195;&#169;</div>
+          <div class="step-desc">Notre &#195;&#169;quipe importe vos donn&#195;&#169;es (liste des r&#195;&#169;sidents, lots, informations de la r&#195;&#169;sidence), param&#195;&#168;tre votre espace et personnalise les modules selon vos besoins. Vous n'avez rien &#195;&#160; faire techniquement.</div>
+        </div>
+        <div class="step-card reveal reveal-delay-1">
+          <div class="step-number step-2">2</div>
+          <div class="step-title">Vos r&#195;&#169;sidents t&#195;&#169;l&#195;&#169;chargent l'app</div>
+          <div class="step-desc">Un simple QR code de d&#195;&#169;ploiement est g&#195;&#169;n&#195;&#169;r&#195;&#169; pour votre r&#195;&#169;sidence. Les r&#195;&#169;sidents scannent, t&#195;&#169;l&#195;&#169;chargent l'app sur iOS ou Android, et sont automatiquement connect&#195;&#169;s &#195;&#160; votre cit&#195;&#169;.</div>
+        </div>
+        <div class="step-card reveal reveal-delay-2">
+          <div class="step-number step-3">3</div>
+          <div class="step-title">Le syndic pilote tout depuis son tableau de bord</div>
+          <div class="step-desc">Vous acc&#195;&#169;dez &#195;&#160; votre dashboard web depuis n'importe quel appareil. Comptabilit&#195;&#169;, incidents, s&#195;&#169;curit&#195;&#169;, annonces &#226;&#8364;&#8221; tout est centralis&#195;&#169; et visible en temps r&#195;&#169;el. DOMO s'occupe du reste.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEVIS / CONTACT -->
+  <section class="section devis-section" id="devis">
+    <div class="container">
+      <div class="devis-grid">
+        <div class="devis-info reveal">
+          <div class="badge badge-teal">Sur devis uniquement</div>
+          <h2 class="section-title section-title-white">Quel est le tarif ?</h2>
+          <p class="section-subtitle section-subtitle-white">
+            DOMO s'adapte enti&#195;&#168;rement &#195;&#160; votre r&#195;&#169;sidence. Nous proposons une facturation personnalis&#195;&#169;e selon votre situation &#226;&#8364;&#8221; pas de prix standard, pas de surprises.
+          </p>
+          <ul class="devis-points">
+            <li>
+              <div class="dp-icon">&#240;&#376;&#143;&#732;&#239;&#184;&#143;</div>
+              <span>Adapt&#195;&#169; &#195;&#160; la taille de votre r&#195;&#169;sidence &#226;&#8364;&#8221; de 20 &#195;&#160; plus de 500 logements</span>
+            </li>
+            <li>
+              <div class="dp-icon">&#240;&#376;&#167;&#169;</div>
+              <span>Modules &#195;&#160; la carte &#226;&#8364;&#8221; choisissez uniquement ce dont vous avez besoin</span>
+            </li>
+            <li>
+              <div class="dp-icon">&#240;&#376;&#8220;&#8230;</div>
+              <span>Engagement flexible &#226;&#8364;&#8221; mensuel, annuel ou pluriannuel</span>
+            </li>
+            <li>
+              <div class="dp-icon">&#240;&#376;&#353;&#8364;</div>
+              <span>Onboarding inclus &#226;&#8364;&#8221; configuration, formation et support d&#195;&#169;di&#195;&#169;</span>
+            </li>
+            <li>
+              <div class="dp-icon">&#226;&#353;&#161;</div>
+              <span>R&#195;&#169;ponse sous 24h &#226;&#8364;&#8221; votre devis personnalis&#195;&#169; envoy&#195;&#169; rapidement</span>
+            </li>
+          </ul>
+        </div>
+        <div class="reveal reveal-delay-2">
+          <div class="devis-form" id="devisForm">
+            <div class="form-title">Recevoir mon devis gratuit</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Pr&#195;&#169;nom *</label>
+                <input type="text" placeholder="Aminata" id="f_prenom" required />
+              </div>
+              <div class="form-group">
+                <label>Nom *</label>
+                <input type="text" placeholder="Traor&#195;&#169;" id="f_nom" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email *</label>
+                <input type="email" placeholder="aminata@email.com" id="f_email" required />
+              </div>
+              <div class="form-group">
+                <label>T&#195;&#169;l&#195;&#169;phone *</label>
+                <input type="tel" placeholder="+225 07 XX XX XX XX" id="f_tel" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Nom de la r&#195;&#169;sidence / cit&#195;&#169; *</label>
+              <input type="text" placeholder="Ex : R&#195;&#169;sidence Les Palmiers, Cit&#195;&#169; Sicogi..." id="f_residence" required />
+            </div>
+            <div class="form-group">
+              <label>Nombre approximatif de r&#195;&#169;sidents</label>
+              <select id="f_residents">
+                <option value="">S&#195;&#169;lectionner...</option>
+                <option>Moins de 50 r&#195;&#169;sidents</option>
+                <option>50 &#195;&#160; 150 r&#195;&#169;sidents</option>
+                <option>150 &#195;&#160; 300 r&#195;&#169;sidents</option>
+                <option>300 &#195;&#160; 500 r&#195;&#169;sidents</option>
+                <option>Plus de 500 r&#195;&#169;sidents</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Message (optionnel)</label>
+              <textarea placeholder="D&#195;&#169;crivez votre r&#195;&#169;sidence, vos besoins sp&#195;&#169;cifiques ou vos questions..." id="f_message"></textarea>
+            </div>
+            <button class="btn btn-primary form-submit" onclick="submitForm()">
+              &#226;&#339;&#8240;&#239;&#184;&#143; Recevoir mon devis gratuit &#226;&#8364;&#8221; sous 24h
+            </button>
+          </div>
+          <div class="form-success" id="formSuccess">
+            <div class="fs-icon">&#240;&#376;&#381;&#8240;</div>
+            <h3>Demande envoy&#195;&#169;e avec succ&#195;&#168;s !</h3>
+            <p>Notre &#195;&#169;quipe va analyser votre situation et vous envoyer un devis personnalis&#195;&#169; dans les prochaines 24 heures. Merci de votre confiance en DOMO.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section section-alt" id="temoignages">
+    <div class="container">
+      <div class="text-center reveal">
+        <div class="badge">T&#195;&#169;moignages</div>
+        <h2 class="section-title">Ce que disent ceux qui l'utilisent</h2>
+        <p class="section-subtitle">Des gestionnaires, syndics et r&#195;&#169;sidents satisfaits &#195;&#160; travers l'Afrique francophone.</p>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card reveal">
+          <div class="testimonial-stars">&#226;&#732;&#8230;&#226;&#732;&#8230;&#226;&#732;&#8230;&#226;&#732;&#8230;&#226;&#732;&#8230;</div>
+          <p class="testimonial-text">"DOMO a transform&#195;&#169; la gestion de nos deux cit&#195;&#169;s &#195;&#160; Abidjan. Avant, je passais mes weekends &#195;&#160; rappeler les impay&#195;&#169;s. Maintenant, le syst&#195;&#168;me envoie des relances automatiques et je vois tout en temps r&#195;&#169;el sur mon tableau de bord. En 3 mois, nos taux de recouvrement ont augment&#195;&#169; de 40%."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar avatar-1">K</div>
+            <div>
+              <div class="testimonial-name">Kouassi Amed&#195;&#169;e</div>
+              <div class="testimonial-role">Gestionnaire de cit&#195;&#169; &#226;&#8364;&#8221; Abidjan, C&#195;&#180;te d'Ivoire</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal reveal-delay-1">
+          <div class="testimonial-stars">&#226;&#732;&#8230;&#226;&#732;&#8230;&#226;&#732;&#8230;&#226;&#732;&#8230;&#226;&#732;&#8230;</div>
+          <p class="testimonial-text">"En tant que pr&#195;&#169;sidente de l'association des r&#195;&#169;sidents, j'avais du mal &#195;&#160; mobiliser tout le monde pour les AG. Avec DOMO, on organise des votes depuis le t&#195;&#169;l&#195;&#169;phone. La participation a tripl&#195;&#169;. Le march&#195;&#169; de la cit&#195;&#169;, c'est un bonus adorable &#226;&#8364;&#8221; mes voisins y vendent et ach&#195;&#168;tent tout le temps !"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar avatar-2">F</div>
+            <div>
+              <div class="testimonial-name">Fatou Diallo</div>
+              <div class="testimonial-role">Pr&#195;&#169;sidente d'association &#226;&#8364;&#8221; Dakar, S&#195;&#169;n&#195;&#169;gal</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal reveal-delay-2">
+          <div class="testimonial-stars">&#226;&#732;&#8230;&#226;&#732;&#8230;&#226;&#732;&#8230;&#226;&#732;&#8230;&#226;&#732;&#8230;</div>
+          <p class="testimonial-text">"Nous g&#195;&#169;rons un portefeuille de 12 r&#195;&#169;sidences pour le compte de promoteurs. DOMO nous permet de tout centraliser avec une seule interface syndic. La fonctionnalit&#195;&#169; de rapport financier automatique nous a fait &#195;&#169;conomiser l'&#195;&#169;quivalent d'un poste comptable. ROI en moins de 2 mois."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar avatar-3">M</div>
+            <div>
+              <div class="testimonial-name">Mamadou Ndiaye</div>
+              <div class="testimonial-role">Directeur Immobilier &#226;&#8364;&#8221; Douala, Cameroun</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="text-center reveal">
+        <div class="badge">Questions fr&#195;&#169;quentes</div>
+        <h2 class="section-title">Toutes vos questions,<br/>r&#195;&#169;pondues clairement.</h2>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item reveal" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            Est-ce disponible sur iOS et Android ?
+            <div class="faq-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          </div>
+          <div class="faq-answer">Oui, DOMO est disponible sur l'App Store (iOS) et le Google Play Store (Android) pour les r&#195;&#169;sidents et les agents de s&#195;&#169;curit&#195;&#169;. Le dashboard syndic est accessible via n'importe quel navigateur web (ordinateur, tablette, smartphone). Aucun appareil sp&#195;&#169;cifique n'est requis.</div>
+        </div>
+        <div class="faq-item reveal" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            Faut-il un serveur ou une installation informatique ?
+            <div class="faq-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          </div>
+          <div class="faq-answer">Absolument pas. DOMO est une solution 100% cloud (SaaS). Vous n'avez besoin ni de serveur, ni de technicien, ni d'installation locale. Tout fonctionne directement depuis le cloud, et nous g&#195;&#169;rons l'infrastructure pour vous. Vous avez juste besoin d'une connexion internet.</div>
+        </div>
+        <div class="faq-item reveal" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            Le SOKORA Wallet est-il obligatoire ?
+            <div class="faq-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          </div>
+          <div class="faq-answer">Non, le SOKORA Wallet est un module optionnel. Vous pouvez utiliser DOMO pour la gestion, les incidents, la s&#195;&#169;curit&#195;&#169; et les communications sans activer le paiement int&#195;&#169;gr&#195;&#169;. Cependant, nous recommandons vivement son activation &#226;&#8364;&#8221; c'est le meilleur moyen d'augmenter votre taux de recouvrement des cotisations.</div>
+        </div>
+        <div class="faq-item reveal" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            Combien de temps prend le d&#195;&#169;ploiement ?
+            <div class="faq-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          </div>
+          <div class="faq-answer">En g&#195;&#169;n&#195;&#169;ral, votre r&#195;&#169;sidence est op&#195;&#169;rationnelle sous 24 &#195;&#160; 48 heures apr&#195;&#168;s la signature du contrat. Notre &#195;&#169;quipe importe vos donn&#195;&#169;es, configure votre espace et forme vos administrateurs. Le QR code de d&#195;&#169;ploiement pour vos r&#195;&#169;sidents est pr&#195;&#170;t le jour m&#195;&#170;me. Nous assurons un accompagnement les deux premi&#195;&#168;res semaines.</div>
+        </div>
+        <div class="faq-item reveal" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            Y a-t-il un engagement de dur&#195;&#169;e minimum ?
+            <div class="faq-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          </div>
+          <div class="faq-answer">Les conditions d'engagement sont n&#195;&#169;goci&#195;&#169;es lors de votre devis personnalis&#195;&#169;. Nous proposons des formules mensuelles, annuelles et pluriannuelles avec des avantages tarifaires progressifs. Nous croyons que DOMO vous apportera assez de valeur pour que vous restiez &#226;&#8364;&#8221; pas parce que vous &#195;&#170;tes forc&#195;&#169;s de le faire.</div>
+        </div>
+        <div class="faq-item reveal" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            Les donn&#195;&#169;es de ma r&#195;&#169;sidence sont-elles s&#195;&#169;curis&#195;&#169;es ?
+            <div class="faq-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          </div>
+          <div class="faq-answer">La s&#195;&#169;curit&#195;&#169; des donn&#195;&#169;es est notre priorit&#195;&#169; absolue. Toutes les donn&#195;&#169;es sont chiffr&#195;&#169;es en transit (TLS) et au repos (AES-256). Nous effectuons des sauvegardes automatiques quotidiennes. Vos donn&#195;&#169;es vous appartiennent &#226;&#8364;&#8221; vous pouvez les exporter &#195;&#160; tout moment. Nous sommes conformes aux r&#195;&#169;glementations locales de protection des donn&#195;&#169;es personnelles.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section style="background: linear-gradient(135deg, var(--orange) 0%, #ff8c5a 100%); padding: 72px 0;">
+    <div class="container text-center reveal">
+      <h2 style="font-size:clamp(26px,4vw,42px);font-weight:800;color:white;margin-bottom:16px;">Pr&#195;&#170;t &#195;&#160; moderniser votre r&#195;&#169;sidence ?</h2>
+      <p style="font-size:18px;color:rgba(255,255,255,0.85);margin-bottom:36px;max-width:540px;margin-left:auto;margin-right:auto;">Rejoignez les gestionnaires qui ont choisi DOMO. Recevez votre devis personnalis&#195;&#169; en 24h.</p>
+      <a href="#devis" class="btn" style="background:white;color:var(--orange);font-size:16px;padding:16px 36px;box-shadow:0 8px 30px rgba(0,0,0,0.2);">
+        &#226;&#339;&#8240;&#239;&#184;&#143; Demander mon devis gratuit
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">DO<span>MO</span></div>
+          <p>La plateforme SaaS de gestion de r&#195;&#169;sidences et de syndic, con&#195;&#167;ue pour l'Afrique francophone. Simplifiez votre cit&#195;&#169;, connectez vos r&#195;&#169;sidents.</p>
+          <div class="footer-social">
+            <a href="#" class="social-btn" title="Facebook">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+            </a>
+            <a href="#" class="social-btn" title="Twitter / X">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+            </a>
+            <a href="#" class="social-btn" title="LinkedIn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+            </a>
+            <a href="#" class="social-btn" title="WhatsApp">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.95 2.1C6.424 2.1 2 6.524 2 12.05c0 1.873.487 3.635 1.34 5.154L2 22l4.934-1.295A9.817 9.817 0 0011.95 22c5.526 0 9.95-4.424 9.95-9.95S17.476 2.1 11.95 2.1z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="#hero">Accueil</a></li>
+            <li><a href="#fonctionnalites">Fonctionnalit&#195;&#169;s</a></li>
+            <li><a href="#interfaces">Interfaces</a></li>
+            <li><a href="#comment">D&#195;&#169;mo</a></li>
+            <li><a href="#devis">Tarifs &amp; Devis</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Produit</h4>
+          <ul>
+            <li><a href="#interfaces">App R&#195;&#169;sident</a></li>
+            <li><a href="#interfaces">Dashboard Syndic</a></li>
+            <li><a href="#interfaces">App S&#195;&#169;curit&#195;&#169;</a></li>
+            <li><a href="#fonctionnalites">SOKORA Wallet</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Nous contacter</h4>
+          <ul>
+            <li><a href="mailto:contact@domo.africa">&#240;&#376;&#8220;&#167; contact@domo.africa</a></li>
+            <li><a href="tel:+2250700000000">&#240;&#376;&#8220;&#382; +225 07 00 00 00 00</a></li>
+            <li><a href="#devis">&#240;&#376;&#8217;&#172; Demander un devis</a></li>
+          </ul>
+          <div style="margin-top:16px; padding: 12px 16px; background: rgba(0,212,170,0.1); border-radius: 10px; border: 1px solid rgba(0,212,170,0.2);">
+            <div style="color: var(--teal); font-size: 12px; font-weight: 700;">&#240;&#376;&#338;&#141; March&#195;&#169;s desservis</div>
+            <div style="color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 4px;">C&#195;&#180;te d'Ivoire &#194;&#183; S&#195;&#169;n&#195;&#169;gal &#194;&#183; Mali<br/>Cameroun &#194;&#183; Maroc &#194;&#183; Burkina Faso</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&#194;&#169; 2026 DOMO &#226;&#8364;&#8221; Un produit <span class="footer-sokora">&#226;&#8212;&#8224; SOKORA</span></div>
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+          <a href="#">Mentions l&#195;&#169;gales</a>
+          <a href="#">Politique de confidentialit&#195;&#169;</a>
+          <a href="#">CGU</a>
+          <a href="#">RGPD</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    // ===== NAVBAR SCROLL =====
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) { navbar.classList.add('scrolled'); }
+      else { navbar.classList.remove('scrolled'); }
+    });
+
+    // ===== MOBILE MENU =====
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileClose = document.getElementById('mobileClose');
+    hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+    mobileClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    document.querySelectorAll('.mobile-link, .mobile-menu .btn').forEach(link => {
+      link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    });
+
+    // ===== SCROLL REVEAL =====
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ===== COUNTER ANIMATION =====
+    function animateCounter(el) {
+      const target = parseInt(el.dataset.target);
+      const duration = 1800;
+      const step = target / (duration / 16);
+      let current = 0;
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        el.textContent = Math.floor(current);
+      }, 16);
+    }
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          counterObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
+
+    // ===== FAQ ACCORDION =====
+    function toggleFaq(item) {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) { item.classList.add('open'); }
+    }
+
+    // ===== FORM SUBMIT =====
+    function submitForm() {
+      const fields = ['f_prenom', 'f_nom', 'f_email', 'f_tel', 'f_residence'];
+      let valid = true;
+      fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el.value.trim()) {
+          el.style.borderColor = '#FF4444';
+          el.addEventListener('input', () => { el.style.borderColor = ''; }, { once: true });
+          valid = false;
+        }
+      });
+      if (!valid) {
+        alert('Veuillez remplir tous les champs obligatoires (*).');
+        return;
+      }
+      document.getElementById('devisForm').style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+      document.getElementById('formSuccess').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // ===== SMOOTH SCROLL FOR ALL ANCHOR LINKS =====
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const offset = 80;
+          const top = target.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
