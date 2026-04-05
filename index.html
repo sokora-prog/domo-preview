@@ -3,37 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DOMO Prototypes</title>
+<title>DOMO & KYRION â€” Prototypes</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:sans-serif; background:#0F1E35; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; }
-h1 { color:#fff; font-size:36px; font-weight:800; margin-bottom:6px; }
-.sub { color:#00D4AA; font-size:12px; letter-spacing:2px; font-weight:600; margin-bottom:8px; }
-.desc { color:rgba(255,255,255,0.45); font-size:13px; margin-bottom:40px; }
-.cards { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
-.card { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:28px 32px; text-decoration:none; text-align:center; width:260px; }
-.icon { font-size:44px; margin-bottom:12px; }
-.card h2 { color:#fff; font-size:18px; font-weight:700; margin-bottom:8px; }
-.card p { color:rgba(255,255,255,0.5); font-size:13px; line-height:1.5; margin-bottom:12px; }
-.badge { display:inline-block; border-radius:8px; padding:4px 12px; font-size:11px; font-weight:700; color:#fff; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0F1E35; font-family: -apple-system, system-ui, sans-serif; min-height: 100vh; padding: 24px 16px; }
+h1 { color: #fff; text-align: center; font-size: 1.6rem; margin-bottom: 6px; }
+p.sub { color: #8A9BB0; text-align: center; font-size: 0.9rem; margin-bottom: 28px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; max-width: 900px; margin: 0 auto; }
+.card { background: #1A2B45; border-radius: 16px; padding: 24px; text-decoration: none; display: block; transition: transform .2s, box-shadow .2s; }
+.card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.4); }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; letter-spacing: .05em; margin-bottom: 12px; }
+.mobile { background: rgba(255,107,53,.15); color: #FF6B35; }
+.admin { background: rgba(0,212,170,.15); color: #00D4AA; }
+.security { background: rgba(255,75,75,.15); color: #FF4B4B; }
+.trading { background: rgba(240,185,11,.15); color: #F0B90B; }
+.card h2 { color: #fff; font-size: 1.1rem; margin-bottom: 8px; }
+.card p { color: #8A9BB0; font-size: 0.85rem; line-height: 1.5; }
+.logo { font-size: 2rem; margin-bottom: 12px; }
 </style>
 </head>
 <body>
-<div class="sub">PROTOTYPE INTERACTIF</div>
-<h1>DOMO</h1>
-<p class="desc">Gestion de residence - Cote d Ivoire</p>
-<div class="cards">
+<h1>SOKORA Prototypes</h1>
+<p class="sub">Interfaces interactives â€” testez sur mobile</p>
+<div class="grid">
   <a class="card" href="DOMO_App_Mobile_Prototype.html">
-    <div class="icon">📱</div>
-    <h2>App Resident</h2>
-    <p>Cotisations, incidents, visiteurs, marche voisinage, Mobile Money</p>
-    <span class="badge" style="background:#FF6B35">MOBILE</span>
+    <div class="logo">&#127960;&#65039;</div>
+    <span class="badge mobile">MOBILE</span>
+    <h2>DOMO â€” App RÃ©sident</h2>
+    <p>MarchÃ©, incidents, votes, events voisinage, SOKORA Pay, QR visiteur</p>
   </a>
   <a class="card" href="DOMO_Admin_Prototype.html">
-    <div class="icon">🖥️</div>
-    <h2>Dashboard Syndic</h2>
-    <p>Gestion cites, residents, finances, incidents, marche - admin</p>
-    <span class="badge" style="background:#00D4AA;color:#0F1E35">ADMIN</span>
+    <div class="logo">&#128421;&#65039;</div>
+    <span class="badge admin">ADMIN</span>
+    <h2>DOMO â€” Dashboard Syndic</h2>
+    <p>ComptabilitÃ©, rÃ©sidents, sÃ©curitÃ©, AG, votes, sondages, modÃ©ration</p>
+  </a>
+  <a class="card" href="DOMO_Agent_Security_Prototype.html">
+    <div class="logo">&#128737;&#65039;</div>
+    <span class="badge security">SÃ‰CURITÃ‰</span>
+    <h2>DOMO â€” App Agent</h2>
+    <p>Rondes connectÃ©es, contrÃ´le accÃ¨s, SOS, badge numÃ©rique</p>
+  </a>
+  <a class="card" href="KYRION_Mobile_App.html">
+    <div class="logo">&#128200;</div>
+    <span class="badge trading">TRADING</span>
+    <h2>KYRION â€” Trading App</h2>
+    <p>Signaux crypto & forex, positions, performance, multi-stratÃ©gies</p>
   </a>
 </div>
 </body>
