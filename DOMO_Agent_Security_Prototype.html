@@ -1,0 +1,2436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOMO Security Agent - Prototype 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0B1622;
+            --card: #132030;
+            --card2: #1A2C42;
+            --red: #FF4B4B;
+            --orange: #FF6B35;
+            --teal: #00D4AA;
+            --muted: #7A90A8;
+            --border: #1E3048;
+            --text: #FFFFFF;
+            --text-muted: #B4C4D8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        /* Phone Frame */
+        .phone-mockup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 390px;
+            height: 844px;
+            background: var(--bg);
+            border-radius: 60px;
+            border: 12px solid #000;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            background: var(--bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-left, .status-right {
+            display: flex;
+            gap: 4px;
+        }
+
+        .status-center {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* Screen Container */
+        .screen-container {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+            scroll-behavior: smooth;
+        }
+
+        .screen {
+            display: none;
+            min-height: 100%;
+            padding-bottom: 60px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Header */
+        .screen-header {
+            padding: 16px;
+            background: linear-gradient(135deg, var(--card2) 0%, var(--card) 100%);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header-left p {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            background: rgba(0, 212, 170, 0.2);
+            border-radius: 4px;
+            color: var(--teal);
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--teal);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Content Area */
+        .screen-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--muted);
+            transition: all 0.3s;
+            border-top: 3px solid transparent;
+        }
+
+        .nav-item.active {
+            color: var(--teal);
+            border-top-color: var(--teal);
+        }
+
+        .nav-label {
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--orange) 0%, var(--red) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .logo-subtitle {
+            font-size: 12px;
+            color: var(--red);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .residence-info {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            padding: 12px;
+            background: var(--card);
+            border-radius: 8px;
+            border-left: 3px solid var(--orange);
+            width: 100%;
+        }
+
+        .residence-info-name {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .form-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .form-input::placeholder {
+            color: var(--muted);
+        }
+
+        .btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--red) 0%, #E63A3A 100%);
+            color: var(--text);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 4px 12px rgba(255, 75, 75, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--card2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:active {
+            background: var(--card);
+        }
+
+        .btn-teal {
+            background: linear-gradient(135deg, var(--teal) 0%, #00B894 100%);
+            color: var(--bg);
+            font-weight: 700;
+        }
+
+        .btn-teal:active {
+            transform: scale(0.98);
+        }
+
+        /* Quick Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--teal);
+        }
+
+        /* SOS Button */
+        .sos-button {
+            width: 160px;
+            height: 160px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, var(--red) 0%, #E63A3A 100%);
+            border: none;
+            border-radius: 50%;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 30px rgba(255, 75, 75, 0.4);
+            animation: sosPulse 2s infinite;
+            transition: all 0.1s;
+        }
+
+        .sos-button:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes sosPulse {
+            0%, 100% {
+                box-shadow: 0 0 30px rgba(255, 75, 75, 0.4), 0 0 60px rgba(255, 75, 75, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(255, 75, 75, 0.6), 0 0 80px rgba(255, 75, 75, 0.3);
+            }
+        }
+
+        .sos-icon {
+            font-size: 32px;
+        }
+
+        /* Action Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .action-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-card:active {
+            background: var(--card2);
+            border-color: var(--teal);
+        }
+
+        .action-icon {
+            font-size: 28px;
+        }
+
+        .action-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            color: var(--text);
+        }
+
+        /* Ronde Screen */
+        .ronde-card {
+            background: linear-gradient(135deg, var(--card2) 0%, var(--card) 100%);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .ronde-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .ronde-zone {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .ronde-timer {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--orange);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .ronde-info {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .progress-bar {
+            background: var(--border);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--teal) 0%, var(--orange) 100%);
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .checkpoints-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .checkpoint-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .checkpoint-info {
+            flex: 1;
+        }
+
+        .checkpoint-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .checkpoint-status {
+            font-size: 10px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .checkpoint-status.done {
+            color: var(--teal);
+        }
+
+        .checkpoint-status.pending {
+            color: var(--muted);
+        }
+
+        .checkpoint-status.late {
+            color: var(--red);
+        }
+
+        .btn-pointer {
+            background: linear-gradient(135deg, var(--teal) 0%, #00B894 100%);
+            color: var(--bg);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-pointer:active {
+            transform: scale(0.95);
+        }
+
+        .btn-pointer.done {
+            background: var(--border);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Accordion */
+        .accordion-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 12px;
+            background: var(--card2);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .accordion-header:active {
+            background: var(--border);
+        }
+
+        .accordion-title {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .accordion-arrow {
+            transition: transform 0.3s;
+            font-size: 12px;
+        }
+
+        .accordion-arrow.open {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 12px;
+            background: var(--card);
+        }
+
+        .accordion-content.open {
+            display: block;
+        }
+
+        .planning-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+        }
+
+        .planning-item:last-child {
+            border-bottom: none;
+        }
+
+        .planning-zone {
+            font-weight: 600;
+        }
+
+        .planning-time {
+            color: var(--muted);
+        }
+
+        .planning-status {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .planning-status.en_cours {
+            background: rgba(255, 107, 53, 0.2);
+            color: var(--orange);
+        }
+
+        .planning-status.planifiee {
+            background: rgba(122, 144, 168, 0.2);
+            color: var(--muted);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: var(--teal);
+            border-bottom-color: var(--teal);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* QR Scanner */
+        .scanner-frame {
+            width: 100%;
+            aspect-ratio: 1;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid var(--teal);
+            border-radius: 8px;
+            opacity: 0.5;
+        }
+
+        .scanner-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, var(--teal) 50%, transparent 100%);
+            animation: scanLine 2s infinite;
+            top: 20%;
+        }
+
+        @keyframes scanLine {
+            0%, 100% { top: 20%; }
+            50% { top: 80%; }
+        }
+
+        .scanner-text {
+            color: var(--teal);
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .recent-scans {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .scan-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 10px;
+        }
+
+        .scan-item-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .scan-item-time {
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        /* Visitor Card */
+        .visitor-card {
+            background: linear-gradient(135deg, var(--card2) 0%, var(--card) 100%);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .visitor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 8px;
+        }
+
+        .visitor-name {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        .visitor-status {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .visitor-status.valid {
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--teal);
+        }
+
+        .visitor-status.invalid {
+            background: rgba(255, 75, 75, 0.2);
+            color: var(--red);
+        }
+
+        .visitor-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .visitor-info-row {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .visitor-info-label {
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 8px;
+        }
+
+        /* Incident Form */
+        .incident-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .type-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .type-button {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .type-button:active {
+            border-color: var(--teal);
+            background: var(--card2);
+        }
+
+        .type-button.selected {
+            border-color: var(--teal);
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        .type-icon {
+            font-size: 20px;
+        }
+
+        .severity-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .severity-button {
+            flex: 1;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.3s;
+        }
+
+        .severity-button:active {
+            background: var(--card2);
+        }
+
+        .severity-button.selected {
+            background: var(--orange);
+            border-color: var(--orange);
+        }
+
+        .severity-button.selected.critical {
+            background: var(--red);
+            border-color: var(--red);
+        }
+
+        textarea {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        textarea::placeholder {
+            color: var(--muted);
+        }
+
+        .voice-input {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .voice-input:active {
+            border-color: var(--red);
+        }
+
+        .voice-icon {
+            font-size: 16px;
+        }
+
+        .voice-text {
+            font-size: 12px;
+            color: var(--muted);
+            flex: 1;
+        }
+
+        .photo-preview {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .photo-thumb {
+            width: 60px;
+            height: 60px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            position: relative;
+        }
+
+        .photo-remove {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 18px;
+            height: 18px;
+            background: var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .zone-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .zone-button {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .zone-button:active {
+            border-color: var(--orange);
+        }
+
+        .zone-button.selected {
+            border-color: var(--orange);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        /* Incidents Feed */
+        .incidents-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .incident-item {
+            background: var(--card);
+            border-left: 4px solid var(--orange);
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .incident-item.critical {
+            border-left-color: var(--red);
+        }
+
+        .incident-item.resolved {
+            border-left-color: var(--teal);
+        }
+
+        .incident-item:active {
+            background: var(--card2);
+        }
+
+        .incident-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 6px;
+        }
+
+        .incident-type {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .incident-status {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .incident-status.ouvert {
+            background: rgba(255, 75, 75, 0.2);
+            color: var(--red);
+        }
+
+        .incident-status.en_cours {
+            background: rgba(255, 107, 53, 0.2);
+            color: var(--orange);
+        }
+
+        .incident-status.resolu {
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--teal);
+        }
+
+        .incident-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .incident-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            color: var(--muted);
+        }
+
+        /* Badge Screen */
+        .badge-display {
+            width: 100%;
+            aspect-ratio: 1.5;
+            background: linear-gradient(135deg, var(--card2) 0%, #0D1F2D 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            perspective: 1000px;
+            transition: transform 0.6s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge-display.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .badge-front, .badge-back {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .badge-back {
+            transform: rotateY(180deg);
+        }
+
+        .badge-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .badge-logo {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--orange) 0%, var(--red) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge-title {
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--muted);
+            text-align: right;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .badge-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--orange);
+            border: 2px solid var(--border);
+        }
+
+        .badge-name {
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .badge-society {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .badge-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 9px;
+        }
+
+        .badge-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .badge-info-label {
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 7px;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-info-value {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .badge-qr {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .qr-code {
+            width: 120px;
+            height: 120px;
+            background: var(--text);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: var(--bg);
+        }
+
+        .qr-text {
+            font-size: 9px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .badge-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--teal);
+        }
+
+        /* Geofencing */
+        .geofencing-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .geofencing-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .geofencing-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+        }
+
+        .geofencing-zone {
+            color: var(--text);
+        }
+
+        .geofencing-status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 6px;
+            background: rgba(0, 212, 170, 0.2);
+            border-radius: 3px;
+            color: var(--teal);
+            font-weight: 600;
+        }
+
+        .geofencing-status.out {
+            background: rgba(255, 75, 75, 0.2);
+            color: var(--red);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            width: 90%;
+            max-width: 340px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+
+        .modal-content {
+            margin-bottom: 16px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            flex-direction: column;
+        }
+
+        .countdown {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--red);
+            margin: 20px 0;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s;
+            z-index: 1500;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.success {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        .toast.error {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        /* Animations */
+        .success-check {
+            animation: checkBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes checkBounce {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .blacklist-alert {
+            background: rgba(255, 75, 75, 0.1);
+            border: 2px solid var(--red);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .blacklist-alert-title {
+            font-weight: 700;
+            color: var(--red);
+            font-size: 13px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .blacklist-alert-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Scrollbar */
+        .screen-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .screen-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .screen-container::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .screen-container::-webkit-scrollbar-thumb:hover {
+            background: var(--muted);
+        }
+
+        /* Incident Feed Entry Counter */
+        .incidents-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: var(--card);
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .incidents-count-badge {
+            background: var(--red);
+            color: var(--text);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Phone Mockup -->
+    <div class="phone-mockup">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span>9:41</span>
+            </div>
+            <div class="status-center">SecurPlus CI</div>
+            <div class="status-right">
+                <span>📶</span>
+                <span>🔋</span>
+            </div>
+        </div>
+
+        <!-- Screen Container -->
+        <div class="screen-container">
+            <!-- =============== SCREEN 1: LOGIN =============== -->
+            <div id="s-agent-login" class="screen active">
+                <div class="login-container">
+                    <div class="logo">DOMO</div>
+                    <div class="logo-subtitle">AGENT SÉCURITÉ</div>
+
+                    <div class="residence-info">
+                        <div class="residence-info-name">SecurPlus CI</div>
+                        <div>Cité Les Palmiers</div>
+                    </div>
+
+                    <div class="form-group" style="width: 100%; padding: 0 20px;">
+                        <label>Badge ID</label>
+                        <input type="text" id="badgeId" class="form-input" placeholder="Ex: SEC-2024-001" value="">
+
+                        <label>Code PIN (4 chiffres)</label>
+                        <input type="password" id="pinCode" class="form-input" placeholder="••••" maxlength="4" inputmode="numeric">
+
+                        <button class="btn btn-primary" onclick="loginAgent()">ENTRER</button>
+                        <button class="btn btn-secondary" onclick="openQRValidator()">Présenter badge QR</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============== SCREEN 2: HOME DASHBOARD =============== -->
+            <div id="s-agent-home" class="screen">
+                <div class="screen-header">
+                    <div class="header-left">
+                        <h1>Agent Dashboard</h1>
+                        <p>KONAN MICHEL • Badge: SEC-2024-001</p>
+                    </div>
+                    <div class="header-right">
+                        <div style="font-size: 12px; font-weight: 600;">Service 14h-22h</div>
+                        <div class="status-badge">
+                            <span class="pulse-dot"></span>
+                            EN SERVICE
+                        </div>
+                    </div>
+                </div>
+
+                <div class="screen-content">
+                    <!-- Quick Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Ronde en cours</div>
+                            <div class="stat-value" id="statRonde">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Incidents ouverts</div>
+                            <div class="stat-value" id="statIncidents">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Visiteurs</div>
+                            <div class="stat-value" id="statVisitors">0</div>
+                        </div>
+                    </div>
+
+                    <!-- SOS Button -->
+                    <button class="sos-button" onclick="triggerSOS()">
+                        <div class="sos-icon">🚨</div>
+                        <div>URGENCE</div>
+                        <div style="font-size: 12px;">SOS</div>
+                    </button>
+
+                    <!-- Action Grid -->
+                    <div class="action-grid">
+                        <div class="action-card" onclick="navigateAgent('ronde')">
+                            <div class="action-icon">📍</div>
+                            <div class="action-label">Pointer Ronde</div>
+                        </div>
+                        <div class="action-card" onclick="navigateAgent('acces')">
+                            <div class="action-icon">🚪</div>
+                            <div class="action-label">Contrôle Accès</div>
+                        </div>
+                        <div class="action-card" onclick="openIncidentForm()">
+                            <div class="action-icon">⚠️</div>
+                            <div class="action-label">Signaler Incident</div>
+                        </div>
+                        <div class="action-card" onclick="navigateAgent('acces')">
+                            <div class="action-icon">👥</div>
+                            <div class="action-label">Visiteurs</div>
+                        </div>
+                        <div class="action-card" onclick="navigateAgent('incidents')">
+                            <div class="action-icon">📋</div>
+                            <div class="action-label">Feed Incidents</div>
+                        </div>
+                        <div class="action-card" onclick="navigateAgent('badge')">
+                            <div class="action-icon">🏅</div>
+                            <div class="action-label">Mon Badge</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============== SCREEN 3: RONDES =============== -->
+            <div id="s-agent-ronde" class="screen">
+                <div class="screen-header">
+                    <div class="header-left">
+                        <h1>Rondes</h1>
+                        <p id="ronde-shift">Service 14h-22h</p>
+                    </div>
+                </div>
+
+                <div class="screen-content">
+                    <!-- Active Ronde Card -->
+                    <div class="ronde-card">
+                        <div class="ronde-header">
+                            <div>
+                                <div class="ronde-zone">Bloc A-B</div>
+                                <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">Zone assignée</div>
+                            </div>
+                            <div class="ronde-timer" id="ronde-timer">00:00</div>
+                        </div>
+                        <div class="ronde-info">
+                            <span>Début: 14:00</span>
+                            <span>Fin prévue: 14:45</span>
+                        </div>
+                        <div>
+                            <div style="font-size: 10px; color: var(--muted); margin-bottom: 6px;">
+                                Progression: <span id="ronde-progress-text">0</span>/4 points
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="ronde-progress-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Checkpoints -->
+                    <div class="checkpoints-list" id="checkpoints-list">
+                        <!-- Generated by JS -->
+                    </div>
+
+                    <!-- Planning Accordion -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title">Planning des rondes</div>
+                            <div class="accordion-arrow">▼</div>
+                        </div>
+                        <div class="accordion-content">
+                            <div id="planning-list">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============== SCREEN 4: ACCES CONTROL =============== -->
+            <div id="s-agent-acces" class="screen">
+                <div class="screen-header">
+                    <div class="header-left">
+                        <h1>Contrôle Accès</h1>
+                        <p>Portail - Entrée principale</p>
+                    </div>
+                </div>
+
+                <div class="screen-content">
+                    <!-- Tabs -->
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab(event, 'tab-qr')">QR Scanner</button>
+                        <button class="tab" onclick="switchTab(event, 'tab-manuel')">Saisie Manuelle</button>
+                        <button class="tab" onclick="switchTab(event, 'tab-log')">Log Accès</button>
+                    </div>
+
+                    <!-- TAB 1: QR Scanner -->
+                    <div id="tab-qr" class="tab-content active">
+                        <div class="scanner-frame">
+                            <div class="scanner-overlay"></div>
+                            <div class="scanner-line"></div>
+                            <div class="scanner-text">En attente de scan...</div>
+                        </div>
+                        <button class="btn btn-teal" onclick="simulateValidQR()" style="margin-bottom: 8px;">Simuler QR Valide</button>
+                        <button class="btn btn-secondary" onclick="simulateInvalidQR()" style="margin-bottom: 12px;">Simuler QR Invalide</button>
+
+                        <div style="font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Derniers scans</div>
+                        <div class="recent-scans" id="recent-scans-list">
+                            <div class="scan-item">
+                                <div class="scan-item-name">En attente de scan...</div>
+                                <div class="scan-item-time">--:--</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: Saisie Manuelle -->
+                    <div id="tab-manuel" class="tab-content">
+                        <div class="form-group">
+                            <label>Nom du visiteur</label>
+                            <input type="text" class="form-input" id="visitor-name" placeholder="Ex: M. Diallo">
+
+                            <label>Résidence ciblée</label>
+                            <select class="form-input" id="residence-select" style="appearance: none; cursor: pointer;">
+                                <option value="">-- Sélectionner --</option>
+                                <option value="A01">A01</option>
+                                <option value="A02">A02</option>
+                                <option value="B05">B05</option>
+                                <option value="C02">C02</option>
+                            </select>
+
+                            <label>Motif</label>
+                            <select class="form-input" id="motif-select" style="appearance: none; cursor: pointer;">
+                                <option value="">-- Sélectionner --</option>
+                                <option value="Livraison">Livraison</option>
+                                <option value="Visite famille">Visite famille</option>
+                                <option value="Technicien">Technicien</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+
+                            <label>Plaque (optionnel)</label>
+                            <input type="text" class="form-input" id="plaque-input" placeholder="Ex: AB 1234 CI">
+
+                            <button class="btn btn-secondary" onclick="photoCapture()" style="margin-bottom: 12px;">📷 Photo visiteur</button>
+
+                            <button class="btn btn-teal" onclick="authorizeAccess()">✓ Autoriser entrée</button>
+                            <button class="btn btn-secondary" onclick="denyAccess()" style="margin-top: 8px;">✗ Refuser</button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: Log Accès -->
+                    <div id="tab-log" class="tab-content">
+                        <div class="incidents-count">
+                            <span>Total</span>
+                            <div class="incidents-count-badge" id="log-count">4</div>
+                        </div>
+                        <div class="incidents-feed" id="acces-log-list">
+                            <!-- Generated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============== SCREEN 5: INCIDENTS =============== -->
+            <div id="s-agent-incidents" class="screen">
+                <div class="screen-header">
+                    <div class="header-left">
+                        <h1>Incidents</h1>
+                        <p>Cité Les Palmiers</p>
+                    </div>
+                </div>
+
+                <div class="screen-content">
+                    <button class="btn btn-primary" onclick="openIncidentForm()" style="margin-bottom: 16px;">🚨 Signaler Incident</button>
+
+                    <div class="incidents-count">
+                        <span>Incidents actifs</span>
+                        <div class="incidents-count-badge" id="incidents-count">3</div>
+                    </div>
+
+                    <div class="incidents-feed" id="incidents-feed-list">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============== SCREEN 6: BADGE =============== -->
+            <div id="s-agent-badge" class="screen">
+                <div class="screen-header">
+                    <div class="header-left">
+                        <h1>Mon Badge</h1>
+                        <p>Badge numérique de sécurité</p>
+                    </div>
+                </div>
+
+                <div class="screen-content">
+                    <div class="badge-display" id="badge-card" onclick="flipBadge()">
+                        <!-- Front -->
+                        <div class="badge-front">
+                            <div class="badge-top">
+                                <div class="badge-logo">DOMO</div>
+                                <div class="badge-title">Sécurité</div>
+                            </div>
+                            <div class="badge-center">
+                                <div class="badge-avatar">KM</div>
+                                <div class="badge-name">KONAN MICHEL</div>
+                                <div class="badge-society">SecurPlus CI</div>
+                            </div>
+                            <div class="badge-bottom">
+                                <div class="badge-info">
+                                    <div class="badge-info-label">Badge ID</div>
+                                    <div class="badge-info-value">SEC-2024-001</div>
+                                </div>
+                                <div class="badge-info">
+                                    <div class="badge-info-label">Valide jusqu'au</div>
+                                    <div class="badge-info-value">31 Déc 2026</div>
+                                </div>
+                                <div class="badge-status">ACCRÉDITÉ ✓</div>
+                            </div>
+                        </div>
+                        <!-- Back (QR) -->
+                        <div class="badge-back">
+                            <div style="text-align: center; margin-top: 10px;">
+                                <div class="badge-logo" style="margin-bottom: 8px;">DOMO</div>
+                                <div class="qr-code">█▀█ █▀█</div>
+                                <div class="qr-text">Scanner pour vérifier</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="geofencing-section">
+                        <div class="geofencing-title">Géolocalisation</div>
+                        <div class="geofencing-item">
+                            <div class="geofencing-zone">Zone assignée: Bloc A-B</div>
+                            <div class="geofencing-status">
+                                <span class="pulse-dot" style="width: 4px; height: 4px;"></span>
+                                OK
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" id="nav-home" onclick="navigateAgent('home')">
+                <div style="font-size: 20px;">🏠</div>
+                <div class="nav-label">Accueil</div>
+            </div>
+            <div class="nav-item" id="nav-ronde" onclick="navigateAgent('ronde')">
+                <div style="font-size: 20px;">📍</div>
+                <div class="nav-label">Ronde</div>
+            </div>
+            <div class="nav-item" id="nav-acces" onclick="navigateAgent('acces')">
+                <div style="font-size: 20px;">🚪</div>
+                <div class="nav-label">Accès</div>
+            </div>
+            <div class="nav-item" id="nav-incidents" onclick="navigateAgent('incidents')">
+                <div style="font-size: 20px;">⚠️</div>
+                <div class="nav-label">Incidents</div>
+            </div>
+            <div class="nav-item" id="nav-badge" onclick="navigateAgent('badge')">
+                <div style="font-size: 20px;">🏅</div>
+                <div class="nav-label">Badge</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal" id="modal-content">
+            <!-- Modal content generated by JS -->
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" style="display: none;"></div>
+
+    <script>
+        // ============== DATA ==============
+        const AGENT = {
+            name: 'KONAN MICHEL',
+            badgeId: 'SEC-2024-001',
+            society: 'SecurPlus CI',
+            zone: 'Bloc A-B',
+            shift: '14h-22h'
+        };
+
+        const rondeActive = {
+            zone: 'Bloc A-B',
+            heureDebut: '14:00',
+            heureFin: '14:45',
+            checkpoints: [
+                {nom:'Entrée Bloc A', pointe:false, heure:null},
+                {nom:'Parking sous-sol', pointe:false, heure:null},
+                {nom:'Jardins communs', pointe:false, heure:null},
+                {nom:'Sortie Bloc B', pointe:false, heure:null}
+            ]
+        };
+
+        const planningRondes = [
+            {zone:'Bloc A-B', debut:'14:00', fin:'14:45', statut:'en_cours'},
+            {zone:'Portail+Parking', debut:'16:00', fin:'16:30', statut:'planifiee'},
+            {zone:'Bloc C-D', debut:'18:00', fin:'18:45', statut:'planifiee'},
+            {zone:'Tour complète', debut:'22:00', fin:'23:00', statut:'planifiee'},
+        ];
+
+        const logAccesAgent = [
+            {heure:'14:25', visiteur:'M. Diallo Ibrahima', residence:'A04', motif:'Livraison', statut:'entré'},
+            {heure:'13:50', visiteur:'Mme Kone Aissatou', residence:'B07', motif:'Visite famille', statut:'entré'},
+            {heure:'12:30', visiteur:'M. Ouattara Jean', residence:'C02', motif:'Technicien', statut:'sorti'},
+            {heure:'11:15', visiteur:'Inconnu', residence:'???', motif:'???', statut:'refusé'},
+        ];
+
+        const listeNoire = [
+            {nom:'Inconnu X', description:'Vol à main armée Mars 2025', signalement:'Homme, 30-35 ans, cicatrice joue gauche'},
+        ];
+
+        let incidentsFeed = [
+            {id:1, type:'intrusion', gravite:'critique', description:'Individu non identifié dans parking sous-sol',
+             source:'Agent Konan Michel', heure:'14:10', statut:'en_cours', icon:'🔓'},
+            {id:2, type:'personne_suspecte', gravite:'moyen', description:'Homme qui rôde autour du Bloc B',
+             source:'Agent Touré Seydou', heure:'13:45', statut:'ouvert', icon:'👤'},
+            {id:3, type:'autre', gravite:'faible', description:'Lumière panne Bloc C escalier 2',
+             source:'Résident C05', heure:'11:20', statut:'ouvert', icon:'⚠️'},
+        ];
+
+        let rondeTimer = null;
+        let rondeSeconds = 0;
+
+        // ============== INIT ==============
+        function initApp() {
+            renderCheckpoints();
+            renderPlanning();
+            renderIncidentsFeed();
+            renderAccesLog();
+            updateStats();
+            startRondeTimer();
+        }
+
+        function renderCheckpoints() {
+            const list = document.getElementById('checkpoints-list');
+            list.innerHTML = rondeActive.checkpoints.map((cp, i) => {
+                const statusClass = cp.pointe ? 'done' : 'pending';
+                const statusText = cp.pointe ? `✅ Pointé ${cp.heure}` : '⏳ En attente';
+                const btnDisabled = cp.pointe ? 'done' : '';
+                return `
+                    <div class="checkpoint-item">
+                        <div class="checkpoint-info">
+                            <div class="checkpoint-name">${cp.nom}</div>
+                            <div class="checkpoint-status ${statusClass}">${statusText}</div>
+                        </div>
+                        <button class="btn-pointer ${btnDisabled}" onclick="pointerCheckpoint(${i})" ${cp.pointe ? 'disabled' : ''}>
+                            POINTER ICI
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderPlanning() {
+            const list = document.getElementById('planning-list');
+            list.innerHTML = planningRondes.map(p => `
+                <div class="planning-item">
+                    <div>
+                        <div class="planning-zone">${p.zone}</div>
+                        <div class="planning-time">${p.debut}-${p.fin}</div>
+                    </div>
+                    <div class="planning-status ${p.statut}">${p.statut === 'en_cours' ? 'EN COURS' : 'PLANIFIÉE'}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderIncidentsFeed() {
+            const list = document.getElementById('incidents-feed-list');
+            document.getElementById('incidents-count').textContent = incidentsFeed.filter(i => i.statut !== 'resolu').length;
+            
+            list.innerHTML = incidentsFeed.map(inc => {
+                const graviteClass = inc.gravite === 'critique' ? 'critical' : inc.statut === 'resolu' ? 'resolved' : '';
+                return `
+                    <div class="incident-item ${graviteClass}">
+                        <div class="incident-header">
+                            <div class="incident-type">${inc.icon} ${inc.type.replace('_', ' ').toUpperCase()}</div>
+                            <div class="incident-status ${inc.statut}">${inc.statut.toUpperCase()}</div>
+                        </div>
+                        <div class="incident-desc">${inc.description}</div>
+                        <div class="incident-meta">
+                            <span>${inc.source}</span>
+                            <span>${inc.heure}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderAccesLog() {
+            const list = document.getElementById('acces-log-list');
+            list.innerHTML = logAccesAgent.map(log => {
+                const statusClass = log.statut === 'entré' ? 'valid' : log.statut === 'refusé' ? 'invalid' : 'valid';
+                const statusEmoji = log.statut === 'entré' ? '✓' : log.statut === 'sorti' ? '←' : '✗';
+                return `
+                    <div class="incident-item">
+                        <div class="incident-header">
+                            <div class="incident-type">${log.visiteur}</div>
+                            <div class="visitor-status ${statusClass}">${statusEmoji} ${log.statut}</div>
+                        </div>
+                        <div class="visitor-info">
+                            <div class="visitor-info-row">
+                                <div class="visitor-info-label">Résidence</div>
+                                <div>${log.residence}</div>
+                            </div>
+                            <div class="visitor-info-row">
+                                <div class="visitor-info-label">Motif</div>
+                                <div>${log.motif}</div>
+                            </div>
+                        </div>
+                        <div class="incident-meta" style="margin-top: 6px;">
+                            <span>${log.heure}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('log-count').textContent = logAccesAgent.length;
+        }
+
+        function updateStats() {
+            const completedCheckpoints = rondeActive.checkpoints.filter(cp => cp.pointe).length;
+            const progressPercent = Math.round((completedCheckpoints / rondeActive.checkpoints.length) * 100);
+            
+            document.getElementById('statRonde').textContent = progressPercent + '%';
+            document.getElementById('statIncidents').textContent = incidentsFeed.filter(i => i.statut !== 'resolu').length;
+            document.getElementById('statVisitors').textContent = logAccesAgent.length;
+            
+            document.getElementById('ronde-progress-text').textContent = completedCheckpoints;
+            document.getElementById('ronde-progress-fill').style.width = progressPercent + '%';
+        }
+
+        // ============== NAVIGATION ==============
+        const SCREENS_AGENT = {
+            'home': {screen:'s-agent-home', nav:'nav-home'},
+            'ronde': {screen:'s-agent-ronde', nav:'nav-ronde'},
+            'acces': {screen:'s-agent-acces', nav:'nav-acces'},
+            'incidents': {screen:'s-agent-incidents', nav:'nav-incidents'},
+            'badge': {screen:'s-agent-badge', nav:'nav-badge'},
+        };
+
+        function navigateAgent(key) {
+            const target = SCREENS_AGENT[key];
+            if (!target) return;
+
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            // Show target screen
+            document.getElementById(target.screen).classList.add('active');
+            document.getElementById(target.nav).classList.add('active');
+
+            // Scroll to top
+            document.querySelector('.screen-container').scrollTop = 0;
+        }
+
+        // ============== LOGIN ==============
+        function loginAgent() {
+            const badgeId = document.getElementById('badgeId').value;
+            const pinCode = document.getElementById('pinCode').value;
+
+            if (!badgeId || pinCode.length !== 4) {
+                showToast('Badge ID et PIN requis', 'error');
+                return;
+            }
+
+            showToast('✓ Authentification réussie', 'success');
+            setTimeout(() => {
+                navigateAgent('home');
+                initApp();
+            }, 600);
+        }
+
+        function openQRValidator() {
+            showModal(`
+                <div style="text-align: center;">
+                    <div style="font-size: 48px; margin: 20px 0;">📱</div>
+                    <p style="margin-bottom: 16px;">Présentez votre badge QR au scanner du superviseur.</p>
+                    <button class="btn btn-secondary" onclick="closeModal()">Fermer</button>
+                </div>
+            `);
+        }
+
+        // ============== SOS ==============
+        function triggerSOS() {
+            let countdown = 3;
+            
+            const modal = `
+                <div style="text-align: center;">
+                    <div class="countdown" id="countdown">3</div>
+                    <p style="margin-bottom: 16px; color: var(--muted);">Alerte SOS envoyée dans...</p>
+                    <button class="btn btn-secondary" onclick="closeModal()" style="width: 100%;">Annuler (5s)</button>
+                </div>
+            `;
+            
+            showModal(modal);
+            
+            const countdownEl = document.getElementById('countdown');
+            const timer = setInterval(() => {
+                countdown--;
+                if (countdownEl) countdownEl.textContent = countdown;
+                
+                if (countdown === 0) {
+                    clearInterval(timer);
+                    showSOSConfirmation();
+                }
+            }, 1000);
+        }
+
+        function showSOSConfirmation() {
+            const now = new Date().toLocaleTimeString('fr-FR');
+            const modal = `
+                <div style="text-align: center;">
+                    <div style="font-size: 48px; color: var(--red); margin: 20px 0; animation: pulse 1s infinite;">🚨</div>
+                    <div style="font-size: 18px; font-weight: 700; color: var(--red); margin-bottom: 16px;">ALERTE ENVOYÉE</div>
+                    <div style="background: var(--card); border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 11px; color: var(--text-muted);">
+                        <div><strong>Heure:</strong> ${now}</div>
+                        <div style="margin-top: 6px;"><strong>Position:</strong> Bloc A-B</div>
+                        <div style="margin-top: 6px;"><strong>Alerte envoyée à:</strong></div>
+                        <div style="margin-top: 4px;">✓ Syndic de copropriété</div>
+                        <div>✓ SecurPlus CI</div>
+                        <div>✓ Tous les agents</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="closeModal()" style="width: 100%;">Fermer</button>
+                </div>
+            `;
+            
+            showModal(modal);
+            playAlertSound();
+        }
+
+        // ============== CHECKPOINTS ==============
+        function pointerCheckpoint(index) {
+            if (rondeActive.checkpoints[index].pointe) return;
+
+            rondeActive.checkpoints[index].pointe = true;
+            rondeActive.checkpoints[index].heure = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+
+            renderCheckpoints();
+            updateStats();
+            showToast('✓ Checkpoint pointé — NFC détecté', 'success');
+
+            // Check if all done
+            if (rondeActive.checkpoints.every(cp => cp.pointe)) {
+                setTimeout(showRondeCompletionModal, 800);
+            }
+        }
+
+        function showRondeCompletionModal() {
+            const summary = rondeActive.checkpoints.map(cp => 
+                `<div style="padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 11px;">
+                    <div style="font-weight: 600;">${cp.nom}</div>
+                    <div style="color: var(--text-muted);">${cp.heure}</div>
+                </div>`
+            ).join('');
+
+            const modal = `
+                <div>
+                    <div style="font-size: 16px; font-weight: 700; color: var(--teal); text-align: center; margin-bottom: 16px;">✓ RONDE TERMINÉE</div>
+                    <div style="background: var(--card); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                        ${summary}
+                    </div>
+                    <form>
+                        <label style="font-size: 11px; font-weight: 600; color: var(--muted);">Note de fin de ronde</label>
+                        <textarea id="ronde-note" placeholder="Remarques, observations..." style="margin-bottom: 12px;"></textarea>
+                        <button type="button" class="btn btn-teal" onclick="submitRondeReport()" style="width: 100%;">Soumettre rapport</button>
+                    </form>
+                </div>
+            `;
+
+            showModal(modal);
+        }
+
+        function submitRondeReport() {
+            const note = document.getElementById('ronde-note')?.value || '';
+            showToast('✓ Rapport enregistré', 'success');
+            closeModal();
+            resetRonde();
+        }
+
+        function resetRonde() {
+            rondeActive.checkpoints.forEach(cp => {
+                cp.pointe = false;
+                cp.heure = null;
+            });
+            rondeSeconds = 0;
+            renderCheckpoints();
+            updateStats();
+        }
+
+        // ============== TIMER ==============
+        function startRondeTimer() {
+            if (rondeTimer) clearInterval(rondeTimer);
+            
+            rondeTimer = setInterval(() => {
+                rondeSeconds++;
+                const minutes = Math.floor(rondeSeconds / 60);
+                const seconds = rondeSeconds % 60;
+                const display = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+                const el = document.getElementById('ronde-timer');
+                if (el) el.textContent = display;
+            }, 1000);
+        }
+
+        // ============== QR SCANNER ==============
+        function simulateValidQR() {
+            const visitorCard = `
+                <div style="text-align: center;">
+                    <div style="font-size: 32px; margin: 12px 0;">✓</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--teal); margin-bottom: 16px;">QR VALIDE</div>
+                    <div class="visitor-card">
+                        <div class="visitor-header">
+                            <div class="visitor-name">M. Diallo Ibrahima</div>
+                            <div class="visitor-status valid">✓ AUTORISÉ</div>
+                        </div>
+                        <div class="visitor-info">
+                            <div class="visitor-info-row">
+                                <div class="visitor-info-label">Résidence</div>
+                                <div>A04</div>
+                            </div>
+                            <div class="visitor-info-row">
+                                <div class="visitor-info-label">Motif</div>
+                                <div>Livraison</div>
+                            </div>
+                            <div class="visitor-info-row">
+                                <div class="visitor-info-label">Validité</div>
+                                <div>Aujourd'hui</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-teal" onclick="approveVisitor()" style="width: 100%; margin-top: 12px;">✓ Accès autorisé</button>
+                </div>
+            `;
+            showModal(visitorCard);
+            addRecentScan('M. Diallo Ibrahima', true);
+        }
+
+        function simulateInvalidQR() {
+            const invalidCard = `
+                <div style="text-align: center;">
+                    <div style="font-size: 32px; margin: 12px 0; color: var(--red);">✗</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--red); margin-bottom: 16px;">QR EXPIRÉ/INVALIDE</div>
+                    <div class="blacklist-alert">
+                        <div class="blacklist-alert-title">⛔ PERSONNE SIGNALÉE</div>
+                        <div class="blacklist-alert-desc">Individu figurant sur liste noire - Vol à main armée Mars 2025</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="contactResident()" style="width: 100%; margin-bottom: 8px;">Contacter résident</button>
+                    <button class="btn btn-primary" onclick="denyAccess2()" style="width: 100%;">✗ Refuser entrée</button>
+                </div>
+            `;
+            showModal(invalidCard);
+            addRecentScan('Inconnu X', false);
+            playAlertSound();
+        }
+
+        function addRecentScan(name, valid) {
+            const list = document.getElementById('recent-scans-list');
+            const time = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+            const newItem = document.createElement('div');
+            newItem.className = 'scan-item';
+            newItem.innerHTML = `
+                <div class="scan-item-name">${name}</div>
+                <div class="scan-item-time">${time}</div>
+            `;
+            list.insertBefore(newItem, list.firstChild);
+            if (list.children.length > 3) list.removeChild(list.lastChild);
+        }
+
+        function approveVisitor() {
+            showToast('✓ Accès approuvé', 'success');
+            closeModal();
+        }
+
+        function denyAccess2() {
+            showToast('✗ Accès refusé', 'error');
+            closeModal();
+        }
+
+        function contactResident() {
+            showToast('📞 Appel au résident en cours...', 'success');
+        }
+
+        function authorizeAccess() {
+            const name = document.getElementById('visitor-name').value;
+            if (!name) {
+                showToast('Remplir tous les champs requis', 'error');
+                return;
+            }
+            showToast('✓ Accès autorisé', 'success');
+            document.getElementById('visitor-name').value = '';
+            document.getElementById('motif-select').value = '';
+            document.getElementById('residence-select').value = '';
+        }
+
+        function denyAccess() {
+            showToast('✗ Accès refusé', 'error');
+            document.getElementById('visitor-name').value = '';
+        }
+
+        function photoCapture() {
+            showToast('📷 Photo capturée', 'success');
+        }
+
+        // ============== INCIDENTS ==============
+        function openIncidentForm() {
+            const form = `
+                <div style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">Signaler Incident</div>
+                
+                <div class="form-section">
+                    <div class="form-section-title">Type d'incident</div>
+                    <div class="type-selector">
+                        <button class="type-button" onclick="selectType(this, 'intrusion')"><div class="type-icon">🔓</div>Intrusion</button>
+                        <button class="type-button" onclick="selectType(this, 'bagarre')"><div class="type-icon">👊</div>Bagarre</button>
+                        <button class="type-button" onclick="selectType(this, 'vol')"><div class="type-icon">🔒</div>Vol</button>
+                        <button class="type-button" onclick="selectType(this, 'incendie')"><div class="type-icon">🔥</div>Incendie</button>
+                        <button class="type-button" onclick="selectType(this, 'personne')"><div class="type-icon">👤</div>Personne</button>
+                        <button class="type-button" onclick="selectType(this, 'accident')"><div class="type-icon">🚗</div>Accident</button>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">Gravité</div>
+                    <div class="severity-selector">
+                        <button class="severity-button" onclick="selectSeverity(this, 'faible')">⚪ Faible</button>
+                        <button class="severity-button" onclick="selectSeverity(this, 'moyen')">🟠 Moyen</button>
+                        <button class="severity-button" onclick="selectSeverity(this, 'critique')">🔴 Critique</button>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">Description</div>
+                    <textarea id="incident-desc" placeholder="Détails de l'incident..."></textarea>
+                </div>
+
+                <div class="form-section">
+                    <button class="btn btn-secondary" style="width: 100%;">🎙️ Retranscription vocale</button>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">Localisation</div>
+                    <div class="zone-selector">
+                        <button class="zone-button" onclick="selectZone(this, 'A')">Bloc A</button>
+                        <button class="zone-button" onclick="selectZone(this, 'B')">Bloc B</button>
+                        <button class="zone-button" onclick="selectZone(this, 'C')">Bloc C</button>
+                        <button class="zone-button" onclick="selectZone(this, 'D')">Bloc D</button>
+                        <button class="zone-button" onclick="selectZone(this, 'P')">Portail</button>
+                        <button class="zone-button" onclick="selectZone(this, 'PK')">Parking</button>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="submitIncident()" style="width: 100%; margin-top: 16px;">Soumettre</button>
+            `;
+
+            showModal(form);
+        }
+
+        let incidentData = {type: null, severity: null, zone: null};
+
+        function selectType(btn, type) {
+            document.querySelectorAll('.type-button').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            incidentData.type = type;
+        }
+
+        function selectSeverity(btn, sev) {
+            document.querySelectorAll('.severity-button').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            incidentData.severity = sev;
+        }
+
+        function selectZone(btn, zone) {
+            document.querySelectorAll('.zone-button').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            incidentData.zone = zone;
+        }
+
+        function submitIncident() {
+            const desc = document.getElementById('incident-desc')?.value || '';
+            
+            if (!incidentData.type || !incidentData.severity || !desc) {
+                showToast('Remplir tous les champs', 'error');
+                return;
+            }
+
+            // Add to feed
+            const newIncident = {
+                id: incidentsFeed.length + 1,
+                type: incidentData.type,
+                gravite: incidentData.severity,
+                description: desc,
+                source: 'Agent Konan Michel',
+                heure: new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}),
+                statut: 'ouvert',
+                icon: '⚠️'
+            };
+
+            incidentsFeed.unshift(newIncident);
+
+            if (incidentData.severity === 'critique') {
+                showToast('🚨 Alerte envoyée au syndic et à la société de sécurité', 'success');
+                setTimeout(triggerSOS, 600);
+            } else {
+                showToast('✓ Incident enregistré', 'success');
+            }
+
+            closeModal();
+            renderIncidentsFeed();
+            incidentData = {type: null, severity: null, zone: null};
+        }
+
+        // ============== BADGE ==============
+        function flipBadge() {
+            const card = document.getElementById('badge-card');
+            card.classList.toggle('flipped');
+        }
+
+        // ============== UTILS ==============
+        function showModal(content) {
+            const overlay = document.getElementById('modal-overlay');
+            const modal = document.getElementById('modal-content');
+            modal.innerHTML = content;
+            overlay.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        function switchTab(e, tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            
+            e.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const arrow = header.querySelector('.accordion-arrow');
+            
+            content.classList.toggle('open');
+            arrow.classList.toggle('open');
+        }
+
+        function playAlertSound() {
+            // Simulated alert sound
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.frequency.value = 800;
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // ============== STARTUP ==============
+        document.addEventListener('DOMContentLoaded', () => {
+            // Pre-fill login with test credentials
+            document.getElementById('badgeId').value = 'SEC-2024-001';
+            document.getElementById('pinCode').value = '1234';
+        });
+
+        // Close modal on overlay click
+        document.getElementById('modal-overlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modal-overlay')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
