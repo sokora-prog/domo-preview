@@ -1466,8 +1466,8 @@
             </div>
             <div class="status-center">SecurPlus CI</div>
             <div class="status-right">
-                <span>&#55357;&#56566;</span>
-                <span>&#55357;&#56587;</span>
+                <span>&#128246;</span>
+                <span>&#128267;</span>
             </div>
         </div>
 
@@ -1532,7 +1532,7 @@
 
                     <!-- SOS Button -->
                     <button class="sos-button" onclick="triggerSOS()">
-                        <div class="sos-icon">&#55357;&#57000;</div>
+                        <div class="sos-icon">&#128680;</div>
                         <div>URGENCE</div>
                         <div style="font-size: 12px;">SOS</div>
                     </button>
@@ -1540,11 +1540,11 @@
                     <!-- Action Grid -->
                     <div class="action-grid">
                         <div class="action-card" onclick="navigateAgent('ronde')">
-                            <div class="action-icon">&#55357;&#56525;</div>
+                            <div class="action-icon">&#128205;</div>
                             <div class="action-label">Pointer Ronde</div>
                         </div>
                         <div class="action-card" onclick="navigateAgent('acces')">
-                            <div class="action-icon">&#55357;&#57002;</div>
+                            <div class="action-icon">&#128682;</div>
                             <div class="action-label">Contr&#244;le Acc&#232;s</div>
                         </div>
                         <div class="action-card" onclick="openIncidentForm()">
@@ -1552,15 +1552,15 @@
                             <div class="action-label">Signaler Incident</div>
                         </div>
                         <div class="action-card" onclick="navigateAgent('acces')">
-                            <div class="action-icon">&#55357;&#56421;</div>
+                            <div class="action-icon">&#128101;</div>
                             <div class="action-label">Visiteurs</div>
                         </div>
                         <div class="action-card" onclick="navigateAgent('incidents')">
-                            <div class="action-icon">&#55357;&#56523;</div>
+                            <div class="action-icon">&#128203;</div>
                             <div class="action-label">Feed Incidents</div>
                         </div>
                         <div class="action-card" onclick="navigateAgent('badge')">
-                            <div class="action-icon">&#55356;&#57285;</div>
+                            <div class="action-icon">&#127941;</div>
                             <div class="action-label">Mon Badge</div>
                         </div>
                     </div>
@@ -1683,7 +1683,7 @@
                             <label>Plaque (optionnel)</label>
                             <input type="text" class="form-input" id="plaque-input" placeholder="Ex: AB 1234 CI">
 
-                            <button class="btn btn-secondary" onclick="photoCapture()" style="margin-bottom: 12px;">&#55357;&#56567; Photo visiteur</button>
+                            <button class="btn btn-secondary" onclick="photoCapture()" style="margin-bottom: 12px;">&#128247; Photo visiteur</button>
 
                             <button class="btn btn-teal" onclick="authorizeAccess()">&#10003; Autoriser entr&#233;e</button>
                             <button class="btn btn-secondary" onclick="denyAccess()" style="margin-top: 8px;">&#10007; Refuser</button>
@@ -1713,7 +1713,7 @@
                 </div>
 
                 <div class="screen-content">
-                    <button class="btn btn-primary" onclick="openIncidentForm()" style="margin-bottom: 16px;">&#55357;&#57000; Signaler Incident</button>
+                    <button class="btn btn-primary" onclick="openIncidentForm()" style="margin-bottom: 16px;">&#128680; Signaler Incident</button>
 
                     <div class="incidents-count">
                         <span>Incidents actifs</span>
@@ -1787,15 +1787,15 @@
         <!-- Bottom Navigation -->
         <div class="bottom-nav">
             <div class="nav-item active" id="nav-home" onclick="navigateAgent('home')">
-                <div style="font-size: 20px;">&#55356;&#57312;</div>
+                <div style="font-size: 20px;">&#127968;</div>
                 <div class="nav-label">Accueil</div>
             </div>
             <div class="nav-item" id="nav-ronde" onclick="navigateAgent('ronde')">
-                <div style="font-size: 20px;">&#55357;&#56525;</div>
+                <div style="font-size: 20px;">&#128205;</div>
                 <div class="nav-label">Ronde</div>
             </div>
             <div class="nav-item" id="nav-acces" onclick="navigateAgent('acces')">
-                <div style="font-size: 20px;">&#55357;&#57002;</div>
+                <div style="font-size: 20px;">&#128682;</div>
                 <div class="nav-label">Acc&#232;s</div>
             </div>
             <div class="nav-item" id="nav-incidents" onclick="navigateAgent('incidents')">
@@ -1803,7 +1803,7 @@
                 <div class="nav-label">Incidents</div>
             </div>
             <div class="nav-item" id="nav-badge" onclick="navigateAgent('badge')">
-                <div style="font-size: 20px;">&#55356;&#57285;</div>
+                <div style="font-size: 20px;">&#127941;</div>
                 <div class="nav-label">Badge</div>
             </div>
         </div>
@@ -1861,9 +1861,9 @@
 
         let incidentsFeed = [
             {id:1, type:'intrusion', gravite:'critique', description:'Individu non identifi&#233; dans parking sous-sol',
-             source:'Agent Konan Michel', heure:'14:10', statut:'en_cours', icon:'&#55357;&#56595;'},
+             source:'Agent Konan Michel', heure:'14:10', statut:'en_cours', icon:'&#128275;'},
             {id:2, type:'personne_suspecte', gravite:'moyen', description:'Homme qui r&#244;de autour du Bloc B',
-             source:'Agent Tour&#233; Seydou', heure:'13:45', statut:'ouvert', icon:'&#55357;&#56420;'},
+             source:'Agent Tour&#233; Seydou', heure:'13:45', statut:'ouvert', icon:'&#128100;'},
             {id:3, type:'autre', gravite:'faible', description:'Lumi&#232;re panne Bloc C escalier 2',
              source:'R&#233;sident C05', heure:'11:20', statut:'ouvert', icon:'&#9888;&#65039;'},
         ];
@@ -2023,7 +2023,7 @@
         function openQRValidator() {
             showModal(`
                 <div style="text-align: center;">
-                    <div style="font-size: 48px; margin: 20px 0;">&#55357;&#56561;</div>
+                    <div style="font-size: 48px; margin: 20px 0;">&#128241;</div>
                     <p style="margin-bottom: 16px;">Pr&#233;sentez votre badge QR au scanner du superviseur.</p>
                     <button class="btn btn-secondary" onclick="closeModal()">Fermer</button>
                 </div>
@@ -2060,7 +2060,7 @@
             const now = new Date().toLocaleTimeString('fr-FR');
             const modal = `
                 <div style="text-align: center;">
-                    <div style="font-size: 48px; color: var(--red); margin: 20px 0; animation: pulse 1s infinite;">&#55357;&#57000;</div>
+                    <div style="font-size: 48px; color: var(--red); margin: 20px 0; animation: pulse 1s infinite;">&#128680;</div>
                     <div style="font-size: 18px; font-weight: 700; color: var(--red); margin-bottom: 16px;">ALERTE ENVOY&#201;E</div>
                     <div style="background: var(--card); border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 11px; color: var(--text-muted);">
                         <div><strong>Heure:</strong> ${now}</div>
@@ -2226,7 +2226,7 @@
         }
 
         function contactResident() {
-            showToast('&#55357;&#56542; Appel au r&#233;sident en cours...', 'success');
+            showToast('&#128222; Appel au r&#233;sident en cours...', 'success');
         }
 
         function authorizeAccess() {
@@ -2247,7 +2247,7 @@
         }
 
         function photoCapture() {
-            showToast('&#55357;&#56567; Photo captur&#233;e', 'success');
+            showToast('&#128247; Photo captur&#233;e', 'success');
         }
 
         // ============== INCIDENTS ==============
@@ -2258,12 +2258,12 @@
                 <div class="form-section">
                     <div class="form-section-title">Type d'incident</div>
                     <div class="type-selector">
-                        <button class="type-button" onclick="selectType(this, 'intrusion')"><div class="type-icon">&#55357;&#56595;</div>Intrusion</button>
-                        <button class="type-button" onclick="selectType(this, 'bagarre')"><div class="type-icon">&#55357;&#56394;</div>Bagarre</button>
-                        <button class="type-button" onclick="selectType(this, 'vol')"><div class="type-icon">&#55357;&#56594;</div>Vol</button>
-                        <button class="type-button" onclick="selectType(this, 'incendie')"><div class="type-icon">&#55357;&#56613;</div>Incendie</button>
-                        <button class="type-button" onclick="selectType(this, 'personne')"><div class="type-icon">&#55357;&#56420;</div>Personne</button>
-                        <button class="type-button" onclick="selectType(this, 'accident')"><div class="type-icon">&#55357;&#56983;</div>Accident</button>
+                        <button class="type-button" onclick="selectType(this, 'intrusion')"><div class="type-icon">&#128275;</div>Intrusion</button>
+                        <button class="type-button" onclick="selectType(this, 'bagarre')"><div class="type-icon">&#128074;</div>Bagarre</button>
+                        <button class="type-button" onclick="selectType(this, 'vol')"><div class="type-icon">&#128274;</div>Vol</button>
+                        <button class="type-button" onclick="selectType(this, 'incendie')"><div class="type-icon">&#128293;</div>Incendie</button>
+                        <button class="type-button" onclick="selectType(this, 'personne')"><div class="type-icon">&#128100;</div>Personne</button>
+                        <button class="type-button" onclick="selectType(this, 'accident')"><div class="type-icon">&#128663;</div>Accident</button>
                     </div>
                 </div>
 
@@ -2271,8 +2271,8 @@
                     <div class="form-section-title">Gravit&#233;</div>
                     <div class="severity-selector">
                         <button class="severity-button" onclick="selectSeverity(this, 'faible')">&#9898; Faible</button>
-                        <button class="severity-button" onclick="selectSeverity(this, 'moyen')">&#55357;&#57312; Moyen</button>
-                        <button class="severity-button" onclick="selectSeverity(this, 'critique')">&#55357;&#56628; Critique</button>
+                        <button class="severity-button" onclick="selectSeverity(this, 'moyen')">&#128992; Moyen</button>
+                        <button class="severity-button" onclick="selectSeverity(this, 'critique')">&#128308; Critique</button>
                     </div>
                 </div>
 
@@ -2282,7 +2282,7 @@
                 </div>
 
                 <div class="form-section">
-                    <button class="btn btn-secondary" style="width: 100%;">&#55356;&#57241;&#65039; Retranscription vocale</button>
+                    <button class="btn btn-secondary" style="width: 100%;">&#127897;&#65039; Retranscription vocale</button>
                 </div>
 
                 <div class="form-section">
@@ -2346,7 +2346,7 @@
             incidentsFeed.unshift(newIncident);
 
             if (incidentData.severity === 'critique') {
-                showToast('&#55357;&#57000; Alerte envoy&#233;e au syndic et &#224; la soci&#233;t&#233; de s&#233;curit&#233;', 'success');
+                showToast('&#128680; Alerte envoy&#233;e au syndic et &#224; la soci&#233;t&#233; de s&#233;curit&#233;', 'success');
                 setTimeout(triggerSOS, 600);
             } else {
                 showToast('&#10003; Incident enregistr&#233;', 'success');
