@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KYRION &#226;&#8364;&#8221; Lisez les march&#195;&#169;s. Avant tout le monde.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0A0E1A;
+      --bg2: #0D1220;
+      --card: #111827;
+      --card2: #1A2035;
+      --gold: #F0B90B;
+      --gold2: #D4A509;
+      --buy: #00C076;
+      --sell: #FF4B4B;
+      --text: #E8ECF0;
+      --muted: #8B95A5;
+      --border: #1E2A3A;
+      --mono: 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; TICKER &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .ticker-wrap {
+      background: #070B14;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .ticker-inner {
+      display: flex;
+      gap: 48px;
+      animation: ticker 28s linear infinite;
+      white-space: nowrap;
+      align-items: center;
+    }
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-family: var(--mono);
+      color: var(--muted);
+    }
+    .ticker-item .name { color: var(--text); font-weight: 600; }
+    .ticker-item .up { color: var(--buy); }
+    .ticker-item .dn { color: var(--sell); }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; NAV &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    nav {
+      position: sticky;
+      top: 36px;
+      z-index: 999;
+      background: rgba(10,14,26,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    .nav-logo span { color: var(--text); }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--gold);
+      color: #000 !important;
+      font-weight: 700 !important;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-size: 13px !important;
+      transition: background .2s, transform .15s !important;
+    }
+    .nav-cta:hover { background: var(--gold2) !important; transform: translateY(-1px); }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+    .nav-toggle span {
+      display: block; width: 22px; height: 2px;
+      background: var(--text); margin: 5px 0; border-radius: 2px;
+      transition: .3s;
+    }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; HERO &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .hero {
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      padding: 80px 5% 60px;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(240,185,11,0.07) 0%, transparent 70%),
+                  radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,192,118,0.05) 0%, transparent 60%),
+                  var(--bg);
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(240,185,11,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240,185,11,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 820px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(240,185,11,0.1);
+      border: 1px solid rgba(240,185,11,0.3);
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 50px;
+      margin-bottom: 28px;
+    }
+    .hero-badge::before { content: '&#226;&#353;&#160;'; font-size: 13px; }
+    .hero h1 {
+      font-size: clamp(36px, 7vw, 80px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #fff 0%, #d0d8e8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--gold), #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: clamp(15px, 2vw, 19px);
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      font-weight: 400;
+      line-height: 1.7;
+    }
+    .hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--gold);
+      color: #000;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 32px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all .2s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(240,185,11,0.3); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all .2s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+    .hero-stats {
+      display: flex; justify-content: center; gap: 40px;
+      margin-top: 56px; flex-wrap: wrap;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat .val {
+      font-size: 28px; font-weight: 800;
+      font-family: var(--mono);
+      color: var(--gold);
+    }
+    .hero-stat .lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .trial-note { margin-top: 16px; font-size: 12px; color: var(--muted); }
+    .trial-note span { color: var(--buy); font-weight: 600; }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; SECTIONS COMMON &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    section { padding: 80px 5%; }
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(26px, 4vw, 44px); font-weight: 800;
+      letter-spacing: -0.5px; margin-bottom: 14px; line-height: 1.15;
+    }
+    .section-sub { font-size: 16px; color: var(--muted); max-width: 580px; }
+    .section-head { text-align: center; margin-bottom: 60px; }
+    .section-head .section-sub { margin: 0 auto; }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; CHART ANIMATION SECTION &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .chart-section { background: var(--bg2); }
+    .chart-wrapper {
+      max-width: 900px; margin: 0 auto;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+    }
+    .chart-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .chart-header .pair { font-weight: 700; font-size: 15px; }
+    .chart-header .tf {
+      background: var(--card2); padding: 3px 10px; border-radius: 4px;
+      font-size: 12px; font-weight: 600; color: var(--muted);
+    }
+    .chart-header .price {
+      margin-left: auto; font-family: var(--mono);
+      font-size: 18px; font-weight: 700; color: var(--buy);
+    }
+    .chart-body { position: relative; height: 280px; padding: 20px; overflow: hidden; }
+    .chart-canvas { width: 100%; height: 100%; position: relative; }
+    svg.price-chart { width: 100%; height: 100%; }
+    .chart-overlay {
+      position: absolute; top: 20px; right: 20px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .signal-box {
+      background: rgba(0,192,118,0.12);
+      border: 1px solid var(--buy);
+      border-radius: 8px; padding: 10px 16px;
+      text-align: center;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.5s ease;
+    }
+    .signal-box.visible { opacity: 1; transform: scale(1); }
+    .signal-box .sig-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .signal-box .sig-action { font-size: 22px; font-weight: 900; color: var(--buy); }
+    .signal-box .sig-score {
+      font-size: 13px; font-weight: 700; color: var(--text);
+      font-family: var(--mono); margin-top: 4px;
+    }
+    .indicators-list {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 10px; margin-top: 24px;
+    }
+    .ind-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 6px; padding: 7px 14px; font-size: 13px;
+      opacity: 0; transform: translateY(10px);
+      transition: all 0.4s ease;
+    }
+    .ind-badge.visible { opacity: 1; transform: translateY(0); }
+    .ind-badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; MARKETS &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .markets-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px; max-width: 900px; margin: 0 auto;
+    }
+    .market-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px;
+    }
+    .market-card h3 {
+      font-size: 16px; font-weight: 700; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .market-badge-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .mkt-badge {
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 6px; padding: 6px 14px; font-size: 13px;
+      font-weight: 600; font-family: var(--mono);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .mkt-badge .dot { width: 7px; height: 7px; border-radius: 50%; }
+    .mkt-locked { opacity: 0.4; position: relative; }
+    .lock-icon { font-size: 11px; }
+    .market-note {
+      margin-top: 20px; padding: 12px 16px;
+      background: rgba(240,185,11,0.07); border: 1px solid rgba(240,185,11,0.2);
+      border-radius: 8px; font-size: 13px; color: var(--muted);
+      text-align: center;
+    }
+    .market-note strong { color: var(--gold); }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; PRICING &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .pricing-section { background: var(--bg2); }
+    .plans-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 20px; max-width: 1100px; margin: 0 auto 60px;
+    }
+    .plan-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 32px 28px; position: relative;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .plan-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .plan-card.featured {
+      border-color: var(--gold);
+      box-shadow: 0 0 40px rgba(240,185,11,0.12);
+    }
+    .plan-popular {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: var(--gold); color: #000;
+      font-size: 11px; font-weight: 800; letter-spacing: 1px;
+      text-transform: uppercase; padding: 4px 16px; border-radius: 50px;
+    }
+    .plan-icon { font-size: 28px; margin-bottom: 10px; }
+    .plan-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .plan-tagline { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .plan-price-block { margin-bottom: 24px; }
+    .plan-price {
+      font-size: 34px; font-weight: 900; font-family: var(--mono);
+      color: var(--gold); line-height: 1;
+    }
+    .plan-price .currency { font-size: 16px; font-weight: 600; vertical-align: top; margin-top: 6px; display: inline-block; }
+    .plan-period { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .plan-annual {
+      font-size: 12px; color: var(--buy); font-weight: 600; margin-top: 6px;
+    }
+    .plan-features { list-style: none; margin-bottom: 28px; }
+    .plan-features li {
+      font-size: 13.5px; padding: 7px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      display: flex; align-items: flex-start; gap: 10px; color: var(--text);
+    }
+    .plan-features li:last-child { border-bottom: none; }
+    .plan-features li .ck { color: var(--buy); flex-shrink: 0; font-size: 14px; margin-top: 2px; }
+    .plan-features li .no { color: var(--muted); flex-shrink: 0; font-size: 14px; margin-top: 2px; }
+    .plan-btn {
+      width: 100%; padding: 13px; border-radius: 8px;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      border: none; transition: all .2s;
+    }
+    .plan-btn.gold { background: var(--gold); color: #000; }
+    .plan-btn.gold:hover { background: var(--gold2); }
+    .plan-btn.outline {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .plan-btn.outline:hover { border-color: var(--gold); color: var(--gold); }
+    .plan-trial { text-align: center; font-size: 11px; color: var(--muted); margin-top: 10px; }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; COMPARISON TABLE &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .compare-table-wrap {
+      max-width: 900px; margin: 0 auto; overflow-x: auto;
+    }
+    table.compare {
+      width: 100%; border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    table.compare th, table.compare td {
+      padding: 12px 16px; text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    table.compare th:first-child, table.compare td:first-child { text-align: left; }
+    table.compare thead th {
+      font-weight: 700; font-size: 14px;
+      background: var(--card2); color: var(--text);
+    }
+    table.compare thead th.gold-col { color: var(--gold); }
+    table.compare tbody tr:hover td { background: rgba(255,255,255,0.02); }
+    table.compare tbody td:first-child { color: var(--muted); font-weight: 500; }
+    .chk { color: var(--buy); font-size: 16px; }
+    .crs { color: var(--sell); font-size: 16px; }
+    .tbl-section-hdr td {
+      background: rgba(240,185,11,0.06);
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--gold);
+    }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; HOW IT WORKS &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 20px; max-width: 1050px; margin: 0 auto; position: relative;
+    }
+    .steps-grid::before {
+      content: '';
+      position: absolute; top: 38px; left: 12.5%; right: 12.5%;
+      height: 1px; background: linear-gradient(90deg, var(--border), var(--gold), var(--border));
+    }
+    .step-card {
+      text-align: center; padding: 24px 16px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px;
+      transition: border-color .25s;
+    }
+    .step-card:hover { border-color: rgba(240,185,11,0.4); }
+    .step-num {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #000; font-size: 20px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px; position: relative; z-index: 1;
+    }
+    .step-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .step-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; DASHBOARD MOCKUP &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .dashboard-section { background: var(--bg2); }
+    .dash-container {
+      max-width: 360px; margin: 0 auto;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 28px; overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 60px rgba(240,185,11,0.06);
+    }
+    .dash-notch {
+      background: #070B14; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .dash-notch-bar { width: 90px; height: 8px; background: #1A2035; border-radius: 4px; }
+    .dash-header {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .dash-logo { font-size: 16px; font-weight: 900; letter-spacing: 2px; color: var(--gold); }
+    .dash-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--buy); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+    .dash-body { padding: 20px; }
+    .dash-portfolio {
+      background: linear-gradient(135deg, rgba(240,185,11,0.12), rgba(240,185,11,0.04));
+      border: 1px solid rgba(240,185,11,0.2); border-radius: 14px;
+      padding: 20px; margin-bottom: 16px;
+    }
+    .dash-portfolio-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+    .dash-portfolio-val {
+      font-size: 32px; font-weight: 800; font-family: var(--mono);
+      color: var(--text); margin: 4px 0;
+    }
+    .dash-portfolio-change { font-size: 14px; font-weight: 600; color: var(--buy); }
+    .dash-signals-title { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .dash-signal {
+      background: var(--card2); border-radius: 10px; padding: 12px 14px;
+      margin-bottom: 10px; display: flex; align-items: center; gap: 12px;
+    }
+    .dash-sig-type {
+      padding: 4px 10px; border-radius: 5px; font-size: 11px;
+      font-weight: 800; letter-spacing: 0.5px;
+    }
+    .buy-tag { background: rgba(0,192,118,0.15); color: var(--buy); border: 1px solid rgba(0,192,118,0.3); }
+    .sell-tag { background: rgba(255,75,75,0.15); color: var(--sell); border: 1px solid rgba(255,75,75,0.3); }
+    .hold-tag { background: rgba(240,185,11,0.12); color: var(--gold); border: 1px solid rgba(240,185,11,0.3); }
+    .dash-sig-pair { font-size: 13px; font-weight: 700; }
+    .dash-sig-score { margin-left: auto; font-family: var(--mono); font-size: 13px; font-weight: 700; }
+    .dash-position {
+      border: 1px solid rgba(0,192,118,0.25);
+      background: rgba(0,192,118,0.04);
+      border-radius: 10px; padding: 12px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .dash-pos-label { font-size: 12px; color: var(--muted); }
+    .dash-pos-val { font-size: 18px; font-weight: 800; color: var(--buy); font-family: var(--mono); }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; DISCLAIMER &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .disclaimer-section { background: var(--bg); }
+    .disclaimer-box {
+      max-width: 860px; margin: 0 auto;
+      background: rgba(240,185,11,0.04);
+      border: 1.5px solid rgba(240,185,11,0.3);
+      border-radius: 16px; padding: 36px 40px;
+    }
+    .disclaimer-box h3 {
+      font-size: 16px; font-weight: 800; color: var(--gold);
+      margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+    }
+    .disclaimer-box p { font-size: 14px; color: var(--muted); line-height: 1.8; margin-bottom: 14px; }
+    .disclaimer-box p:last-child { margin-bottom: 0; }
+    .disclaimer-box strong { color: var(--text); }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; FAQ &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .faq-section { background: var(--bg2); }
+    .faq-wrap { max-width: 740px; margin: 0 auto; }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-q {
+      width: 100%; background: none; border: none; cursor: pointer;
+      padding: 20px 0; display: flex; align-items: center;
+      justify-content: space-between; gap: 16px;
+      font-size: 15px; font-weight: 600; color: var(--text);
+      text-align: left;
+    }
+    .faq-q:hover { color: var(--gold); }
+    .faq-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--card2); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--gold); transition: transform .3s;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-a {
+      font-size: 14px; color: var(--muted); line-height: 1.7;
+      max-height: 0; overflow: hidden;
+      transition: max-height .4s ease, padding .3s;
+    }
+    .faq-item.open .faq-a { max-height: 300px; padding-bottom: 20px; }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; CTA FINAL &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .cta-section {
+      text-align: center; padding: 100px 5%;
+      background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(240,185,11,0.07) 0%, transparent 70%), var(--bg);
+    }
+    .cta-section h2 {
+      font-size: clamp(28px, 5vw, 54px); font-weight: 900;
+      letter-spacing: -1px; margin-bottom: 16px; line-height: 1.1;
+    }
+    .cta-section p { font-size: 17px; color: var(--muted); margin-bottom: 36px; }
+    .cta-features {
+      display: flex; justify-content: center; gap: 24px;
+      flex-wrap: wrap; margin-bottom: 36px; font-size: 14px; color: var(--muted);
+    }
+    .cta-features span::before { content: '&#226;&#339;&#8220; '; color: var(--buy); }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; FOOTER &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    footer {
+      background: #070B14; border-top: 1px solid var(--border);
+      padding: 48px 5% 24px;
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px; margin-bottom: 40px;
+    }
+    .footer-logo { font-size: 20px; font-weight: 900; letter-spacing: 3px; color: var(--gold); margin-bottom: 10px; }
+    .footer-tagline { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .footer-disclaimer { font-size: 11px; color: #4A5568; line-height: 1.7; }
+    .footer-col h4 { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+    .footer-col a { display: block; font-size: 13px; color: #4A5568; margin-bottom: 8px; transition: color .2s; }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom p { font-size: 12px; color: #3A4558; }
+    .footer-bottom .risk-note { font-size: 11px; color: #3A4558; max-width: 600px; }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; SCROLL REVEAL &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; MODAL &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+      z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 40px; max-width: 440px; width: 100%;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer;
+    }
+    .modal-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .modal-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--muted); }
+    .form-group input, .form-group select {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 11px 14px; color: var(--text);
+      font-size: 14px; font-family: 'Inter', sans-serif;
+      transition: border-color .2s;
+    }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--gold); }
+    .form-group select option { background: var(--card); }
+    .form-submit {
+      width: 100%; padding: 13px; background: var(--gold);
+      color: #000; font-weight: 700; font-size: 15px;
+      border: none; border-radius: 8px; cursor: pointer; transition: background .2s;
+    }
+    .form-submit:hover { background: var(--gold2); }
+    .form-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 12px; }
+    .success-msg {
+      text-align: center; display: none;
+    }
+    .success-icon { font-size: 48px; margin-bottom: 12px; }
+    .success-title { font-size: 20px; font-weight: 800; color: var(--buy); margin-bottom: 8px; }
+    .success-sub { font-size: 14px; color: var(--muted); }
+
+    /* &#226;&#8221;&#8364;&#226;&#8221;&#8364; RESPONSIVE &#226;&#8221;&#8364;&#226;&#8221;&#8364; */
+    @media (max-width: 900px) {
+      .plans-grid { grid-template-columns: 1fr; max-width: 420px; }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid::before { display: none; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .markets-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      nav .nav-links { display: none; }
+      nav .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--card); padding: 20px; border-bottom: 1px solid var(--border); gap: 16px; }
+      .nav-toggle { display: block; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .hero-stats { gap: 24px; }
+      section { padding: 60px 5%; }
+      .disclaimer-box { padding: 24px 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; TICKER &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="tickerInner">
+    <div class="ticker-item"><span class="name">BTC/USDT</span><span class="mono" id="btc-p">67,842.50</span><span class="up" id="btc-c">+2.34%</span></div>
+    <div class="ticker-item"><span class="name">ETH/USDT</span><span class="mono" id="eth-p">3,521.10</span><span class="up" id="eth-c">+1.87%</span></div>
+    <div class="ticker-item"><span class="name">SOL/USDT</span><span class="mono" id="sol-p">182.45</span><span class="dn" id="sol-c">-0.65%</span></div>
+    <div class="ticker-item"><span class="name">BNB/USDT</span><span class="mono" id="bnb-p">598.20</span><span class="up" id="bnb-c">+0.92%</span></div>
+    <div class="ticker-item"><span class="name">EUR/USD</span><span class="mono">1.0842</span><span class="up">+0.12%</span></div>
+    <div class="ticker-item"><span class="name">XAU/USD</span><span class="mono">2,341.80</span><span class="up">+0.45%</span></div>
+    <div class="ticker-item"><span class="name">GBP/USD</span><span class="mono">1.2658</span><span class="dn">-0.08%</span></div>
+    <div class="ticker-item"><span class="name">ADA/USDT</span><span class="mono">0.6124</span><span class="up">+3.12%</span></div>
+    <div class="ticker-item"><span class="name">BTC/USDT</span><span class="mono">67,842.50</span><span class="up">+2.34%</span></div>
+    <div class="ticker-item"><span class="name">ETH/USDT</span><span class="mono">3,521.10</span><span class="up">+1.87%</span></div>
+    <div class="ticker-item"><span class="name">SOL/USDT</span><span class="mono">182.45</span><span class="dn">-0.65%</span></div>
+    <div class="ticker-item"><span class="name">BNB/USDT</span><span class="mono">598.20</span><span class="up">+0.92%</span></div>
+    <div class="ticker-item"><span class="name">EUR/USD</span><span class="mono">1.0842</span><span class="up">+0.12%</span></div>
+    <div class="ticker-item"><span class="name">XAU/USD</span><span class="mono">2,341.80</span><span class="up">+0.45%</span></div>
+    <div class="ticker-item"><span class="name">GBP/USD</span><span class="mono">1.2658</span><span class="dn">-0.08%</span></div>
+    <div class="ticker-item"><span class="name">ADA/USDT</span><span class="mono">0.6124</span><span class="up">+3.12%</span></div>
+  </div>
+</div>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; NAV &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<nav>
+  <div class="nav-logo">KYR<span>ION</span></div>
+  <div class="nav-links" id="navLinks">
+    <a href="#markets">March&#195;&#169;s</a>
+    <a href="#pricing">Tarifs</a>
+    <a href="#how">Comment &#195;&#167;a marche</a>
+    <a href="#faq">FAQ</a>
+    <a href="#signup" class="nav-cta" onclick="openModal()">Essai gratuit</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" onclick="toggleNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; HERO &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<section class="hero" id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">OUTIL D'AIDE &#195;&#8364; LA D&#195;&#8240;CISION &#226;&#8364;&#8221; PAS DE GARANTIE DE R&#195;&#8240;SULTATS</div>
+    <h1>Lisez les march&#195;&#169;s.<br><span>Avant tout le monde.</span></h1>
+    <p class="hero-sub">KYRION analyse le crypto et le forex 24h/24 et vous alerte d&#195;&#168;s qu'une opportunit&#195;&#169; se profile. La d&#195;&#169;cision reste la v&#195;&#180;tre.</p>
+    <div class="hero-ctas">
+      <button class="btn-primary" onclick="openModal()">&#240;&#376;&#353;&#8364; Commencer l'essai gratuit</button>
+      <a href="#chart-section" class="btn-secondary">&#226;&#8211;&#182; Voir une d&#195;&#169;mo</a>
+    </div>
+    <div class="trial-note">&#226;&#339;&#8220; <span>14 jours gratuits</span> &#226;&#8364;&#8221; Sans carte bancaire &#226;&#8364;&#8221; Annulable &#195;&#160; tout moment</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="val">30+</div><div class="lbl">Paires analys&#195;&#169;es</div></div>
+      <div class="hero-stat"><div class="val">24/7</div><div class="lbl">Surveillance continue</div></div>
+      <div class="hero-stat"><div class="val">5</div><div class="lbl">Strat&#195;&#169;gies algorithmiques</div></div>
+      <div class="hero-stat"><div class="val">&lt;1s</div><div class="lbl">D&#195;&#169;lai de signal</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; CHART ANIMATION SECTION &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<section class="chart-section" id="chart-section">
+  <div class="section-head reveal">
+    <div class="section-label">Analyse algorithmique</div>
+    <h2 class="section-title">Comment KYRION lit les march&#195;&#169;s</h2>
+    <p class="section-sub">5 strat&#195;&#169;gies s'activent en cascade pour identifier les confluences et g&#195;&#169;n&#195;&#169;rer un score de conviction unique.</p>
+  </div>
+  <div class="chart-wrapper reveal">
+    <div class="chart-header">
+      <span class="pair">BTC/USDT</span>
+      <span class="tf">1H</span>
+      <span class="tf">Live</span>
+      <span class="price">$67,842.50 <span style="color:var(--buy);font-size:13px">&#226;&#8211;&#178; +2.34%</span></span>
+    </div>
+    <div class="chart-body">
+      <div class="chart-canvas">
+        <svg class="price-chart" viewBox="0 0 800 200" preserveAspectRatio="none">
+          <!-- Donchian channel (appears first) -->
+          <path id="donchian-upper" d="" fill="none" stroke="rgba(240,185,11,0.3)" stroke-width="1.5" stroke-dasharray="1000" stroke-dashoffset="1000"/>
+          <path id="donchian-lower" d="" fill="none" stroke="rgba(240,185,11,0.3)" stroke-width="1.5" stroke-dasharray="1000" stroke-dashoffset="1000"/>
+          <path id="donchian-fill" d="" fill="rgba(240,185,11,0.04)" opacity="0"/>
+          <!-- EMA200 -->
+          <path id="ema-line" d="" fill="none" stroke="rgba(99,179,237,0.6)" stroke-width="1.5" stroke-dasharray="1000" stroke-dashoffset="1000"/>
+          <!-- Price line -->
+          <path id="price-line" d="" fill="none" stroke="var(--gold)" stroke-width="2" stroke-dasharray="2000" stroke-dashoffset="2000"/>
+          <!-- Candle area fill -->
+          <path id="price-fill" d="" fill="url(#priceGrad)" opacity="0.3"/>
+          <!-- BUY marker -->
+          <circle id="buy-marker" cx="0" cy="0" r="0" fill="var(--buy)" opacity="0"/>
+          <line id="buy-line" x1="0" y1="0" x2="0" y2="200" stroke="rgba(0,192,118,0.3)" stroke-width="1" stroke-dasharray="4" opacity="0"/>
+          <defs>
+            <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--gold)" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="var(--gold)" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="chart-overlay">
+        <div class="signal-box" id="signalBox">
+          <div class="sig-label">SIGNAL KYRION</div>
+          <div class="sig-action">BUY</div>
+          <div class="sig-score">Score: <span id="scoreVal">0</span>/100</div>
+        </div>
+      </div>
+    </div>
+    <div class="indicators-list" id="indList">
+      <div class="ind-badge" data-delay="0"><span class="dot" style="background:#F0B90B"></span> Donchian Breakout</div>
+      <div class="ind-badge" data-delay="200"><span class="dot" style="background:#63B3ED"></span> EMA 200</div>
+      <div class="ind-badge" data-delay="400"><span class="dot" style="background:#FC8181"></span> RSI Divergence</div>
+      <div class="ind-badge" data-delay="600"><span class="dot" style="background:#B794F4"></span> MACD Cross</div>
+      <div class="ind-badge" data-delay="800"><span class="dot" style="background:#68D391"></span> Support/R&#195;&#169;sistance</div>
+    </div>
+    <div style="padding:16px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);text-align:center">
+      &#226;&#353;&#160; Visualisation illustrative &#226;&#8364;&#8221; Les signaux ne constituent pas des recommandations d'investissement
+    </div>
+  </div>
+</section>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; MARKETS SECTION &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<section id="markets">
+  <div class="section-head reveal">
+    <div class="section-label">Couverture des march&#195;&#169;s</div>
+    <h2 class="section-title">Crypto & Forex &#226;&#8364;&#8221; Tout dans un seul outil</h2>
+    <p class="section-sub">KYRION surveille les actifs les plus liquides, 24h/24 et 7j/7, sans jamais s'arr&#195;&#170;ter.</p>
+  </div>
+  <div class="markets-grid">
+    <div class="market-card reveal">
+      <h3>&#240;&#376;&#8221;&#182; Cryptomonnaies</h3>
+      <div class="market-badge-grid">
+        <span class="mkt-badge"><span class="dot" style="background:#F7931A"></span>BTC/USDT</span>
+        <span class="mkt-badge"><span class="dot" style="background:#627EEA"></span>ETH/USDT</span>
+        <span class="mkt-badge"><span class="dot" style="background:#9945FF"></span>SOL/USDT</span>
+        <span class="mkt-badge"><span class="dot" style="background:#F3BA2F"></span>BNB/USDT</span>
+        <span class="mkt-badge"><span class="dot" style="background:#0033AD"></span>ADA/USDT</span>
+        <span class="mkt-badge"><span class="dot" style="background:#E84142"></span>AVAX/USDT</span>
+        <span class="mkt-badge"><span class="dot" style="background:#2775CA"></span>USDC/USDT</span>
+        <span class="mkt-badge"><span class="dot" style="background:#CC2112"></span>XRP/USDT</span>
+        <span class="mkt-badge mkt-locked"><span class="dot" style="background:#00D4AA"></span>LINK/USDT <span class="lock-icon">&#240;&#376;&#8221;&#8217;</span></span>
+        <span class="mkt-badge mkt-locked"><span class="dot" style="background:#7B3FE4"></span>MATIC/USDT <span class="lock-icon">&#240;&#376;&#8221;&#8217;</span></span>
+        <span class="mkt-badge mkt-locked"><span class="dot" style="background:#1DA462"></span>DOT/USDT <span class="lock-icon">&#240;&#376;&#8221;&#8217;</span></span>
+        <span class="mkt-badge mkt-locked"><span class="dot" style="background:#E84042"></span>ATOM/USDT <span class="lock-icon">&#240;&#376;&#8221;&#8217;</span></span>
+      </div>
+    </div>
+    <div class="market-card reveal reveal-delay-1">
+      <h3>&#240;&#376;&#8217;&#177; Forex & Mati&#195;&#168;res premi&#195;&#168;res</h3>
+      <div class="market-badge-grid">
+        <span class="mkt-badge mkt-locked"><span class="dot" style="background:#003399"></span>EUR/USD <span class="lock-icon">&#240;&#376;&#8221;&#8217;</span></span>
+        <span class="mkt-badge mkt-locked"><span class="dot" style="background:#012169"></span>GBP/USD <span class="lock-icon">&#240;&#376;&#8221;&#8217;</span></span>
+        <span class="mkt-badge mkt-locked"><span class="dot" style="background:#FFD700"></span>XAU/USD <span class="lock-icon">&#240;&#376;&#8221;&#8217;</span></span>
+        <span class="mkt-badge mkt-locked"><span class="dot" style="background:#BC002D"></span>USD/JPY <span class="lock-icon">&#240;&#376;&#8221;&#8217;</span></span>
+        <span class="mkt-badge mkt-locked"><span class="dot" style="background:#D52B1E"></span>USD/CAD <span class="lock-icon">&#240;&#376;&#8221;&#8217;</span></span>
+        <span class="mkt-badge mkt-locked"><span class="dot" style="background:#FF0000"></span>AUD/USD <span class="lock-icon">&#240;&#376;&#8221;&#8217;</span></span>
+      </div>
+      <div style="margin-top:16px;padding:10px;background:rgba(255,75,75,0.06);border:1px solid rgba(255,75,75,0.15);border-radius:8px;font-size:12px;color:var(--muted)">
+        &#240;&#376;&#8221;&#8217; Forex disponible &#195;&#160; partir du plan <strong style="color:var(--text)">Pro</strong>
+      </div>
+    </div>
+  </div>
+  <div class="market-note reveal" style="max-width:900px;margin:20px auto 0">
+    <strong>Starter :</strong> 10 paires Crypto seulement &nbsp;|&nbsp; <strong>Pro :</strong> 20 paires Crypto + 6 paires Forex &nbsp;|&nbsp; <strong>Premium :</strong> 30+ paires Crypto + Forex complet
+  </div>
+</section>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; PRICING SECTION &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<section class="pricing-section" id="pricing">
+  <div class="section-head reveal">
+    <div class="section-label">Tarification</div>
+    <h2 class="section-title">Choisissez votre niveau d'analyse</h2>
+    <p class="section-sub">Commencez avec 14 jours gratuits sur n'importe quel plan. Aucune carte bancaire requise.</p>
+  </div>
+  <div class="plans-grid">
+
+    <!-- STARTER -->
+    <div class="plan-card reveal">
+      <div class="plan-icon">&#240;&#376;&#167;&#173;</div>
+      <div class="plan-name">Starter</div>
+      <div class="plan-tagline">"La Boussole" &#226;&#8364;&#8221; KYRION te montre, tu d&#195;&#169;cides</div>
+      <div class="plan-price-block">
+        <div class="plan-price"><span class="currency">FCFA </span>9 990<span style="font-size:16px;color:var(--muted)">/mois</span></div>
+        <div class="plan-period">&#226;&#8240;&#710; 15&#226;&#8218;&#172;/mois</div>
+        <div class="plan-annual">&#226;&#339;&#8220; 89 900 FCFA/an (&#226;&#8240;&#710; 135&#226;&#8218;&#172;) &#226;&#8364;&#8221; &#195;&#8240;conomisez 25%</div>
+      </div>
+      <ul class="plan-features">
+        <li><span class="ck">&#226;&#339;&#8220;</span> 10 paires Crypto (BTC, ETH, SOL, BNB, ADA&#226;&#8364;&#166;)</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Signaux BUY/SELL/HOLD + score 0-100</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> 2 strat&#195;&#169;gies : Donchian + RSI Divergence</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Alertes push signal fort (&gt;70/100)</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Paper trading simul&#195;&#169; (portefeuille fictif)</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Dashboard basique : win rate, nb trades</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Timeframe : 1H uniquement</li>
+        <li><span class="no">&#226;&#339;&#8212;</span> <span style="color:var(--muted)">Pas d'ex&#195;&#169;cution automatique</span></li>
+        <li><span class="no">&#226;&#339;&#8212;</span> <span style="color:var(--muted)">Pas d'acc&#195;&#168;s Forex</span></li>
+      </ul>
+      <button class="plan-btn outline" onclick="openModal('Starter')">D&#195;&#169;marrer gratuitement</button>
+      <div class="plan-trial">14 jours d'essai gratuit inclus</div>
+    </div>
+
+    <!-- PRO -->
+    <div class="plan-card featured reveal reveal-delay-1">
+      <div class="plan-popular">POPULAIRE</div>
+      <div class="plan-icon">&#226;&#353;&#161;</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-tagline">"Le Navigateur" &#226;&#8364;&#8221; Allez plus loin sans tout automatiser</div>
+      <div class="plan-price-block">
+        <div class="plan-price"><span class="currency">FCFA </span>24 990<span style="font-size:16px;color:var(--muted)">/mois</span></div>
+        <div class="plan-period">&#226;&#8240;&#710; 38&#226;&#8218;&#172;/mois</div>
+        <div class="plan-annual">&#226;&#339;&#8220; 229 900 FCFA/an (&#226;&#8240;&#710; 345&#226;&#8218;&#172;) &#226;&#8364;&#8221; &#195;&#8240;conomisez 23%</div>
+      </div>
+      <ul class="plan-features">
+        <li><span class="ck">&#226;&#339;&#8220;</span> Tout Starter, plus :</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> 20 paires Crypto + 6 paires Forex (EUR/USD, XAU/USD&#226;&#8364;&#166;)</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> 5 strat&#195;&#169;gies : Donchian, RSI, MACD, Bollinger, S/R</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Multi-timeframe : 15m + 1H + 4H</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Score composite (confluence multi-strat&#195;&#169;gie)</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Backtesting 90 jours</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Alertes Telegram</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Dashboard avanc&#195;&#169; : Sharpe, drawdown, courbe equity</li>
+        <li><span class="no">&#226;&#339;&#8212;</span> <span style="color:var(--muted)">Pas d'ex&#195;&#169;cution automatique</span></li>
+      </ul>
+      <button class="plan-btn gold" onclick="openModal('Pro')">D&#195;&#169;marrer gratuitement</button>
+      <div class="plan-trial">14 jours d'essai gratuit inclus</div>
+    </div>
+
+    <!-- PREMIUM -->
+    <div class="plan-card reveal reveal-delay-2">
+      <div class="plan-icon">&#240;&#376;&#164;&#8211;</div>
+      <div class="plan-name">Premium</div>
+      <div class="plan-tagline">"L'Outil Ind&#195;&#169;pendant" &#226;&#8364;&#8221; Configure une fois, il op&#195;&#168;re 24h/24</div>
+      <div class="plan-price-block">
+        <div class="plan-price"><span class="currency">FCFA </span>59 990<span style="font-size:16px;color:var(--muted)">/mois</span></div>
+        <div class="plan-period">&#226;&#8240;&#710; 90&#226;&#8218;&#172;/mois</div>
+        <div class="plan-annual">&#226;&#339;&#8220; 549 900 FCFA/an (&#226;&#8240;&#710; 825&#226;&#8218;&#172;) &#226;&#8364;&#8221; &#195;&#8240;conomisez 23%</div>
+      </div>
+      <ul class="plan-features">
+        <li><span class="ck">&#226;&#339;&#8220;</span> Tout Pro, plus :</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> 30+ paires Crypto + Forex complet</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Ex&#195;&#169;cution automatique sur Bybit (Spot & Futures)</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Gestion du risque auto : SL/TP, trailing stop ATR</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Paper trading illimit&#195;&#169; avant activation live</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Backtesting 1 an + optimisation param&#195;&#168;tres</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Bot Telegram avec menu de contr&#195;&#180;le</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Rapports quotidiens email/Telegram</li>
+        <li><span class="ck">&#226;&#339;&#8220;</span> Support prioritaire + API prioritaire</li>
+      </ul>
+      <button class="plan-btn outline" onclick="openModal('Premium')">D&#195;&#169;marrer gratuitement</button>
+      <div class="plan-trial">14 jours d'essai gratuit inclus</div>
+    </div>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="compare-table-wrap reveal">
+    <h3 style="text-align:center;margin-bottom:28px;font-size:18px;font-weight:700">Tableau comparatif complet</h3>
+    <table class="compare">
+      <thead>
+        <tr>
+          <th>Fonctionnalit&#195;&#169;</th>
+          <th>&#240;&#376;&#167;&#173; Starter</th>
+          <th>&#226;&#353;&#161; Pro</th>
+          <th class="gold-col">&#240;&#376;&#164;&#8211; Premium</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="tbl-section-hdr"><td colspan="4">March&#195;&#169;s & Paires</td></tr>
+        <tr><td>Paires Crypto</td><td>10</td><td>20</td><td>30+</td></tr>
+        <tr><td>Paires Forex</td><td><span class="crs">&#226;&#339;&#8212;</span></td><td>6 paires</td><td>Complet</td></tr>
+        <tr><td>XAU/USD (Or)</td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr class="tbl-section-hdr"><td colspan="4">Signaux & Strat&#195;&#169;gies</td></tr>
+        <tr><td>Signal BUY/SELL/HOLD</td><td><span class="chk">&#226;&#339;&#8220;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr><td>Score de conviction 0-100</td><td><span class="chk">&#226;&#339;&#8220;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr><td>Nombre de strat&#195;&#169;gies</td><td>2</td><td>5</td><td>5 + confluence auto</td></tr>
+        <tr><td>Timeframes</td><td>1H</td><td>15m / 1H / 4H</td><td>Tous TF</td></tr>
+        <tr><td>Score composite multi-strat&#195;&#169;gie</td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr class="tbl-section-hdr"><td colspan="4">Alertes & Notifications</td></tr>
+        <tr><td>Alertes push</td><td><span class="chk">&#226;&#339;&#8220;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr><td>Alertes Telegram</td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr><td>Bot Telegram de contr&#195;&#180;le</td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr><td>Rapports quotidiens auto</td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr class="tbl-section-hdr"><td colspan="4">Trading & Ex&#195;&#169;cution</td></tr>
+        <tr><td>Paper trading</td><td>Simul&#195;&#169;</td><td>Simul&#195;&#169;</td><td>Illimit&#195;&#169;</td></tr>
+        <tr><td>Ex&#195;&#169;cution automatique Bybit</td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr><td>Gestion SL/TP automatique</td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr><td>Trailing stop ATR</td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr class="tbl-section-hdr"><td colspan="4">Analyse & Backtesting</td></tr>
+        <tr><td>Dashboard performance</td><td>Basique</td><td>Avanc&#195;&#169;</td><td>Complet</td></tr>
+        <tr><td>Backtesting</td><td><span class="crs">&#226;&#339;&#8212;</span></td><td>90 jours</td><td>1 an + optimisation</td></tr>
+        <tr><td>Sharpe ratio / Drawdown</td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr class="tbl-section-hdr"><td colspan="4">Support & Acc&#195;&#168;s</td></tr>
+        <tr><td>Support</td><td>Documentation</td><td>Email</td><td>Prioritaire</td></tr>
+        <tr><td>API prioritaire</td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="crs">&#226;&#339;&#8212;</span></td><td><span class="chk">&#226;&#339;&#8220;</span></td></tr>
+        <tr>
+          <td><strong>Prix mensuel</strong></td>
+          <td><strong style="font-family:var(--mono)">9 990 FCFA</strong></td>
+          <td><strong style="font-family:var(--mono);color:var(--gold)">24 990 FCFA</strong></td>
+          <td><strong style="font-family:var(--mono)">59 990 FCFA</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; HOW IT WORKS &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<section id="how">
+  <div class="section-head reveal">
+    <div class="section-label">Prise en main</div>
+    <h2 class="section-title">Comment &#195;&#167;a marche</h2>
+    <p class="section-sub">Op&#195;&#169;rationnel en moins de 5 minutes. Commencez en paper trading, activez le live quand vous &#195;&#170;tes pr&#195;&#170;t.</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card reveal">
+      <div class="step-num">1</div>
+      <h4>Connectez votre compte</h4>
+      <p>Liez votre compte Bybit via cl&#195;&#169; API, ou commencez en paper trading sans connexion n&#195;&#169;cessaire.</p>
+    </div>
+    <div class="step-card reveal reveal-delay-1">
+      <div class="step-num">2</div>
+      <h4>Choisissez vos actifs</h4>
+      <p>S&#195;&#169;lectionnez vos paires pr&#195;&#169;f&#195;&#169;r&#195;&#169;es parmi la liste disponible, et activez les strat&#195;&#169;gies de votre choix.</p>
+    </div>
+    <div class="step-card reveal reveal-delay-2">
+      <div class="step-num">3</div>
+      <h4>KYRION surveille les march&#195;&#169;s</h4>
+      <p>Les algorithmes analysent les prix en temps r&#195;&#169;el et g&#195;&#169;n&#195;&#168;rent un score de signal d&#195;&#168;s qu'une opportunit&#195;&#169; se profile.</p>
+    </div>
+    <div class="step-card reveal reveal-delay-3">
+      <div class="step-num">4</div>
+      <h4>Vous d&#195;&#169;cidez (ou KYRION ex&#195;&#169;cute)</h4>
+      <p>Sur Starter/Pro : vous recevez l'alerte et vous d&#195;&#169;cidez. Sur Premium : KYRION peut ex&#195;&#169;cuter automatiquement selon vos r&#195;&#168;gles.</p>
+    </div>
+  </div>
+</section>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; DASHBOARD PREVIEW &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<section class="dashboard-section">
+  <div class="section-head reveal">
+    <div class="section-label">Interface</div>
+    <h2 class="section-title">Votre tableau de bord, partout</h2>
+    <p class="section-sub">Suivez vos signaux, vos positions et vos performances depuis votre t&#195;&#169;l&#195;&#169;phone.</p>
+  </div>
+  <div style="display:flex;justify-content:center;align-items:center;gap:40px;flex-wrap:wrap">
+    <div class="dash-container reveal">
+      <div class="dash-notch"><div class="dash-notch-bar"></div></div>
+      <div class="dash-header">
+        <span class="dash-logo">KYRION</span>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+          <div class="dash-dot"></div> Live
+        </div>
+      </div>
+      <div class="dash-body">
+        <div class="dash-portfolio">
+          <div class="dash-portfolio-label">Portfolio Value</div>
+          <div class="dash-portfolio-val">$12,847.50</div>
+          <div class="dash-portfolio-change">&#226;&#8211;&#178; +$342.20 ce mois (+2.73%)</div>
+        </div>
+        <div class="dash-signals-title">Signaux actifs</div>
+        <div class="dash-signal">
+          <span class="dash-sig-type buy-tag">BUY</span>
+          <div>
+            <div class="dash-sig-pair">BTC/USDT</div>
+            <div style="font-size:11px;color:var(--muted)">Donchian + RSI confluent</div>
+          </div>
+          <div class="dash-sig-score" style="color:var(--buy)">82/100</div>
+        </div>
+        <div class="dash-signal">
+          <span class="dash-sig-type hold-tag">HOLD</span>
+          <div>
+            <div class="dash-sig-pair">ETH/USDT</div>
+            <div style="font-size:11px;color:var(--muted)">Attente confirmation 4H</div>
+          </div>
+          <div class="dash-sig-score" style="color:var(--gold)">54/100</div>
+        </div>
+        <div class="dash-signal">
+          <span class="dash-sig-type sell-tag">SELL</span>
+          <div>
+            <div class="dash-sig-pair">SOL/USDT</div>
+            <div style="font-size:11px;color:var(--muted)">RSI divergence baissi&#195;&#168;re</div>
+          </div>
+          <div class="dash-sig-score" style="color:var(--sell)">76/100</div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="dash-signals-title">Position ouverte</div>
+          <div class="dash-position">
+            <div>
+              <div style="font-size:13px;font-weight:700">BTC/USDT Long</div>
+              <div class="dash-pos-label">Entr&#195;&#169;e : $65,240 &#194;&#183; SL : $63,800</div>
+            </div>
+            <div class="dash-pos-val">+5.42%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="max-width:320px" class="reveal reveal-delay-1">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Win Rate (90j)</div>
+          <div style="font-size:36px;font-weight:800;font-family:var(--mono);color:var(--buy)">63.4%</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">127 trades analys&#195;&#169;s</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Max Drawdown</div>
+          <div style="font-size:36px;font-weight:800;font-family:var(--mono);color:var(--sell)">-8.2%</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">P&#195;&#169;riode 90 jours</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Sharpe Ratio</div>
+          <div style="font-size:36px;font-weight:800;font-family:var(--mono);color:var(--gold)">1.87</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Backtesting 90 jours</div>
+        </div>
+      </div>
+      <p style="font-size:11px;color:#3A4558;margin-top:14px;line-height:1.6">&#226;&#353;&#160; Ces chiffres sont issus de backtests illustratifs. Les performances pass&#195;&#169;es ne pr&#195;&#169;jugent pas des r&#195;&#169;sultats futurs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; DISCLAIMER &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<section class="disclaimer-section" id="disclaimer">
+  <div class="disclaimer-box reveal">
+    <h3>&#226;&#353;&#160; AVERTISSEMENT &#226;&#8364;&#8221; RISQUES FINANCIERS</h3>
+    <p><strong>KYRION est un outil d'aide &#195;&#160; la d&#195;&#169;cision.</strong> Il n'est pas un conseiller en investissement, un gestionnaire de fonds, ni un service de conseil financier r&#195;&#169;glement&#195;&#169;. Les signaux g&#195;&#169;n&#195;&#169;r&#195;&#169;s par KYRION sont bas&#195;&#169;s sur des analyses techniques algorithmiques et ne constituent <strong>pas des recommandations d'investissement</strong>.</p>
+    <p>Le trading de cryptomonnaies et de produits d&#195;&#169;riv&#195;&#169;s forex comporte des <strong>risques importants de perte en capital</strong>, pouvant aller jusqu'&#195;&#160; la perte totale des fonds investis. Le levier amplifie &#195;&#160; la fois les gains et les pertes potentielles.</p>
+    <p><strong>Les performances pass&#195;&#169;es ne pr&#195;&#169;jugent pas des performances futures. Aucun r&#195;&#169;sultat n'est garanti.</strong> Les backtests pr&#195;&#169;sent&#195;&#169;s sont des simulations historiques r&#195;&#169;alis&#195;&#169;es dans des conditions id&#195;&#169;ales et ne refl&#195;&#168;tent pas n&#195;&#169;cessairement les conditions r&#195;&#169;elles de march&#195;&#169;.</p>
+    <p>En utilisant KYRION, vous reconnaissez avoir lu, compris et accept&#195;&#169; ces conditions. Nous vous recommandons vivement de ne trader qu'avec des fonds que vous &#195;&#170;tes pr&#195;&#170;t &#195;&#160; perdre int&#195;&#169;gralement, et de consulter un conseiller financier agr&#195;&#169;&#195;&#169; avant toute d&#195;&#169;cision d'investissement.</p>
+  </div>
+</section>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; FAQ &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<section class="faq-section" id="faq">
+  <div class="section-head reveal">
+    <div class="section-label">Questions fr&#195;&#169;quentes</div>
+    <h2 class="section-title">Tout ce que vous devez savoir</h2>
+  </div>
+  <div class="faq-wrap">
+
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        KYRION est-il un robot de trading ?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">KYRION n'est pas un robot de trading au sens traditionnel. C'est un outil d'aide &#195;&#160; la d&#195;&#169;cision qui analyse les march&#195;&#169;s et g&#195;&#169;n&#195;&#168;re des signaux. Sur les plans Starter et Pro, <strong>aucun ordre n'est ex&#195;&#169;cut&#195;&#169; automatiquement</strong> &#226;&#8364;&#8221; vous conservez le plein contr&#195;&#180;le. Seul le plan Premium permet l'ex&#195;&#169;cution automatique optionnelle sur Bybit, apr&#195;&#168;s configuration explicite et accord de votre part.</div>
+    </div>
+
+    <div class="faq-item reveal reveal-delay-1">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Puis-je perdre de l'argent avec KYRION ?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a"><strong>Oui, absolument.</strong> Le trading comporte des risques importants de perte en capital. KYRION g&#195;&#169;n&#195;&#168;re des signaux bas&#195;&#169;s sur des analyses algorithmiques, mais aucun algorithme ne peut pr&#195;&#169;dire l'avenir avec certitude. Les march&#195;&#169;s peuvent &#195;&#170;tre impr&#195;&#169;visibles et m&#195;&#170;me les signaux &#195;&#160; score &#195;&#169;lev&#195;&#169; peuvent r&#195;&#169;sulter en des trades perdants. Ne tradez qu'avec des fonds que vous pouvez vous permettre de perdre.</div>
+    </div>
+
+    <div class="faq-item reveal reveal-delay-2">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Quelle exchange est support&#195;&#169;e ?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">KYRION supporte actuellement <strong>Bybit</strong> pour l'ex&#195;&#169;cution automatique (plan Premium uniquement) en Spot et Futures. Pour les plans Starter et Pro, les signaux sont affich&#195;&#169;s dans le dashboard et envoy&#195;&#169;s par alertes &#226;&#8364;&#8221; vous pouvez les ex&#195;&#169;cuter manuellement sur n'importe quelle plateforme. D'autres exchanges (Binance, OKX) sont en cours d'int&#195;&#169;gration.</div>
+    </div>
+
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Comment fonctionne le paper trading ?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">Le paper trading (ou trading simul&#195;&#169;) vous permet de tester les signaux de KYRION avec un <strong>portefeuille fictif</strong>, sans risquer d'argent r&#195;&#169;el. KYRION simule l'ex&#195;&#169;cution des trades aux prix de march&#195;&#169; r&#195;&#169;els, et vous pouvez suivre les performances de votre portefeuille fictif dans le temps. C'est la meilleure fa&#195;&#167;on de vous familiariser avec l'outil avant de passer au live.</div>
+    </div>
+
+    <div class="faq-item reveal reveal-delay-1">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Puis-je annuler &#195;&#160; tout moment ?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">Oui, sans condition. Vous pouvez <strong>annuler votre abonnement &#195;&#160; tout moment</strong> depuis votre espace personnel, sans frais de r&#195;&#169;siliation. L'acc&#195;&#168;s reste actif jusqu'&#195;&#160; la fin de la p&#195;&#169;riode en cours. Pour les abonnements annuels, aucun remboursement n'est effectu&#195;&#169; pour les mois d&#195;&#169;j&#195;&#160; &#195;&#169;coul&#195;&#169;s, mais l'annulation stoppe le renouvellement automatique.</div>
+    </div>
+
+    <div class="faq-item reveal reveal-delay-2">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        KYRION est-il r&#195;&#169;gul&#195;&#169; ou agr&#195;&#169;&#195;&#169; ?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">KYRION est un <strong>outil logiciel d'analyse technique</strong>, pas un service d'investissement r&#195;&#169;glement&#195;&#169;. Il ne fournit pas de conseil en investissement au sens l&#195;&#169;gal du terme et ne d&#195;&#169;tient pas d'agr&#195;&#169;ment d'autorit&#195;&#169; financi&#195;&#168;re (AMF, CSSF, etc.). Les signaux g&#195;&#169;n&#195;&#169;r&#195;&#169;s sont des indicateurs techniques algorithmiques et ne doivent pas &#195;&#170;tre interpr&#195;&#169;t&#195;&#169;s comme des conseils financiers personnalis&#195;&#169;s.</div>
+    </div>
+  </div>
+</section>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; CTA FINAL &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<section class="cta-section">
+  <div class="section-label reveal" style="text-align:center">Pr&#195;&#170;t &#195;&#160; commencer ?</div>
+  <h2 class="reveal">Commencez &#195;&#160; lire les march&#195;&#169;s<br><span style="color:var(--gold)">aujourd'hui</span></h2>
+  <p class="reveal">14 jours gratuits. Sans carte bancaire. Annulable &#195;&#160; tout moment.</p>
+  <div class="cta-features reveal">
+    <span>Acc&#195;&#168;s imm&#195;&#169;diat</span>
+    <span>14 jours d'essai</span>
+    <span>Aucun engagement</span>
+    <span>Support inclus</span>
+  </div>
+  <div class="reveal">
+    <button class="btn-primary" style="font-size:17px;padding:16px 40px" onclick="openModal()">
+      &#240;&#376;&#353;&#8364; D&#195;&#169;marrer gratuitement
+    </button>
+  </div>
+  <p class="reveal" style="margin-top:20px;font-size:12px;color:#3A4558">
+    &#226;&#353;&#160; KYRION est un outil d'aide &#195;&#160; la d&#195;&#169;cision. Aucun r&#195;&#169;sultat financier n'est garanti. Le trading comporte des risques de perte en capital.
+  </p>
+</section>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; FOOTER &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">KYRION</div>
+      <div class="footer-tagline">Lisez les march&#195;&#169;s.</div>
+      <div class="footer-disclaimer">
+        KYRION est un outil d'aide &#195;&#160; la d&#195;&#169;cision. Il ne constitue pas un conseil en investissement. Les performances pass&#195;&#169;es ne pr&#195;&#169;jugent pas des performances futures. Le trading comporte des risques importants de perte en capital. &#194;&#169; 2026 KYRION. Tous droits r&#195;&#169;serv&#195;&#169;s.
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Produit</h4>
+      <a href="#chart-section">Comment &#195;&#167;a marche</a>
+      <a href="#markets">March&#195;&#169;s</a>
+      <a href="#pricing">Tarifs</a>
+      <a href="#" onclick="openModal();return false">Essai gratuit</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#faq">FAQ</a>
+      <a href="#">Documentation</a>
+      <a href="#">Contact</a>
+      <a href="#">Telegram</a>
+    </div>
+    <div class="footer-col">
+      <h4>L&#195;&#169;gal</h4>
+      <a href="#disclaimer">Avertissement</a>
+      <a href="#">Conditions d'utilisation</a>
+      <a href="#">Politique de confidentialit&#195;&#169;</a>
+      <a href="#">Mentions l&#195;&#169;gales</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&#194;&#169; 2026 KYRION &#226;&#8364;&#8221; Tous droits r&#195;&#169;serv&#195;&#169;s</p>
+    <p class="risk-note">&#226;&#353;&#160; Le trading de cryptomonnaies et de forex comporte des risques de perte en capital. KYRION ne garantit aucun r&#195;&#169;sultat et ne fournit pas de conseil en investissement.</p>
+  </div>
+</footer>
+
+<!-- &#226;&#8226;&#144;&#226;&#8226;&#144; MODAL INSCRIPTION &#226;&#8226;&#144;&#226;&#8226;&#144; -->
+<div class="modal-overlay" id="signupModal" onclick="closeModalOutside(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">&#226;&#339;&#8226;</button>
+    <div id="signupForm">
+      <div class="modal-title">Commencer l'essai gratuit</div>
+      <div class="modal-sub">14 jours gratuits &#226;&#8364;&#8221; Sans carte bancaire</div>
+      <div class="form-group">
+        <label>Pr&#195;&#169;nom</label>
+        <input type="text" id="fname" placeholder="Votre pr&#195;&#169;nom">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="femail" placeholder="votre@email.com">
+      </div>
+      <div class="form-group">
+        <label>Plan choisi</label>
+        <select id="fplan">
+          <option value="Starter">&#240;&#376;&#167;&#173; Starter &#226;&#8364;&#8221; 9 990 FCFA/mois</option>
+          <option value="Pro">&#226;&#353;&#161; Pro &#226;&#8364;&#8221; 24 990 FCFA/mois</option>
+          <option value="Premium">&#240;&#376;&#164;&#8211; Premium &#226;&#8364;&#8221; 59 990 FCFA/mois</option>
+        </select>
+      </div>
+      <button class="form-submit" onclick="submitForm()">D&#195;&#169;marrer mon essai gratuit &#226;&#8224;&#8217;</button>
+      <div class="form-note">
+        En vous inscrivant, vous acceptez nos conditions d'utilisation.<br>
+        &#226;&#353;&#160; KYRION est un outil d'aide &#195;&#160; la d&#195;&#169;cision. Aucun r&#195;&#169;sultat n'est garanti.
+      </div>
+    </div>
+    <div class="success-msg" id="successMsg">
+      <div class="success-icon">&#226;&#339;&#8230;</div>
+      <div class="success-title">Inscription r&#195;&#169;ussie !</div>
+      <div class="success-sub">Bienvenue sur KYRION. V&#195;&#169;rifiez votre email pour activer votre essai gratuit de 14 jours.</div>
+      <button class="form-submit" style="margin-top:20px" onclick="closeModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// &#226;&#8226;&#144;&#226;&#8226;&#144; SCROLL REVEAL &#226;&#8226;&#144;&#226;&#8226;&#144;
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// &#226;&#8226;&#144;&#226;&#8226;&#144; MOBILE NAV &#226;&#8226;&#144;&#226;&#8226;&#144;
+function toggleNav() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+// &#226;&#8226;&#144;&#226;&#8226;&#144; FAQ &#226;&#8226;&#144;&#226;&#8226;&#144;
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+// &#226;&#8226;&#144;&#226;&#8226;&#144; MODAL &#226;&#8226;&#144;&#226;&#8226;&#144;
+function openModal(plan) {
+  document.getElementById('signupModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  if (plan) {
+    const sel = document.getElementById('fplan');
+    for (let o of sel.options) { if (o.value === plan) { sel.value = plan; break; } }
+  }
+  document.getElementById('signupForm').style.display = 'block';
+  document.getElementById('successMsg').style.display = 'none';
+}
+function closeModal() {
+  document.getElementById('signupModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('signupModal')) closeModal();
+}
+function submitForm() {
+  const name = document.getElementById('fname').value.trim();
+  const email = document.getElementById('femail').value.trim();
+  if (!name || !email) { alert('Veuillez remplir tous les champs.'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('Email invalide.'); return; }
+  document.getElementById('signupForm').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+}
+
+// &#226;&#8226;&#144;&#226;&#8226;&#144; TICKER LIVE SIMULATION &#226;&#8226;&#144;&#226;&#8226;&#144;
+const tickers = [
+  { id: 'btc-p', base: 67842.50, dp: 2 },
+  { id: 'eth-p', base: 3521.10,  dp: 2 },
+  { id: 'sol-p', base: 182.45,   dp: 2 },
+  { id: 'bnb-p', base: 598.20,   dp: 2 },
+];
+function jitter(v, pct) { return v * (1 + (Math.random()-0.5)*pct); }
+setInterval(() => {
+  tickers.forEach(t => {
+    const el = document.getElementById(t.id);
+    if (el) {
+      const nv = jitter(t.base, 0.002);
+      el.textContent = nv.toLocaleString('en-US', {minimumFractionDigits: t.dp, maximumFractionDigits: t.dp});
+    }
+  });
+}, 2800);
+
+// &#226;&#8226;&#144;&#226;&#8226;&#144; CHART ANIMATION &#226;&#8226;&#144;&#226;&#8226;&#144;
+function buildPricePath() {
+  const pts = [];
+  let y = 140;
+  for (let x = 0; x <= 800; x += 16) {
+    y += (Math.random()-0.48)*12;
+    y = Math.max(40, Math.min(190, y));
+    pts.push([x, y]);
+  }
+  return pts;
+}
+const pts = buildPricePath();
+const priceLine = pts.map((p,i) => (i===0?'M':'L') + p[0]+','+p[1]).join(' ');
+const priceFill = priceLine + ' L800,200 L0,200 Z';
+const minY = Math.min(...pts.map(p=>p[1]));
+const maxY = Math.max(...pts.map(p=>p[1]));
+const midY = (minY + maxY) / 2;
+const emaLine = pts.map((p,i) => (i===0?'M':'L') + p[0]+','+( midY + (p[1]-midY)*0.6) ).join(' ');
+const donchianTop = `M0,${minY+5} L800,${minY+5}`;
+const donchianBot = `M0,${maxY-5} L800,${maxY-5}`;
+const donchianFill = `M0,${minY+5} L800,${minY+5} L800,${maxY-5} L0,${maxY-5} Z`;
+const buyX = pts[Math.floor(pts.length*0.72)][0];
+const buyY = pts[Math.floor(pts.length*0.72)][1];
+
+const priceEl = document.getElementById('price-line');
+const fillEl  = document.getElementById('price-fill');
+const emaEl   = document.getElementById('ema-line');
+const dcTop   = document.getElementById('donchian-upper');
+const dcBot   = document.getElementById('donchian-lower');
+const dcFill  = document.getElementById('donchian-fill');
+const buyMrk  = document.getElementById('buy-marker');
+const buyLn   = document.getElementById('buy-line');
+
+if (priceEl) {
+  priceEl.setAttribute('d', priceLine);
+  fillEl.setAttribute('d', priceFill);
+  emaEl.setAttribute('d', emaLine);
+  dcTop.setAttribute('d', donchianTop);
+  dcBot.setAttribute('d', donchianBot);
+  dcFill.setAttribute('d', donchianFill);
+  buyMrk.setAttribute('cx', buyX);
+  buyMrk.setAttribute('cy', buyY);
+  buyLn.setAttribute('x1', buyX); buyLn.setAttribute('x2', buyX);
+}
+</script>
+
+<script>
+// &#226;&#8226;&#144;&#226;&#8226;&#144; CHART SECTION ANIMATION SEQUENCE &#226;&#8226;&#144;&#226;&#8226;&#144;
+const chartObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      startChartAnim();
+      chartObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+const chartSection = document.querySelector('.chart-section');
+if (chartSection) chartObserver.observe(chartSection);
+
+function startChartAnim() {
+  // 1. Animate price line
+  setTimeout(() => {
+    const pl = document.getElementById('price-line');
+    if (pl) { pl.style.transition='stroke-dashoffset 2s ease'; pl.style.strokeDashoffset='0'; }
+    const pf = document.getElementById('price-fill');
+    if (pf) { pf.style.transition='opacity 2s ease'; pf.style.opacity='0.3'; }
+  }, 200);
+
+  // 2. Show Donchian
+  setTimeout(() => {
+    const dt = document.getElementById('donchian-upper');
+    const db = document.getElementById('donchian-lower');
+    const df = document.getElementById('donchian-fill');
+    if (dt) { dt.style.transition='stroke-dashoffset 1s ease'; dt.style.strokeDashoffset='0'; }
+    if (db) { db.style.transition='stroke-dashoffset 1s ease 0.2s'; db.style.strokeDashoffset='0'; }
+    if (df) { df.style.transition='opacity 0.8s ease 0.4s'; df.style.opacity='1'; }
+  }, 1400);
+
+  // 3. Show EMA
+  setTimeout(() => {
+    const em = document.getElementById('ema-line');
+    if (em) { em.style.transition='stroke-dashoffset 1.2s ease'; em.style.strokeDashoffset='0'; }
+  }, 2600);
+
+  // 4. Animate buy signal
+  setTimeout(() => {
+    const bm = document.getElementById('buy-marker');
+    const bl = document.getElementById('buy-line');
+    if (bm) { bm.style.transition='r 0.4s ease, opacity 0.4s ease'; bm.setAttribute('r','8'); bm.setAttribute('opacity','1'); }
+    if (bl) { bl.style.transition='opacity 0.4s ease'; bl.setAttribute('opacity','1'); }
+    // Show signal box
+    const sb = document.getElementById('signalBox');
+    if (sb) sb.classList.add('visible');
+    // Animate score
+    animateScore(0, 84, 1200);
+  }, 3800);
+
+  // 5. Show indicator badges
+  document.querySelectorAll('.ind-badge').forEach((badge, i) => {
+    setTimeout(() => badge.classList.add('visible'), 2800 + parseInt(badge.dataset.delay || 0));
+  });
+}
+
+function animateScore(from, to, duration) {
+  const el = document.getElementById('scoreVal');
+  if (!el) return;
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+    el.textContent = Math.round(from + (to - from) * ease);
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// &#226;&#8226;&#144;&#226;&#8226;&#144; KEYBOARD ESC TO CLOSE MODAL &#226;&#8226;&#144;&#226;&#8226;&#144;
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// &#226;&#8226;&#144;&#226;&#8226;&#144; SMOOTH CTA SCROLL &#226;&#8226;&#144;&#226;&#8226;&#144;
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+});
+</script>
+</body>
+</html>
