@@ -1,54 +1,61 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DOMO & KYRION â€” Prototypes</title>
+<title>DOMO &amp; KYRION - Prototypes</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0F1E35; font-family: -apple-system, system-ui, sans-serif; min-height: 100vh; padding: 24px 16px; }
-h1 { color: #fff; text-align: center; font-size: 1.6rem; margin-bottom: 6px; }
-p.sub { color: #8A9BB0; text-align: center; font-size: 0.9rem; margin-bottom: 28px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; max-width: 900px; margin: 0 auto; }
-.card { background: #1A2B45; border-radius: 16px; padding: 24px; text-decoration: none; display: block; transition: transform .2s, box-shadow .2s; }
-.card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.4); }
-.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; letter-spacing: .05em; margin-bottom: 12px; }
+body { background: #0F1E35; font-family: -apple-system, system-ui, 'Segoe UI', sans-serif; min-height: 100vh; padding: 32px 16px; }
+h1 { color: #fff; text-align: center; font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; }
+p.sub { color: #8A9BB0; text-align: center; font-size: 0.9rem; margin-bottom: 32px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; max-width: 920px; margin: 0 auto; }
+.card { background: #1A2B45; border-radius: 18px; padding: 26px 22px; text-decoration: none; display: block; transition: transform .2s, box-shadow .2s; border: 1px solid rgba(255,255,255,.06); }
+.card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(0,0,0,.45); }
+.badge { display: inline-block; padding: 3px 11px; border-radius: 20px; font-size: 0.68rem; font-weight: 800; letter-spacing: .08em; margin-bottom: 14px; text-transform: uppercase; }
 .mobile { background: rgba(255,107,53,.15); color: #FF6B35; }
-.admin { background: rgba(0,212,170,.15); color: #00D4AA; }
+.admin  { background: rgba(0,212,170,.15); color: #00D4AA; }
 .security { background: rgba(255,75,75,.15); color: #FF4B4B; }
-.trading { background: rgba(240,185,11,.15); color: #F0B90B; }
-.card h2 { color: #fff; font-size: 1.1rem; margin-bottom: 8px; }
-.card p { color: #8A9BB0; font-size: 0.85rem; line-height: 1.5; }
-.logo { font-size: 2rem; margin-bottom: 12px; }
+.trading  { background: rgba(240,185,11,.15); color: #F0B90B; }
+.card h2 { color: #fff; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; }
+.card p { color: #8A9BB0; font-size: 0.82rem; line-height: 1.55; }
+.logo { font-size: 2.2rem; margin-bottom: 14px; display: block; }
+.divider { max-width: 920px; margin: 28px auto 20px; border: none; border-top: 1px solid rgba(255,255,255,.08); }
+.section-label { color: #8A9BB0; font-size: 0.75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; text-align: center; margin-bottom: 16px; }
 </style>
 </head>
 <body>
 <h1>SOKORA Prototypes</h1>
-<p class="sub">Interfaces interactives â€” testez sur mobile</p>
+<p class="sub">Interfaces interactives - testez sur mobile</p>
+<p class="section-label">DOMO - Gestion de Residence</p>
 <div class="grid">
   <a class="card" href="DOMO_App_Mobile_Prototype.html">
-    <div class="logo">&#127960;&#65039;</div>
+    <span class="logo">&#127968;</span>
     <span class="badge mobile">MOBILE</span>
-    <h2>DOMO â€” App RÃ©sident</h2>
-    <p>MarchÃ©, incidents, votes, events voisinage, SOKORA Pay, QR visiteur</p>
+    <h2>DOMO - App Resident</h2>
+    <p>Marche participatif, incidents avec photos, votes, evenements voisinage, SOKORA Pay, QR visiteur</p>
   </a>
   <a class="card" href="DOMO_Admin_Prototype.html">
-    <div class="logo">&#128421;&#65039;</div>
+    <span class="logo">&#128187;</span>
     <span class="badge admin">ADMIN</span>
-    <h2>DOMO â€” Dashboard Syndic</h2>
-    <p>ComptabilitÃ©, rÃ©sidents, sÃ©curitÃ©, AG, votes, sondages, modÃ©ration</p>
+    <h2>DOMO - Dashboard Syndic</h2>
+    <p>Comptabilite, residents, securite, AG &amp; votes, sondages, moderation, SOKORA Wallet</p>
   </a>
   <a class="card" href="DOMO_Agent_Security_Prototype.html">
-    <div class="logo">&#128737;&#65039;</div>
-    <span class="badge security">SÃ‰CURITÃ‰</span>
-    <h2>DOMO â€” App Agent</h2>
-    <p>Rondes connectÃ©es, contrÃ´le accÃ¨s, SOS, badge numÃ©rique</p>
+    <span class="logo">&#128737;</span>
+    <span class="badge security">SECURITE</span>
+    <h2>DOMO - App Agent</h2>
+    <p>Rondes connectees, controle d'acces, SOS urgence, badge numerique. Login: SEC-2024-001 / 1234</p>
   </a>
+</div>
+<hr class="divider">
+<p class="section-label">KYRION - Trading Algorithmique</p>
+<div class="grid" style="max-width:400px;">
   <a class="card" href="KYRION_Mobile_App.html">
-    <div class="logo">&#128200;</div>
+    <span class="logo">&#128200;</span>
     <span class="badge trading">TRADING</span>
-    <h2>KYRION â€” Trading App</h2>
-    <p>Signaux crypto & forex, positions, performance, multi-stratÃ©gies</p>
+    <h2>KYRION - Trading App</h2>
+    <p>Signaux crypto &amp; forex, multi-strategies, positions en temps reel, performance &amp; analytics</p>
   </a>
 </div>
 </body>
