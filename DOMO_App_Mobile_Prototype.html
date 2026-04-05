@@ -2,1578 +2,1694 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DOMO — Prototype Résident</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DOMO — App Résidents</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:80px;left:16px;right:16px;background:var(--navy-card);border:1px solid var(--navy-border);padding:12px 16px;border-radius:10px;font-size:13px;z-index:400;animation:slideUp 0.3s;max-width:calc(100% - 32px);';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// Check event noise level before submission
+document.addEventListener('DOMContentLoaded', function() {
+  const evtNoiseLevelSelect = document.getElementById('evt-noise-level');
+  if (evtNoiseLevelSelect) {
+    evtNoiseLevelSelect.addEventListener('change', function() {
+      if (this.value === 'élevé') {
+        showToast('⚠️ La sécurité sera notifiée de votre événement');
+      }
+    });
+  }
+  
+  // Initialize AG RSVP buttons if they exist
+  document.querySelectorAll('[data-ag-rsvp-btn]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const agId = this.dataset.agId;
+      const option = this.dataset.option;
+      handleAGRSVP(agId, option);
+    });
+  });
+});
+
+function handleAGRSVP(agId, option) {
+  const agCard = document.getElementById('ag-card-' + agId);
+  if (!agCard) return;
+  
+  // Show badge for the selected option
+  const badgeDiv = agCard.querySelector('.ag-rsvp-status');
+  if (badgeDiv) {
+    badgeDiv.innerHTML = '<span class="badge badge-teal">RSVP: ' + option + '</span>';
+  }
+  
+  // If "En ligne" is selected, show online participation
+  if (option === 'En ligne') {
+    handleAGOnlineParticipation(agId);
+  }
+}
+</script>
 <style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg:#0B1622; --card:#132030; --card2:#1A2C42;
-  --orange:#FF6B35; --orange2:#FF4500;
-  --teal:#00D4AA; --teal2:#00A882;
-  --violet:#7C3AED; --violet2:#5B21B6;
-  --gold:#F59E0B; --gold2:#D97706;
-  --navy:#0F1E35; --white:#FFF; --muted:#7A90A8;
-  --border:#1E3048; --green:#10B981; --red:#EF4444;
+  --navy: #0F1E35;
+  --navy-light: #162840;
+  --navy-card: #1A3050;
+  --navy-border: #1E3A5F;
+  --orange: #FF6B35;
+  --teal: #00D4AA;
+  --red: #FF4B4B;
+  --white: #FFFFFF;
+  --gray: #8A9BB0;
+  --gray-light: #B0C0D0;
+  --tab-h: 70px;
+  --header-h: 64px;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 4px 20px rgba(0,0,0,0.3);
+  --trans: all 0.25s cubic-bezier(0.4,0,0.2,1);
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-  font-family:'Poppins',sans-serif;
-  background:linear-gradient(135deg,#060e1a 0%,#0a1525 50%,#07101e 100%);
-  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
-}
-.phone{
-  width:390px;height:844px;background:var(--bg);border-radius:52px;
-  position:relative;overflow:hidden;
-  box-shadow:
-    0 50px 120px rgba(0,0,0,.8),
-    0 0 0 1px rgba(255,255,255,.06),
-    inset 0 0 0 1px rgba(255,255,255,.04);
-}
-.notch{
-  position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:126px;height:36px;background:#000;border-radius:0 0 24px 24px;z-index:200;
-}
-.screen{
-  position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden;
-}
-.screen.active{display:flex;}
-.screen.slide-in{animation:slideIn .35s cubic-bezier(.25,.46,.45,.94) forwards;}
-.screen.slide-out{animation:slideOut .35s cubic-bezier(.25,.46,.45,.94) forwards;}
-@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
-@keyframes slideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-30px)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-.pin-box:focus{border-color:var(--teal);box-shadow:0 0 16px rgba(0,212,170,.4);}
-.pin-box::-webkit-outer-spin-button,.pin-box::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
-.pin-box[type=number]{-moz-appearance:textfield;}
-.scroll{flex:1;overflow-y:auto;padding-bottom:88px;scrollbar-width:none;}
-.scroll::-webkit-scrollbar{display:none;}
-/* === GLASSMORPHISM NAV === */
-.nav{
-  position:absolute;bottom:0;left:0;right:0;height:78px;
-  background:rgba(11,22,34,.85);
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border-top:1px solid rgba(255,255,255,.07);
-  display:flex;align-items:center;justify-content:space-around;
-  padding:0 6px 14px;z-index:100;
-}
-.nav-item{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  cursor:pointer;padding:8px 14px;border-radius:16px;transition:all .25s;
-  position:relative;
-}
-.nav-item .ni{font-size:21px;transition:all .25s;}
-.nav-item .nl{font-size:10px;color:var(--muted);font-weight:500;transition:all .25s;}
-.nav-item.active{background:rgba(255,107,53,.12);}
-.nav-item.active .nl{color:var(--orange);font-weight:700;}
-.nav-item.active .ni{filter:drop-shadow(0 0 8px rgba(255,107,53,.6));transform:translateY(-1px);}
-/* === CARDS === */
-.card{
-  background:linear-gradient(145deg,#132030,#1A2C42);
-  border-radius:24px;padding:20px;margin:0 16px 12px;
-  border:1px solid rgba(255,255,255,.05);
-}
-.card-glow-teal{box-shadow:0 4px 24px rgba(0,212,170,.12),inset 0 0 0 1px rgba(0,212,170,.1);}
-.card-glow-orange{box-shadow:0 4px 24px rgba(255,107,53,.12),inset 0 0 0 1px rgba(255,107,53,.1);}
-.card-glow-violet{box-shadow:0 4px 24px rgba(124,58,237,.12),inset 0 0 0 1px rgba(124,58,237,.1);}
-/* === BUTTONS === */
-.btn{
-  border:none;cursor:pointer;font-family:'Poppins',sans-serif;
-  font-weight:700;border-radius:50px;transition:all .2s;letter-spacing:.3px;
-}
-.btn:active{transform:scale(.95);}
-.btn-orange{
-  background:linear-gradient(135deg,#FF6B35,#FF4500);color:#fff;
-  padding:15px 32px;font-size:15px;
-  box-shadow:0 6px 24px rgba(255,100,53,.45),0 2px 8px rgba(0,0,0,.3);
-}
-.btn-orange:hover{box-shadow:0 8px 32px rgba(255,100,53,.55);transform:translateY(-1px);}
-.btn-teal{
-  background:linear-gradient(135deg,#00D4AA,#009980);color:#fff;
-  padding:13px 26px;font-size:14px;
-  box-shadow:0 6px 20px rgba(0,212,170,.4),0 2px 8px rgba(0,0,0,.2);
-}
-.btn-violet{
-  background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;
-  padding:13px 26px;font-size:14px;
-  box-shadow:0 6px 20px rgba(124,58,237,.4);
-}
-.btn-sm{padding:8px 18px;font-size:12px;}
-.btn-ghost{background:rgba(255,255,255,.06);color:var(--muted);padding:13px;border:1px solid var(--border);}
-/* === INPUTS === */
-.inp{
-  width:100%;padding:14px 18px;
-  background:rgba(30,48,72,.6);
-  border:1.5px solid var(--border);border-radius:16px;
-  color:#fff;font-family:'Poppins',sans-serif;font-size:14px;outline:none;
-  transition:border .2s,background .2s;
-}
-.inp:focus{border-color:var(--teal);background:rgba(0,212,170,.06);}
-.inp::placeholder{color:var(--muted);}
-textarea.inp{resize:none;}
-/* === BADGES === */
-.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:50px;font-size:11px;font-weight:700;}
-.b-green{background:rgba(16,185,129,.15);color:#10B981;}
-.b-yellow{background:rgba(245,158,11,.15);color:#F59E0B;}
-.b-red{background:rgba(239,68,68,.15);color:#EF4444;}
-.b-blue{background:rgba(96,165,250,.15);color:#60A5FA;}
-.b-gray{background:rgba(120,144,168,.15);color:#7A90A8;}
-.b-violet{background:rgba(124,58,237,.15);color:#A78BFA;}
-.b-teal{background:rgba(0,212,170,.15);color:var(--teal);}
-/* === MODALS === */
-.modal-overlay{
-  position:absolute;inset:0;background:rgba(5,10,18,.88);
-  display:none;align-items:flex-end;z-index:150;
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-}
-.modal-overlay.open{display:flex;animation:fadeOverlay .25s ease;}
-@keyframes fadeOverlay{from{opacity:0}to{opacity:1}}
-.modal{
-  width:100%;background:linear-gradient(160deg,#0F1E30,#152540);
-  border-radius:36px 36px 0 0;padding:28px 20px 36px;
-  max-height:82%;overflow-y:auto;scrollbar-width:none;
-  border-top:1px solid rgba(255,255,255,.08);
-  animation:modalUp .3s cubic-bezier(.25,.46,.45,.94);
-}
-.modal::-webkit-scrollbar{display:none;}
-@keyframes modalUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
-.mhandle{width:44px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:0 auto 22px;}
-/* === SECTION TITLE === */
-.stitle{
-  font-size:16px;font-weight:800;color:#fff;
-  margin:18px 16px 10px;display:flex;align-items:center;justify-content:space-between;
-}
-.stitle a{font-size:12px;color:var(--teal);cursor:pointer;font-weight:600;}
-/* === BACK BTN === */
-.backbtn{
-  width:40px;height:40px;background:rgba(255,255,255,.07);border-radius:14px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:18px;border:1px solid var(--border);
-  color:#fff;flex-shrink:0;transition:all .2s;
-}
-.backbtn:active{transform:scale(.9);}
-/* === CAT BUTTONS === */
-.cat-btn{
-  background:rgba(30,48,72,.7);border:1.5px solid var(--border);border-radius:18px;
-  padding:14px 6px;text-align:center;cursor:pointer;color:var(--muted);
-  transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:5px;
-}
-.cat-btn:active{transform:scale(.94);}
-.cat-btn.sel{border-color:var(--teal);background:rgba(0,212,170,.1);color:var(--teal);}
-/* === PRIO BUTTONS === */
-.prio-btn{
-  flex:1;padding:11px 6px;border:1.5px solid var(--border);border-radius:50px;
-  text-align:center;font-size:12px;font-weight:700;color:var(--muted);
-  cursor:pointer;transition:all .2s;background:rgba(30,48,72,.5);
-}
-.prio-btn:active{transform:scale(.95);}
-.prio-low.sel{border-color:var(--green);color:var(--green);background:rgba(16,185,129,.1);}
-.prio-med.sel{border-color:var(--yellow);color:var(--yellow);background:rgba(245,158,11,.1);}
-.prio-high.sel{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.1);}
-/* === PAY METHODS === */
-.pay-meth{
-  display:flex;align-items:center;gap:14px;padding:16px;
-  background:rgba(20,36,56,.8);border-radius:18px;border:1.5px solid var(--border);
-  cursor:pointer;transition:all .2s;
-}
-.pay-meth:active{transform:scale(.98);}
-.pay-meth.sel{border-color:var(--teal);background:rgba(0,212,170,.08);box-shadow:0 0 0 1px rgba(0,212,170,.2);}
-/* === MENU ITEMS === */
-.menu-item{
-  display:flex;align-items:center;gap:16px;padding:18px;cursor:pointer;
-  transition:background .2s;
-}
-.menu-item:active{background:rgba(255,255,255,.03);}
-/* === TOAST === */
-#toast{
-  position:absolute;bottom:100px;left:50%;transform:translateX(-50%);
-  background:linear-gradient(135deg,#132030,#1e3a55);
-  border:1px solid rgba(0,212,170,.3);border-radius:20px;
-  padding:12px 22px;font-size:13px;color:#fff;font-weight:600;
-  display:none;z-index:300;text-align:center;white-space:nowrap;
-  box-shadow:0 8px 28px rgba(0,0,0,.5),0 0 0 1px rgba(0,212,170,.1);
-}
-/* === STAGGER ANIMATIONS === */
-.anim-1{animation:fadeUp .4s .05s both;}
-.anim-2{animation:fadeUp .4s .1s both;}
-.anim-3{animation:fadeUp .4s .15s both;}
-.anim-4{animation:fadeUp .4s .2s both;}
-.anim-5{animation:fadeUp .4s .25s both;}
-.anim-6{animation:fadeUp .4s .3s both;}
-/* === QR PATTERN === */
-.qr-cell{background:#000;}
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--navy); font-family: system-ui, -apple-system, 'Inter', sans-serif; color: var(--white); }
+input, textarea, select, button { font-family: inherit; }
+button { cursor: pointer; border: none; background: none; }
+
+/* ===== APP SHELL ===== */
+#app { width: 100%; max-width: 430px; height: 100vh; margin: 0 auto; position: relative; overflow: hidden; background: var(--navy); display: flex; flex-direction: column; }
+
+/* ===== SCREENS ===== */
+.screen { position: absolute; top: 0; left: 0; right: 0; bottom: var(--tab-h); overflow-y: auto; overflow-x: hidden; background: var(--navy); display: none; flex-direction: column; scrollbar-width: none; }
+.screen::-webkit-scrollbar { display: none; }
+.screen.active { display: flex; }
+.screen-inner { padding: 0 0 16px 0; flex: 1; }
+
+/* ===== HEADER ===== */
+.header { position: sticky; top: 0; z-index: 100; background: var(--navy); padding: 14px 16px 10px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--navy-border); backdrop-filter: blur(10px); }
+.header-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), #FF9F70); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+.header-info { flex: 1; }
+.header-info .name { font-size: 15px; font-weight: 600; }
+.header-info .sub { font-size: 12px; color: var(--gray); }
+.header-right { display: flex; align-items: center; gap: 10px; }
+.notif-btn { position: relative; width: 38px; height: 38px; border-radius: 50%; background: var(--navy-card); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.notif-badge { position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; background: var(--red); border-radius: 50%; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid var(--navy); }
+
+/* ===== CARDS ===== */
+.card { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: var(--radius); padding: 16px; margin: 0 16px 12px; transition: var(--trans); }
+.card:active { transform: scale(0.98); }
+.card-title { font-size: 13px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+.card-title .see-all { font-size: 12px; color: var(--teal); text-transform: none; letter-spacing: 0; font-weight: 500; }
+
+/* ===== BADGES ===== */
+.badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.badge-orange { background: rgba(255,107,53,0.15); color: var(--orange); }
+.badge-teal { background: rgba(0,212,170,0.15); color: var(--teal); }
+.badge-red { background: rgba(255,75,75,0.15); color: var(--red); }
+.badge-gray { background: rgba(138,155,176,0.15); color: var(--gray); }
+.badge-blue { background: rgba(66,153,225,0.15); color: #63B3ED; }
+.badge-green { background: rgba(72,187,120,0.15); color: #68D391; }
+
+/* ===== SECTION LABEL ===== */
+.section-label { font-size: 16px; font-weight: 700; padding: 16px 16px 8px; }
+
+/* ===== BOTTOM TAB BAR ===== */
+.tab-bar { position: absolute; bottom: 0; left: 0; right: 0; height: var(--tab-h); background: var(--navy-card); border-top: 1px solid var(--navy-border); display: flex; align-items: stretch; z-index: 200; padding-bottom: env(safe-area-inset-bottom); }
+.tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 6px 4px 4px; cursor: pointer; position: relative; transition: var(--trans); -webkit-tap-highlight-color: transparent; }
+.tab-item .tab-icon { font-size: 20px; line-height: 1; transition: var(--trans); }
+.tab-item .tab-label { font-size: 9.5px; font-weight: 500; color: var(--gray); transition: var(--trans); }
+.tab-item.active .tab-label { color: var(--orange); }
+.tab-item.active .tab-icon { transform: translateY(-2px); }
+.tab-item .tab-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--orange); position: absolute; top: 6px; opacity: 0; transition: var(--trans); }
+.tab-item.active .tab-dot { opacity: 1; }
+
+/* ===== BUTTONS ===== */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; transition: var(--trans); cursor: pointer; border: none; }
+.btn-primary { background: var(--orange); color: #fff; }
+.btn-primary:active { background: #E55A28; transform: scale(0.97); }
+.btn-teal { background: var(--teal); color: #0F1E35; }
+.btn-teal:active { background: #00B894; transform: scale(0.97); }
+.btn-ghost { background: var(--navy-border); color: var(--white); }
+.btn-ghost:active { background: #2A4A6E; transform: scale(0.97); }
+.btn-outline { background: transparent; color: var(--orange); border: 1.5px solid var(--orange); }
+.btn-full { width: 100%; }
+.btn-sm { padding: 8px 14px; font-size: 12px; }
+
+/* ===== FORMS ===== */
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--gray); margin-bottom: 6px; display: block; }
+.form-input { width: 100%; background: var(--navy); border: 1.5px solid var(--navy-border); border-radius: var(--radius-sm); padding: 11px 14px; font-size: 14px; color: var(--white); transition: var(--trans); outline: none; }
+.form-input:focus { border-color: var(--orange); }
+.form-input::placeholder { color: var(--gray); }
+textarea.form-input { resize: vertical; min-height: 80px; }
+select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M1 4l5 5 5-5' stroke='%238A9BB0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+/* ===== TOGGLE ===== */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--navy-border); }
+.toggle-row:last-child { border-bottom: none; }
+.toggle-info .toggle-title { font-size: 14px; font-weight: 500; }
+.toggle-info .toggle-sub { font-size: 12px; color: var(--gray); margin-top: 2px; }
+.toggle { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; inset: 0; background: var(--navy-border); border-radius: 13px; cursor: pointer; transition: var(--trans); }
+.toggle-slider::before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: var(--trans); }
+input:checked + .toggle-slider { background: var(--teal); }
+input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+/* ===== FAB ===== */
+.fab { position: fixed; bottom: calc(var(--tab-h) + 16px); right: 16px; width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), #FF9F70); display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 20px rgba(255,107,53,0.5); z-index: 150; transition: var(--trans); border: none; color: #fff; }
+.fab:active { transform: scale(0.9); }
+
+/* ===== MODAL ===== */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300; display: none; align-items: flex-end; }
+.modal-overlay.open { display: flex; animation: fadeIn 0.2s; }
+.modal-sheet { background: var(--navy-card); border-radius: 24px 24px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; padding: 8px 16px 32px; animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1); scrollbar-width: none; }
+.modal-sheet::-webkit-scrollbar { display: none; }
+.modal-handle { width: 40px; height: 4px; background: var(--navy-border); border-radius: 2px; margin: 8px auto 16px; }
+.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+.modal-close { float: right; font-size: 22px; color: var(--gray); background: none; border: none; cursor: pointer; margin-top: -4px; }
+
+/* ===== TABS (sub) ===== */
+.sub-tabs { display: flex; gap: 8px; padding: 12px 16px; overflow-x: auto; scrollbar-width: none; }
+.sub-tabs::-webkit-scrollbar { display: none; }
+.sub-tab { flex-shrink: 0; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; background: var(--navy-card); color: var(--gray); border: 1.5px solid var(--navy-border); cursor: pointer; transition: var(--trans); }
+.sub-tab.active { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+/* ===== TIMELINE ===== */
+.timeline { position: relative; padding-left: 20px; }
+.timeline::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 0; width: 2px; background: var(--navy-border); }
+.timeline-item { position: relative; padding-bottom: 16px; }
+.timeline-item::before { content: ''; position: absolute; left: -17px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--gray); border: 2px solid var(--navy-card); }
+.timeline-item.done::before { background: var(--teal); }
+.timeline-item.active::before { background: var(--orange); }
+.timeline-item .tl-label { font-size: 12px; color: var(--gray); }
+.timeline-item .tl-title { font-size: 13px; font-weight: 500; margin-top: 2px; }
+
+/* ===== MARKET CARDS ===== */
+.market-card { display: flex; gap: 12px; background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: var(--radius); padding: 12px; margin: 0 16px 10px; }
+.market-img { width: 64px; height: 64px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.market-info { flex: 1; }
+.market-title { font-size: 14px; font-weight: 600; }
+.market-price { font-size: 15px; font-weight: 700; color: var(--orange); margin-top: 2px; }
+.market-meta { font-size: 11px; color: var(--gray); margin-top: 4px; }
+.market-fav { font-size: 20px; align-self: flex-start; }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar { height: 8px; background: var(--navy-border); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+.progress-fill.orange { background: var(--orange); }
+.progress-fill.teal { background: var(--teal); }
+.progress-fill.red { background: var(--red); }
+
+/* ===== CHAT ===== */
+.chat-container { display: flex; flex-direction: column; height: 100%; }
+.chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.msg-bubble { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 13px; line-height: 1.5; }
+.msg-bubble.sent { align-self: flex-end; background: var(--orange); border-bottom-right-radius: 4px; }
+.msg-bubble.recv { align-self: flex-start; background: var(--navy-card); border: 1px solid var(--navy-border); border-bottom-left-radius: 4px; }
+.msg-meta { font-size: 10px; color: var(--gray); margin-top: 4px; }
+.chat-input-bar { padding: 12px 16px; border-top: 1px solid var(--navy-border); display: flex; gap: 10px; align-items: flex-end; }
+.chat-input-bar .form-input { flex: 1; max-height: 100px; }
+
+/* ===== ANNOUNCE CARDS ===== */
+.announce-card { border-radius: var(--radius); padding: 14px; margin: 0 16px 10px; border-left: 4px solid; cursor: pointer; transition: var(--trans); }
+.announce-card:active { transform: scale(0.98); }
+.announce-card.info { background: rgba(66,153,225,0.08); border-left-color: #63B3ED; }
+.announce-card.urgent { background: rgba(255,107,53,0.08); border-left-color: var(--orange); }
+.announce-card.critical { background: rgba(255,75,75,0.08); border-left-color: var(--red); }
+.announce-card .unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); display: inline-block; margin-left: 6px; }
+.announce-card .ann-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; }
+.announce-card .ann-body { font-size: 12px; color: var(--gray-light); margin-top: 6px; line-height: 1.5; }
+.announce-card .ann-meta { font-size: 11px; color: var(--gray); margin-top: 8px; }
+
+/* ===== VOTE CARD ===== */
+.vote-card { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: var(--radius); padding: 16px; margin: 0 16px 12px; }
+.vote-choices { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+.vote-btn { flex: 1; padding: 10px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; text-align: center; cursor: pointer; transition: var(--trans); border: 1.5px solid var(--navy-border); background: var(--navy); color: var(--white); }
+.vote-btn:active { transform: scale(0.96); }
+.vote-btn.oui:hover, .vote-btn.oui.voted { background: rgba(0,212,170,0.15); border-color: var(--teal); color: var(--teal); }
+.vote-btn.non:hover, .vote-btn.non.voted { background: rgba(255,75,75,0.15); border-color: var(--red); color: var(--red); }
+.vote-btn.abs:hover, .vote-btn.abs.voted { background: rgba(138,155,176,0.15); border-color: var(--gray); color: var(--gray); }
+.vote-result-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+.pulse { animation: pulse 1.5s infinite; }
+
+/* ===== WEATHER CARD ===== */
+.weather-card { background: linear-gradient(135deg, var(--navy-card), #0D2A4A); border: 1px solid var(--navy-border); border-radius: var(--radius); padding: 18px; margin: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+.weather-left .cité { font-size: 12px; color: var(--gray); }
+.weather-left .statut { font-size: 20px; font-weight: 700; margin-top: 4px; }
+.weather-right { text-align: right; }
+.weather-temp { font-size: 36px; font-weight: 300; }
+.weather-icon { font-size: 40px; }
+
+/* ===== EVENT CARDS ===== */
+.event-scroll { display: flex; gap: 12px; padding: 4px 16px 8px; overflow-x: auto; scrollbar-width: none; }
+.event-scroll::-webkit-scrollbar { display: none; }
+.event-card-h { flex-shrink: 0; width: 160px; background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: var(--radius); padding: 14px 12px; }
+.event-date { font-size: 11px; color: var(--teal); font-weight: 600; margin-bottom: 6px; }
+.event-title-h { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.event-detail { font-size: 11px; color: var(--gray); }
+
+/* ===== QR CODE ===== */
+#qr-display { display: flex; justify-content: center; padding: 20px; }
+#qr-display canvas, #qr-display img { border-radius: 12px; padding: 12px; background: white; }
+
+/* ===== RESIDENT CARD ===== */
+.resident-card { display: flex; align-items: center; gap: 12px; background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: var(--radius); padding: 14px; margin: 0 16px 10px; }
+.resident-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+.resident-info .res-name { font-size: 14px; font-weight: 600; }
+.resident-info .res-apt { font-size: 12px; color: var(--gray); margin-top: 2px; }
+.resident-info .res-phone { font-size: 12px; color: var(--teal); margin-top: 2px; }
+.resident-actions { margin-left: auto; display: flex; gap: 8px; }
+.icon-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--navy); border: 1px solid var(--navy-border); display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: var(--trans); }
+.icon-btn:active { transform: scale(0.9); }
+
+/* ===== PHOTO UPLOAD ===== */
+.photo-upload-area { border: 2px dashed var(--navy-border); border-radius: var(--radius-sm); padding: 20px; text-align: center; cursor: pointer; transition: var(--trans); position: relative; }
+.photo-upload-area:hover { border-color: var(--orange); }
+.photo-upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.photo-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.photo-thumb { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; background: var(--navy-border); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+
+/* ===== MISC ===== */
+.divider { height: 1px; background: var(--navy-border); margin: 4px 0; }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--gray); }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state .empty-text { font-size: 14px; }
+.chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.chip { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--navy-border); color: var(--gray); cursor: pointer; transition: var(--trans); border: none; }
+.chip.active { background: rgba(255,107,53,0.2); color: var(--orange); }
+.info-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--navy-border); font-size: 14px; }
+.info-row:last-child { border-bottom: none; }
+.info-row .info-label { color: var(--gray); font-size: 13px; }
+.info-row .info-val { font-weight: 500; text-align: right; max-width: 60%; }
+.sub-section-title { font-size: 13px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 16px 8px; }
+
+/* ===== SERVICE GRID ===== */
+.service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; }
+.service-item { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: var(--radius); padding: 20px 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; transition: var(--trans); }
+.service-item:active { transform: scale(0.96); border-color: var(--orange); }
+.service-item .srv-icon { font-size: 32px; }
+.service-item .srv-label { font-size: 13px; font-weight: 600; text-align: center; }
+.service-item .srv-count { font-size: 11px; color: var(--gray); }
+
+/* ===== TICKET ROW ===== */
+.ticket-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--navy-border); }
+.ticket-row:last-child { border-bottom: none; }
+.ticket-icon { font-size: 20px; width: 38px; height: 38px; border-radius: 10px; background: var(--navy); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ticket-info { flex: 1; }
+.ticket-title { font-size: 13px; font-weight: 500; }
+.ticket-meta { font-size: 11px; color: var(--gray); margin-top: 2px; }
+
+/* ===== PROFILE ===== */
+.profile-hero { display: flex; flex-direction: column; align-items: center; padding: 24px 16px 16px; }
+.profile-avatar-lg { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), #FF9F70); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+.profile-name { font-size: 20px; font-weight: 700; }
+.profile-apt { font-size: 13px; color: var(--gray); margin-top: 4px; }
+
+/* ===== QR HISTORY ===== */
+.qr-hist-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--navy-border); }
+.qr-hist-item:last-child { border-bottom: none; }
+.qr-hist-info { flex: 1; font-size: 13px; }
+.qr-hist-info .qr-time { font-size: 11px; color: var(--gray); margin-top: 2px; }
+.qr-status { font-size: 11px; font-weight: 600; }
+.qr-status.valid { color: var(--teal); }
+.qr-status.expired { color: var(--gray); }
+
+/* ===== AG CARD ===== */
+.ag-card { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: var(--radius); padding: 14px; margin: 0 16px 10px; }
+.ag-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.ag-title { font-size: 14px; font-weight: 600; }
+.ag-date { font-size: 11px; color: var(--gray); }
+.ag-resolution { font-size: 12px; color: var(--gray-light); padding: 6px 0; border-bottom: 1px solid var(--navy-border); display: flex; align-items: flex-start; gap: 6px; }
+.ag-resolution:last-child { border-bottom: none; }
+.ag-resolution::before { content: '•'; color: var(--teal); flex-shrink: 0; }
+
+/* ===== SECURITY BANNERS ===== */
+.security-alert-banner { background: rgba(255,152,0,0.15); border-left: 4px solid #FF9800; padding: 12px 16px; margin: 12px 16px 0; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; }
+.security-alert-banner.critical { background: rgba(255,75,75,0.15); border-left-color: var(--red); }
+.security-alert-text { font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.security-alert-close { background: none; border: none; color: var(--gray); font-size: 18px; cursor: pointer; }
+
+.vote-banner { background: rgba(66,153,225,0.08); border-left: 4px solid #63B3ED; padding: 12px 16px; margin: 12px 16px 0; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+.vote-banner .banner-text { flex: 1; display: flex; align-items: center; gap: 8px; }
+
+.survey-banner { background: rgba(72,187,120,0.08); border-left: 4px solid #68D391; padding: 12px 16px; margin: 12px 16px 0; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+.survey-banner .banner-text { flex: 1; display: flex; align-items: center; gap: 8px; }
+
+.banner-close { background: none; border: none; color: var(--gray); font-size: 16px; cursor: pointer; }
+
+/* ===== ESCALADE BUTTON ===== */
+.btn-escalade { background: rgba(255,75,75,0.15); color: var(--red); border: 1.5px solid var(--red); }
+.btn-escalade:active { background: rgba(255,75,75,0.3); transform: scale(0.97); }
+
+/* ===== ONLINE PARTICIPATION ===== */
+.online-participation { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: var(--radius); padding: 16px; margin: 12px 16px; }
+.question-item { padding: 12px; background: var(--navy); border-radius: 10px; margin-bottom: 10px; border-left: 3px solid var(--teal); }
+.question-item.pending { border-left-color: var(--orange); }
+.question-meta { font-size: 11px; color: var(--gray); margin-top: 6px; }
+.question-input { display: flex; gap: 8px; margin-top: 12px; }
+.question-input textarea { flex: 1; }
+.question-input button { flex-shrink: 0; }
+
+.notification-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 6px; }
+.notification-badge.info { background: rgba(66,153,225,0.15); color: #63B3ED; }
+.notification-badge.success { background: rgba(72,187,120,0.15); color: #68D391; }
+
+
+.event-security-badge { background: rgba(66,153,225,0.15); color: #63B3ED; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; margin-top: 6px; }
+
 </style>
 </head>
 <body>
-<div class="phone">
-<div class="notch"></div>
-
-<!-- ==================== SCREEN 1: LOGIN ==================== -->
-<div class="screen active" id="s-login">
-  <div style="flex:1;background:linear-gradient(170deg,#0F1E35 0%,#0B1622 55%,#081018 100%);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:40px 30px;position:relative;overflow:hidden;">
-    <!-- BG glows -->
-    <div style="position:absolute;top:-100px;right:-100px;width:280px;height:280px;border-radius:50%;
-      background:radial-gradient(circle,rgba(255,107,53,.18) 0%,transparent 70%);pointer-events:none;"></div>
-    <div style="position:absolute;bottom:60px;left:-120px;width:300px;height:300px;border-radius:50%;
-      background:radial-gradient(circle,rgba(0,212,170,.12) 0%,transparent 70%);pointer-events:none;"></div>
-    <!-- Geometric decor -->
-    <div style="position:absolute;top:100px;left:20px;width:60px;height:60px;border-radius:18px;
-      background:rgba(255,107,53,.09);border:1px solid rgba(255,107,53,.2);transform:rotate(20deg);"></div>
-    <div style="position:absolute;top:160px;right:28px;width:36px;height:36px;border-radius:10px;
-      background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.25);transform:rotate(-15deg);"></div>
-    <div style="position:absolute;bottom:200px;right:18px;width:50px;height:50px;border-radius:50%;
-      background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);"></div>
-    <!-- Logo block -->
-    <div style="animation:scaleIn .5s .1s both;text-align:center;margin-bottom:40px;">
-      <div style="width:80px;height:80px;border-radius:28px;margin:0 auto 14px;
-        background:linear-gradient(145deg,#FF6B35,#FF4500);
-        display:flex;align-items:center;justify-content:center;font-size:38px;
-        box-shadow:0 12px 36px rgba(255,100,53,.45),0 4px 12px rgba(0,0,0,.3);">🏘️</div>
-      <div style="font-size:38px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;">DOMO</div>
-      <div style="font-size:13px;color:var(--muted);font-weight:300;letter-spacing:2px;margin-top:4px;">Votre résidence, connectée.</div>
-    </div>
-    <!-- Form -->
-    <div style="width:100%;display:flex;flex-direction:column;gap:14px;animation:fadeUp .5s .25s both;">
-      <div>
-        <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:7px;letter-spacing:.5px;">📱 NUMÉRO DE TÉLÉPHONE</label>
-        <div style="position:relative;display:flex;align-items:center;gap:8px;">
-          <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);padding:12px 14px;border-radius:14px;border:1px solid rgba(0,212,170,.2);">
-            <span style="font-size:16px;">🇨🇮</span>
-            <span style="font-size:13px;color:var(--muted);font-weight:600;">+225</span>
-          </div>
-          <input class="inp" type="tel" placeholder="07 XX XX XX" value="07 49 52 33" style="flex:1;">
-        </div>
+<div id="app">
+  <!-- ===== SCREEN 1: ACCUEIL ===== -->
+  <div class="screen active" id="screen-home">
+    <div class="header">
+      <div class="header-avatar" id="home-avatar">AK</div>
+      <div class="header-info">
+        <div class="name" id="home-name">Aminata Koné</div>
+        <div class="sub" id="home-sub">Villa B-12 · Cité Les Bougainvillées</div>
       </div>
-      <div>
-        <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:10px;letter-spacing:.5px;">🔐 CODE PIN (4 CHIFFRES)</label>
-        <div style="display:flex;gap:10px;justify-content:center;">
-          <input class="pin-box" type="password" maxlength="1" value="2" style="width:52px;height:52px;font-size:20px;font-weight:700;text-align:center;border:2px solid rgba(0,212,170,.3);border-radius:14px;background:rgba(11,22,34,.6);color:#fff;outline:none;">
-          <input class="pin-box" type="password" maxlength="1" value="5" style="width:52px;height:52px;font-size:20px;font-weight:700;text-align:center;border:2px solid rgba(0,212,170,.3);border-radius:14px;background:rgba(11,22,34,.6);color:#fff;outline:none;">
-          <input class="pin-box" type="password" maxlength="1" value="8" style="width:52px;height:52px;font-size:20px;font-weight:700;text-align:center;border:2px solid rgba(0,212,170,.3);border-radius:14px;background:rgba(11,22,34,.6);color:#fff;outline:none;">
-          <input class="pin-box" type="password" maxlength="1" value="4" style="width:52px;height:52px;font-size:20px;font-weight:700;text-align:center;border:2px solid rgba(0,212,170,.3);border-radius:14px;background:rgba(11,22,34,.6);color:#fff;outline:none;">
-        </div>
-      </div>
-      <button class="btn btn-orange" style="width:100%;margin-top:12px;font-size:15px;letter-spacing:.5px;" onclick="navigate('home')">
-        Se connecter →
-      </button>
-    </div>
-    <!-- Footer -->
-    <div style="position:absolute;bottom:28px;font-size:11px;color:rgba(120,144,168,.5);">
-      DOMO · Côte d'Ivoire · v1.0
-    </div>
-  </div>
-</div>
-
-<!-- ==================== SCREEN 2: HOME ==================== -->
-<div class="screen" id="s-home">
-  <div class="scroll">
-    <!-- Header -->
-    <div style="padding:52px 20px 0;display:flex;align-items:center;justify-content:space-between;" class="anim-1">
-      <div>
-        <div style="font-size:12px;color:var(--muted);font-weight:500;">Sam. 4 avril 2026</div>
-        <div style="font-size:23px;font-weight:800;color:#fff;line-height:1.2;">Bonjour Adjoua 👋</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="position:relative;cursor:pointer;width:40px;height:40px;background:rgba(255,255,255,.07);
-          border-radius:14px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);">
-          <span style="font-size:20px;">🔔</span>
-          <span style="position:absolute;top:-4px;right:-4px;width:17px;height:17px;
-            background:linear-gradient(135deg,var(--orange),var(--orange2));border-radius:50%;
-            font-size:9px;color:#fff;display:flex;align-items:center;justify-content:center;
-            font-weight:800;border:2px solid var(--bg);">2</span>
-        </div>
-        <div onclick="navigate('profil')" style="width:40px;height:40px;border-radius:50%;cursor:pointer;
-          background:linear-gradient(135deg,#FF6B35,#7C3AED);
-          display:flex;align-items:center;justify-content:center;
-          font-size:17px;font-weight:800;color:#fff;
-          box-shadow:0 4px 16px rgba(255,107,53,.35);">A</div>
-      </div>
-    </div>
-    <!-- HERO CARD -->
-    <div class="anim-2" style="margin:14px 16px;border-radius:28px;padding:24px;
-      background:linear-gradient(145deg,#0F2540 0%,#005A4E 60%,#003D4A 100%);
-      box-shadow:0 12px 40px rgba(0,212,170,.2),0 4px 16px rgba(0,0,0,.4);
-      position:relative;overflow:hidden;border:1px solid rgba(0,212,170,.15);">
-      <!-- BG orbs -->
-      <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;
-        background:rgba(0,212,170,.08);pointer-events:none;"></div>
-      <div style="position:absolute;bottom:-50px;left:20px;width:130px;height:130px;border-radius:50%;
-        background:rgba(0,90,78,.5);pointer-events:none;"></div>
-      <div style="position:relative;">
-        <div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px;margin-bottom:5px;">🏠 MA RÉSIDENCE</div>
-        <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:2px;">Villa 14B</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:20px;">Résidence Les Palmiers · Cocody</div>
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-          <div>
-            <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:2px;">Solde dû — Mars 2026</div>
-            <div style="font-size:30px;font-weight:900;color:#fff;line-height:1;">15 000
-              <span style="font-size:15px;font-weight:500;color:rgba(255,255,255,.7);">XOF</span>
-            </div>
-          </div>
-          <span class="badge b-yellow" style="font-size:12px;padding:7px 14px;">⚠️ En attente</span>
-        </div>
-        <!-- Mini progress -->
-        <div style="margin-top:16px;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-            <span style="font-size:10px;color:rgba(255,255,255,.4);">Payé : 10 000 XOF</span>
-            <span style="font-size:10px;color:rgba(255,255,255,.4);">40%</span>
-          </div>
-          <div style="height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
-            <div style="width:40%;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:3px;"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- QUICK ACTIONS -->
-    <div class="anim-3" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 16px;margin-bottom:6px;">
-      <div onclick="navigate('paiement')" style="background:linear-gradient(145deg,#0C2535,#0A3030);border:1px solid rgba(0,212,170,.2);
-        border-radius:22px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:7px;
-        cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(0,212,170,.1);">
-        <span style="font-size:24px;filter:drop-shadow(0 2px 6px rgba(0,212,170,.4));">💰</span>
-        <span style="font-size:10px;color:var(--teal);font-weight:700;">Payer</span>
-      </div>
-      <div onclick="navigate('incidents')" style="background:linear-gradient(145deg,#2A1208,#300E06);border:1px solid rgba(255,107,53,.2);
-        border-radius:22px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:7px;
-        cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(255,107,53,.1);">
-        <span style="font-size:24px;filter:drop-shadow(0 2px 6px rgba(255,107,53,.4));">🚨</span>
-        <span style="font-size:10px;color:var(--orange);font-weight:700;">Incident</span>
-      </div>
-      <div onclick="navigate('visiteurs')" style="background:linear-gradient(145deg,#1A0D35,#200E40);border:1px solid rgba(124,58,237,.2);
-        border-radius:22px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:7px;
-        cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(124,58,237,.1);">
-        <span style="font-size:24px;filter:drop-shadow(0 2px 6px rgba(124,58,237,.4));">🔑</span>
-        <span style="font-size:10px;color:#A78BFA;font-weight:700;">Visiteur</span>
-      </div>
-      <div style="background:linear-gradient(145deg,#0D2030,#142840);border:1px solid rgba(96,165,250,.2);
-        border-radius:22px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:7px;
-        cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(96,165,250,.1);">
-        <span style="font-size:24px;filter:drop-shadow(0 2px 6px rgba(96,165,250,.4));">📢</span>
-        <span style="font-size:10px;color:#60A5FA;font-weight:700;">Messages</span>
-      </div>
-    </div>
-
-    <!-- INCIDENTS SECTION -->
-    <div class="stitle anim-4">Mes incidents <a onclick="navigate('incidents')">Voir tout →</a></div>
-    <div class="card card-glow-blue anim-4" style="padding:16px;cursor:pointer;margin-bottom:8px;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:48px;height:48px;border-radius:16px;flex-shrink:0;
-          background:linear-gradient(135deg,rgba(96,165,250,.2),rgba(59,130,246,.1));
-          border:1px solid rgba(96,165,250,.2);
-          display:flex;align-items:center;justify-content:center;font-size:22px;">💧</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Fuite d'eau salle de bain</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Plomberie · Il y a 2 jours</div>
-        </div>
-        <span class="badge b-blue">🔄 En cours</span>
-      </div>
-    </div>
-    <div class="card anim-5" style="padding:16px;cursor:pointer;margin-bottom:8px;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:48px;height:48px;border-radius:16px;flex-shrink:0;
-          background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(217,119,6,.1));
-          border:1px solid rgba(245,158,11,.2);
-          display:flex;align-items:center;justify-content:center;font-size:22px;">⚡</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Ampoule couloir cassée</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Électricité · Il y a 5 jours</div>
-        </div>
-        <span class="badge b-yellow">📋 Ouvert</span>
-      </div>
-    </div>
-    <!-- NOTIFICATIONS SECTION -->
-    <div class="stitle anim-5">Notifications récentes</div>
-    <div class="card anim-6" style="padding:0;overflow:hidden;margin-bottom:8px;">
-      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:12px;align-items:flex-start;">
-        <div style="width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--orange),var(--orange2));
-          display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">💰</div>
-        <div style="flex:1;">
-          <div style="font-size:13px;font-weight:700;color:#fff;">Rappel de cotisation</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Mars 2026 — 15 000 XOF restants à régler.</div>
-          <div style="font-size:10px;color:var(--teal);margin-top:4px;font-weight:600;">Il y a 1h</div>
-        </div>
-      </div>
-      <div style="padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
-        <div style="width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#60A5FA,#3B82F6);
-          display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🔄</div>
-        <div style="flex:1;">
-          <div style="font-size:13px;font-weight:700;color:#fff;">Incident mis à jour</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Votre fuite d'eau est en cours de traitement.</div>
-          <div style="font-size:10px;color:var(--teal);margin-top:4px;font-weight:600;">Il y a 3h</div>
-        </div>
-      </div>
-    </div>
-  </div><!-- end scroll -->
-</div><!-- end s-home -->
-
-<!-- ==================== SCREEN 3: COTISATIONS ==================== -->
-<div class="screen" id="s-cotisations">
-  <div style="padding:52px 20px 14px;display:flex;align-items:center;gap:14px;" class="anim-1">
-    <div class="backbtn" onclick="navigate('home')">←</div>
-    <div>
-      <div style="font-size:11px;color:var(--teal);font-weight:600;letter-spacing:1px;">RÉSIDENCE LES PALMIERS</div>
-      <div style="font-size:20px;font-weight:800;color:#fff;">Mes Cotisations</div>
-    </div>
-  </div>
-  <div class="scroll">
-    <!-- SUMMARY CARD -->
-    <div class="anim-2" style="margin:0 16px 16px;border-radius:28px;padding:22px;
-      background:linear-gradient(145deg,#082535,#006050);
-      border:1px solid rgba(0,212,170,.2);
-      box-shadow:0 10px 32px rgba(0,212,170,.18);">
-      <div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px;margin-bottom:16px;">BILAN ANNUEL 2026</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;text-align:center;">
-        <div style="padding:0 12px;">
-          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:6px;font-weight:500;">Total dû</div>
-          <div style="font-size:20px;font-weight:900;color:#fff;">75K</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.4);">XOF</div>
-        </div>
-        <div style="padding:0 12px;border-left:1px solid rgba(255,255,255,.1);border-right:1px solid rgba(255,255,255,.1);">
-          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:6px;font-weight:500;">Payé</div>
-          <div style="font-size:20px;font-weight:900;color:var(--green);">60K</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.4);">XOF</div>
-        </div>
-        <div style="padding:0 12px;">
-          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:6px;font-weight:500;">Solde</div>
-          <div style="font-size:20px;font-weight:900;color:var(--orange);">15K</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.4);">XOF</div>
-        </div>
-      </div>
-      <div style="margin-top:18px;">
-        <div style="height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;">
-          <div style="width:80%;height:100%;background:linear-gradient(90deg,var(--teal),var(--green));border-radius:4px;
-            box-shadow:0 0 12px rgba(0,212,170,.4);"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-top:5px;">
-          <span style="font-size:10px;color:rgba(255,255,255,.4);">80% du bilan annuel payé</span>
-          <span style="font-size:10px;color:var(--teal);font-weight:600;">En bonne voie ✨</span>
-        </div>
-      </div>
-    </div>
-    <!-- MONTHS LIST -->
-    <div class="stitle anim-3">Cycles 2026</div>
-    <!-- Jan - Paid -->
-    <div class="card anim-3" style="padding:16px;cursor:pointer;margin-bottom:8px;" onclick="openModal('modal-cotis','jan')">
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:46px;height:46px;border-radius:16px;flex-shrink:0;
-            background:linear-gradient(135deg,rgba(16,185,129,.25),rgba(5,150,100,.15));
-            border:1px solid rgba(16,185,129,.3);
-            display:flex;align-items:center;justify-content:center;font-size:22px;">✅</div>
-          <div>
-            <div style="font-size:15px;font-weight:700;color:#fff;">Janvier 2026</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px;">25 000 XOF · Payé le 05/01</div>
-          </div>
-        </div>
-        <span class="badge b-green">Payé ✓</span>
-      </div>
-    </div>
-    <!-- Feb - Paid -->
-    <div class="card anim-4" style="padding:16px;cursor:pointer;margin-bottom:8px;" onclick="openModal('modal-cotis','feb')">
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:46px;height:46px;border-radius:16px;flex-shrink:0;
-            background:linear-gradient(135deg,rgba(16,185,129,.25),rgba(5,150,100,.15));
-            border:1px solid rgba(16,185,129,.3);
-            display:flex;align-items:center;justify-content:center;font-size:22px;">✅</div>
-          <div>
-            <div style="font-size:15px;font-weight:700;color:#fff;">Février 2026</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px;">25 000 XOF · Payé le 03/02</div>
-          </div>
-        </div>
-        <span class="badge b-green">Payé ✓</span>
-      </div>
-    </div>
-    <!-- Mar - Pending (featured) -->
-    <div class="anim-5" style="margin:0 16px 12px;padding:18px;cursor:pointer;border-radius:24px;
-      background:linear-gradient(145deg,#1E2A10,#2A3808);
-      border:1.5px solid rgba(245,158,11,.35);
-      box-shadow:0 6px 24px rgba(245,158,11,.12);" onclick="openModal('modal-cotis','mar')">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:46px;height:46px;border-radius:16px;flex-shrink:0;
-            background:linear-gradient(135deg,rgba(245,158,11,.25),rgba(217,119,6,.15));
-            border:1px solid rgba(245,158,11,.3);
-            display:flex;align-items:center;justify-content:center;font-size:22px;">⚠️</div>
-          <div>
-            <div style="font-size:15px;font-weight:700;color:#fff;">Mars 2026</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px;">10 000 XOF payé sur 25 000</div>
-          </div>
-        </div>
-        <span class="badge b-yellow">En attente</span>
-      </div>
-      <div style="height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;">
-        <div style="width:40%;height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));border-radius:4px;
-          box-shadow:0 0 10px rgba(255,107,53,.35);"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-top:6px;">
-        <span style="font-size:10px;color:rgba(255,255,255,.4);">40% payé</span>
-        <span style="font-size:10px;color:var(--orange);font-weight:700;">Reste 15 000 XOF →</span>
-      </div>
-    </div>
-    <!-- Apr - Late -->
-    <div class="card anim-6" style="padding:16px;cursor:pointer;margin-bottom:8px;
-      border:1px solid rgba(239,68,68,.25);box-shadow:0 4px 16px rgba(239,68,68,.08);" onclick="openModal('modal-cotis','apr')">
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:46px;height:46px;border-radius:16px;flex-shrink:0;
-            background:linear-gradient(135deg,rgba(239,68,68,.25),rgba(185,28,28,.15));
-            border:1px solid rgba(239,68,68,.3);
-            display:flex;align-items:center;justify-content:center;font-size:22px;">🔴</div>
-          <div>
-            <div style="font-size:15px;font-weight:700;color:#fff;">Avril 2026</div>
-            <div style="font-size:11px;color:var(--red);margin-top:2px;font-weight:600;">25 000 XOF · En retard</div>
-          </div>
-        </div>
-        <span class="badge b-red">En retard</span>
-      </div>
-    </div>
-    <!-- PAYMENT HISTORY -->
-    <div class="stitle">Historique des paiements</div>
-    <div class="card" style="padding:0;overflow:hidden;">
-      <div style="padding:15px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <span style="font-size:22px;">🌊</span>
-          <div><div style="font-size:13px;font-weight:700;color:#fff;">Wave CI</div><div style="font-size:11px;color:var(--muted);">Mars 2026 · 03/03/2026</div></div>
-        </div>
-        <div style="font-size:15px;font-weight:800;color:var(--green);">+10 000</div>
-      </div>
-      <div style="padding:15px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <span style="font-size:22px;">🟠</span>
-          <div><div style="font-size:13px;font-weight:700;color:#fff;">Orange Money</div><div style="font-size:11px;color:var(--muted);">Fév 2026 · 03/02/2026</div></div>
-        </div>
-        <div style="font-size:15px;font-weight:800;color:var(--green);">+25 000</div>
-      </div>
-      <div style="padding:15px 16px;display:flex;justify-content:space-between;align-items:center;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <span style="font-size:22px;">🌊</span>
-          <div><div style="font-size:13px;font-weight:700;color:#fff;">Wave CI</div><div style="font-size:11px;color:var(--muted);">Jan 2026 · 05/01/2026</div></div>
-        </div>
-        <div style="font-size:15px;font-weight:800;color:var(--green);">+25 000</div>
-      </div>
-    </div>
-  </div>
-</div><!-- end s-cotisations -->
-
-<!-- ==================== SCREEN 4: INCIDENTS ==================== -->
-<div class="screen" id="s-incidents">
-  <div style="padding:52px 20px 14px;display:flex;align-items:center;gap:14px;" class="anim-1">
-    <div class="backbtn" onclick="navigate('home')">←</div>
-    <div>
-      <div style="font-size:11px;color:var(--orange);font-weight:600;letter-spacing:1px;">SIGNALEMENT</div>
-      <div style="font-size:20px;font-weight:800;color:#fff;">Signaler un incident</div>
-    </div>
-  </div>
-  <div class="scroll" style="padding:0 16px 90px;">
-    <!-- Title -->
-    <div class="anim-2" style="margin-bottom:14px;">
-      <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:8px;letter-spacing:.5px;">📝 TITRE</label>
-      <input class="inp" type="text" placeholder="Ex: Fuite d'eau dans la cuisine" id="inc-title">
-    </div>
-    <!-- Description -->
-    <div class="anim-2" style="margin-bottom:14px;">
-      <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:8px;letter-spacing:.5px;">📋 DESCRIPTION</label>
-      <textarea class="inp" rows="3" placeholder="Décrivez l'incident en détail..." id="inc-desc"></textarea>
-    </div>
-    <!-- Category -->
-    <div class="anim-3" style="margin-bottom:16px;">
-      <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:10px;letter-spacing:.5px;">🏷️ CATÉGORIE</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;" id="cat-grid">
-        <div class="cat-btn sel" data-cat="plomberie" onclick="selectCat(this)">
-          <span style="font-size:24px;">💧</span><span style="font-size:10px;font-weight:700;">Plomberie</span>
-        </div>
-        <div class="cat-btn" data-cat="electricite" onclick="selectCat(this)">
-          <span style="font-size:24px;">⚡</span><span style="font-size:10px;font-weight:700;">Électricité</span>
-        </div>
-        <div class="cat-btn" data-cat="securite" onclick="selectCat(this)">
-          <span style="font-size:24px;">🔒</span><span style="font-size:10px;font-weight:700;">Sécurité</span>
-        </div>
-        <div class="cat-btn" data-cat="proprete" onclick="selectCat(this)">
-          <span style="font-size:24px;">🧹</span><span style="font-size:10px;font-weight:700;">Propreté</span>
-        </div>
-        <div class="cat-btn" data-cat="structure" onclick="selectCat(this)">
-          <span style="font-size:24px;">🏗️</span><span style="font-size:10px;font-weight:700;">Structure</span>
-        </div>
-        <div class="cat-btn" data-cat="autre" onclick="selectCat(this)">
-          <span style="font-size:24px;">📦</span><span style="font-size:10px;font-weight:700;">Autre</span>
-        </div>
-      </div>
-    </div>
-    <!-- Priority -->
-    <div class="anim-4" style="margin-bottom:22px;">
-      <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:10px;letter-spacing:.5px;">🎯 PRIORITÉ</label>
-      <div style="display:flex;gap:8px;" id="prio-group">
-        <div class="prio-btn prio-low" data-p="low" onclick="selectPrio(this)">🟢 Faible</div>
-        <div class="prio-btn prio-med sel" data-p="medium" onclick="selectPrio(this)">🟡 Moyen</div>
-        <div class="prio-btn prio-high" data-p="high" onclick="selectPrio(this)">🔴 Urgent</div>
-      </div>
-    </div>
-    <!-- FAB Submit button -->
-    <button class="btn btn-orange anim-5" style="width:100%;margin-bottom:24px;font-size:15px;" onclick="submitIncident()">
-      🚨 Envoyer le signalement
-    </button>
-    <!-- My incidents -->
-    <div class="stitle" style="padding:0;margin-left:0;margin-right:0;">Mes incidents
-      <span style="color:var(--muted);font-size:12px;font-weight:500;">2 actifs</span>
-    </div>
-    <div class="card card-glow-orange" style="padding:16px;margin-left:0;margin-right:0;margin-bottom:10px;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:48px;height:48px;border-radius:16px;flex-shrink:0;
-          background:linear-gradient(135deg,rgba(96,165,250,.2),rgba(59,130,246,.1));
-          border:1px solid rgba(96,165,250,.25);
-          display:flex;align-items:center;justify-content:center;font-size:22px;">💧</div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Fuite d'eau salle de bain</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Plomberie · 02/04/2026</div>
-        </div>
-        <span class="badge b-blue">🔄 En cours</span>
-      </div>
-    </div>
-    <div class="card" style="padding:16px;margin-left:0;margin-right:0;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:48px;height:48px;border-radius:16px;flex-shrink:0;
-          background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(217,119,6,.1));
-          border:1px solid rgba(245,158,11,.25);
-          display:flex;align-items:center;justify-content:center;font-size:22px;">⚡</div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Ampoule couloir cassée</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Électricité · 30/03/2026</div>
-        </div>
-        <span class="badge b-yellow">📋 Ouvert</span>
-      </div>
-    </div>
-  </div>
-</div><!-- end s-incidents -->
-
-<!-- ==================== SCREEN 5: VISITEURS ==================== -->
-<div class="screen" id="s-visiteurs">
-  <div style="padding:52px 20px 14px;display:flex;align-items:center;justify-content:space-between;" class="anim-1">
-    <div style="display:flex;align-items:center;gap:14px;">
-      <div class="backbtn" onclick="navigate('home')">←</div>
-      <div>
-        <div style="font-size:11px;color:#A78BFA;font-weight:600;letter-spacing:1px;">ACCÈS RÉSIDENCE</div>
-        <div style="font-size:20px;font-weight:800;color:#fff;">Codes Visiteurs</div>
-      </div>
-    </div>
-    <button class="btn btn-violet btn-sm" onclick="openModal('modal-visiteur')">+ Créer</button>
-  </div>
-  <div class="scroll">
-    <!-- Stats row -->
-    <div class="anim-2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:0 16px 16px;">
-      <div style="background:linear-gradient(145deg,#1A0D35,#200E42);border:1px solid rgba(124,58,237,.2);
-        border-radius:20px;padding:14px;text-align:center;">
-        <div style="font-size:22px;font-weight:900;color:#A78BFA;">2</div>
-        <div style="font-size:10px;color:var(--muted);font-weight:600;">Actifs</div>
-      </div>
-      <div style="background:linear-gradient(145deg,#0C2535,#0A3030);border:1px solid rgba(0,212,170,.2);
-        border-radius:20px;padding:14px;text-align:center;">
-        <div style="font-size:22px;font-weight:900;color:var(--teal);">3</div>
-        <div style="font-size:10px;color:var(--muted);font-weight:600;">Ce mois</div>
-      </div>
-      <div style="background:linear-gradient(145deg,#0D1E30,#122030);border:1px solid rgba(120,144,168,.1);
-        border-radius:20px;padding:14px;text-align:center;">
-        <div style="font-size:22px;font-weight:900;color:var(--muted);">1</div>
-        <div style="font-size:10px;color:var(--muted);font-weight:600;">Expirés</div>
-      </div>
-    </div>
-    <!-- ACTIVE CODES -->
-    <div class="stitle anim-3">Codes actifs</div>
-    <!-- Code card 1 -->
-    <div class="anim-3" style="margin:0 16px 12px;padding:20px;border-radius:24px;
-      background:linear-gradient(145deg,#180D30,#1A0F3A);
-      border:1.5px solid rgba(124,58,237,.3);
-      box-shadow:0 8px 28px rgba(124,58,237,.15);">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
-        <div>
-          <div style="font-size:17px;font-weight:800;color:#fff;">Kofi Mensah</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:3px;">📞 +225 07 12 34 56</div>
-          <div style="font-size:11px;color:var(--muted);">🎯 Livraison</div>
-          <div style="font-size:11px;color:var(--muted);">📅 04/04 – 05/04/2026</div>
-        </div>
-        <span class="badge b-green">✅ Actif</span>
-      </div>
-      <div style="display:flex;gap:14px;align-items:center;">
-        <div style="width:72px;height:72px;background:#fff;border-radius:12px;padding:7px;flex-shrink:0;">
-          <canvas id="qr1" width="58" height="58"></canvas>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.5px;margin-bottom:5px;">CODE D'ACCÈS</div>
-          <div style="font-size:28px;font-weight:900;color:#A78BFA;letter-spacing:5px;">D8K2</div>
-          <button class="btn btn-sm" style="margin-top:8px;background:rgba(239,68,68,.12);color:var(--red);
-            border:1px solid rgba(239,68,68,.25);font-size:11px;" onclick="cancelCode(this,event)">
-            ✕ Annuler le code
-          </button>
-        </div>
-      </div>
-    </div>
-    <!-- Code card 2 -->
-    <div class="anim-4" style="margin:0 16px 12px;padding:20px;border-radius:24px;
-      background:linear-gradient(145deg,#180D30,#1A0F3A);
-      border:1.5px solid rgba(124,58,237,.3);
-      box-shadow:0 8px 28px rgba(124,58,237,.15);">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
-        <div>
-          <div style="font-size:17px;font-weight:800;color:#fff;">Aya Traoré</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:3px;">📞 +225 05 67 89 01</div>
-          <div style="font-size:11px;color:var(--muted);">🎯 Visite famille</div>
-          <div style="font-size:11px;color:var(--muted);">📅 04/04 – 07/04/2026</div>
-        </div>
-        <span class="badge b-green">✅ Actif</span>
-      </div>
-      <div style="display:flex;gap:14px;align-items:center;">
-        <div style="width:72px;height:72px;background:#fff;border-radius:12px;padding:7px;flex-shrink:0;">
-          <canvas id="qr2" width="58" height="58"></canvas>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.5px;margin-bottom:5px;">CODE D'ACCÈS</div>
-          <div style="font-size:28px;font-weight:900;color:#A78BFA;letter-spacing:5px;">P5M9</div>
-          <button class="btn btn-sm" style="margin-top:8px;background:rgba(239,68,68,.12);color:var(--red);
-            border:1px solid rgba(239,68,68,.25);font-size:11px;" onclick="cancelCode(this,event)">
-            ✕ Annuler le code
-          </button>
-        </div>
-      </div>
-    </div>
-    <!-- EXPIRED CODES -->
-    <div class="stitle anim-5">Codes expirés</div>
-    <div class="card anim-5" style="padding:16px;opacity:.55;margin-bottom:8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:#fff;">Djibril Coulibaly</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">📞 +225 01 23 45 67 · 🎯 Technicien</div>
-          <div style="font-size:11px;color:var(--muted);">📅 28/03 – 29/03/2026</div>
-        </div>
-        <span class="badge b-gray">⌛ Expiré</span>
-      </div>
-    </div>
-  </div>
-</div><!-- end s-visiteurs -->
-
-<!-- ==================== SCREEN 6: PROFIL ==================== -->
-<div class="screen" id="s-profil">
-  <div class="scroll">
-    <!-- Profile hero -->
-    <div class="anim-1" style="padding:52px 20px 28px;text-align:center;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:260px;height:260px;border-radius:50%;
-        background:radial-gradient(circle,rgba(245,158,11,.1) 0%,transparent 70%);pointer-events:none;"></div>
-      <div style="width:90px;height:90px;border-radius:50%;margin:0 auto 14px;
-        background:linear-gradient(145deg,#F59E0B,#D97706,#FF6B35);
-        display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:900;color:#fff;
-        box-shadow:0 8px 28px rgba(245,158,11,.4),0 0 0 4px rgba(245,158,11,.15);">A</div>
-      <div style="font-size:24px;font-weight:900;color:#fff;">Adjoua Koné</div>
-      <div style="font-size:13px;color:var(--muted);margin-top:4px;margin-bottom:14px;">adjoua.kone@palmiers.ci</div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;">
-        <span class="badge b-teal">🏠 Villa 14B</span>
-        <span class="badge b-violet">⭐ Résident Principal</span>
-      </div>
-      <!-- Tier badge -->
-      <div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;
-        background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(217,119,6,.08));
-        border:1px solid rgba(245,158,11,.3);border-radius:50px;padding:8px 18px;">
-        <span style="font-size:18px;">🏆</span>
-        <span style="font-size:13px;font-weight:800;color:var(--gold);">Résident Platine</span>
-      </div>
-    </div>
-    <!-- Stats -->
-    <div class="card anim-2" style="margin-bottom:16px;">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;text-align:center;">
-        <div style="padding:0 10px;">
-          <div style="font-size:28px;font-weight:900;color:var(--teal);">2</div>
-          <div style="font-size:10px;color:var(--muted);font-weight:600;line-height:1.4;">Cotisations<br>à jour</div>
-        </div>
-        <div style="padding:0 10px;border-left:1px solid rgba(255,255,255,.06);border-right:1px solid rgba(255,255,255,.06);">
-          <div style="font-size:28px;font-weight:900;color:var(--orange);">2</div>
-          <div style="font-size:10px;color:var(--muted);font-weight:600;line-height:1.4;">Incidents<br>soumis</div>
-        </div>
-        <div style="padding:0 10px;">
-          <div style="font-size:28px;font-weight:900;color:#A78BFA;">3</div>
-          <div style="font-size:10px;color:var(--muted);font-weight:600;line-height:1.4;">Visiteurs<br>reçus</div>
-        </div>
-      </div>
-    </div>
-    <!-- Menu -->
-    <div class="card anim-3" style="padding:0;overflow:hidden;margin-bottom:12px;">
-      <div class="menu-item" style="border-bottom:1px solid rgba(255,255,255,.04);">
-        <div style="width:40px;height:40px;border-radius:14px;background:rgba(96,165,250,.12);
-          display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔔</div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Notifications</div>
-          <div style="font-size:11px;color:var(--muted);">Gérer mes alertes</div>
-        </div>
-        <span style="color:var(--muted);font-size:18px;">›</span>
-      </div>
-      <div class="menu-item" style="border-bottom:1px solid rgba(255,255,255,.04);">
-        <div style="width:40px;height:40px;border-radius:14px;background:rgba(16,185,129,.12);
-          display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔐</div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Sécurité</div>
-          <div style="font-size:11px;color:var(--muted);">Mot de passe · Biométrie</div>
-        </div>
-        <span style="color:var(--muted);font-size:18px;">›</span>
-      </div>
-      <div class="menu-item">
-        <div style="width:40px;height:40px;border-radius:14px;background:rgba(245,158,11,.12);
-          display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">❓</div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Aide & Support</div>
-          <div style="font-size:11px;color:var(--muted);">FAQ · Contacter le syndic</div>
-        </div>
-        <span style="color:var(--muted);font-size:18px;">›</span>
-      </div>
-    </div>
-    <div class="card anim-4" style="padding:0;overflow:hidden;margin-bottom:28px;">
-      <div class="menu-item" onclick="navigate('login')">
-        <div style="width:40px;height:40px;border-radius:14px;background:rgba(239,68,68,.12);
-          display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🚪</div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:var(--red);">Se déconnecter</div>
-        </div>
-        <span style="color:var(--red);font-size:18px;">›</span>
-      </div>
-    </div>
-    <div style="text-align:center;padding-bottom:24px;">
-      <div style="font-size:11px;color:rgba(120,144,168,.4);">DOMO v1.0.0 · Abidjan, Côte d'Ivoire</div>
-    </div>
-  </div>
-<!-- ==================== SCREEN: MARKETPLACE ==================== -->
-<div class="screen" id="s-marche">
-  <div class="scroll">
-    <!-- Header -->
-    <div style="padding:52px 20px 0;display:flex;align-items:center;justify-content:space-between;" class="anim-1">
-      <div>
-        <div style="font-size:12px;color:var(--muted);font-weight:500;">Marché du Voisinage</div>
-        <div style="font-size:23px;font-weight:800;color:#fff;line-height:1.2;">Cité Les Palmiers 🛍️</div>
-      </div>
-      <div style="cursor:pointer;width:40px;height:40px;background:rgba(255,255,255,.07);
-        border-radius:14px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);">
-        <span style="font-size:20px;">⚙️</span>
-      </div>
-    </div>
-    <!-- Sell banner -->
-    <div class="anim-2" style="margin:16px 16px;border-radius:24px;padding:20px;
-      background:linear-gradient(145deg,#FF6B35,#FF4500);
-      box-shadow:0 12px 40px rgba(255,107,53,.25);position:relative;overflow:hidden;">
-      <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;
-        background:rgba(255,255,255,.1);pointer-events:none;"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;position:relative;">
-        <div>
-          <div style="font-size:12px;color:rgba(255,255,255,.8);font-weight:600;margin-bottom:4px;">🛍️ VENDRE DANS LA CITÉ</div>
-          <div style="font-size:14px;color:#fff;font-weight:700;">Publiez votre annonce gratuitement</div>
-        </div>
-        <button class="btn btn-orange" style="background:#fff;color:#FF6B35;font-size:12px;padding:10px 14px;" onclick="alert('Formulaire de création d'annonce')">
-          + Publier
+      <div class="header-right">
+        <button class="notif-btn" onclick="showScreen('annonces')">
+          🔔
+          <span class="notif-badge" id="notif-count">3</span>
         </button>
       </div>
     </div>
-    <!-- Category filters -->
-    <div style="display:flex;gap:10px;padding:0 16px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px;-webkit-overflow-scrolling:touch;">
-      <style>
-        .cat-filter{display:none;}
-        .cat-filter::-webkit-scrollbar{display:none;}
-        .filter-btn{display:inline-flex;align-items:center;padding:8px 14px;border-radius:20px;
-          background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
-          color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;
-          transition:all .2s;}
-        .filter-btn.sel{background:var(--teal);color:#fff;border-color:var(--teal);}
-      </style>
-      <div class="filter-btn sel">Tout</div>
-      <div class="filter-btn">Services</div>
-      <div class="filter-btn">Vente</div>
-      <div class="filter-btn">Location</div>
-      <div class="filter-btn">Dons</div>
-    </div>
-    <!-- Listings -->
-    <div style="padding:0 16px;">
-      <!-- Listing 1 -->
-      <div class="card card-glow-orange" style="margin-bottom:14px;cursor:pointer;">
-        <div style="display:flex;gap:12px;">
-          <div style="width:56px;height:56px;border-radius:16px;background:rgba(255,107,53,.15);
-            display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🛵</div>
-          <div style="flex:1;">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
-              <div style="font-size:15px;font-weight:700;color:#fff;">Cours de livraison</div>
-              <span class="badge" style="background:rgba(0,212,170,.15);color:var(--teal);font-size:10px;padding:4px 10px;">Service</span>
-            </div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Livraison rapide dans la cité</div>
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <div style="font-size:11px;color:var(--muted);">👤 Kofi Mensah</div>
-              <div style="font-size:12px;font-weight:700;color:var(--teal);">Voir →</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Listing 2 -->
-      <div class="card card-glow-violet" style="margin-bottom:14px;cursor:pointer;">
-        <div style="display:flex;gap:12px;">
-          <div style="width:56px;height:56px;border-radius:16px;background:rgba(124,58,237,.15);
-            display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🪑</div>
-          <div style="flex:1;">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
-              <div style="font-size:15px;font-weight:700;color:#fff;">Chaises de fête à louer</div>
-              <span class="badge" style="background:rgba(124,58,237,.15);color:#C084FC;font-size:10px;padding:4px 10px;">Location</span>
-            </div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">10 chaises, 500 XOF/unité</div>
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <div style="font-size:11px;color:var(--muted);">👤 Aya Traoré</div>
-              <div style="font-size:12px;font-weight:700;color:#C084FC;">Voir →</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Listing 3 -->
-      <div class="card card-glow-orange" style="margin-bottom:14px;cursor:pointer;opacity:.95;">
-        <div style="display:flex;gap:12px;">
-          <div style="width:56px;height:56px;border-radius:16px;background:rgba(255,107,53,.15);
-            display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🥗</div>
-          <div style="flex:1;">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
-              <div style="font-size:15px;font-weight:700;color:#fff;">Attiéké maison à commander</div>
-              <span class="badge" style="background:rgba(255,107,53,.15);color:#FF9770;font-size:10px;padding:4px 10px;">Vente</span>
-            </div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">1500 XOF la portion, livraison incluse</div>
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <div style="font-size:11px;color:var(--muted);">👤 Mariam Konaté</div>
-              <div style="font-size:12px;font-weight:700;color:var(--orange);">Voir →</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Listing 4 -->
-      <div class="card" style="margin-bottom:14px;cursor:pointer;background:linear-gradient(145deg,#0D2818,#0F3D2A);border:1px solid rgba(16,185,129,.1);box-shadow:0 4px 24px rgba(16,185,129,.1);">
-        <div style="display:flex;gap:12px;">
-          <div style="width:56px;height:56px;border-radius:16px;background:rgba(16,185,129,.15);
-            display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">📚</div>
-          <div style="flex:1;">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
-              <div style="font-size:15px;font-weight:700;color:#fff;">Livres scolaires CE2</div>
-              <span class="badge" style="background:rgba(16,185,129,.15);color:#10B981;font-size:10px;padding:4px 10px;">Don</span>
-            </div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Gratuit, à récupérer</div>
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <div style="font-size:11px;color:var(--muted);">👤 Ibrahim Coulibaly</div>
-              <div style="font-size:12px;font-weight:700;color:var(--green);">Voir →</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div><!-- end s-profil -->
-
-<!-- Payment Screen -->
-<div class="screen" id="s-paiement">
-  <div style="padding:52px 20px 14px;display:flex;align-items:center;gap:14px;" class="anim-1">
-    <div class="backbtn" onclick="navigate('cotisations')">←</div>
-    <div>
-      <div style="font-size:11px;color:var(--teal);font-weight:600;letter-spacing:1px;">PAIEMENT COTISATION</div>
-      <div style="font-size:20px;font-weight:800;color:#fff;">💳 Payer ma cotisation</div>
-    </div>
-  </div>
-  <div class="scroll">
-    <!-- Amount Card -->
-    <div class="anim-2" style="margin:0 16px 20px;border-radius:28px;padding:24px;
-      background:linear-gradient(145deg,#0F2540,#005A4E);
-      border:1px solid rgba(0,212,170,.15);
-      box-shadow:0 12px 40px rgba(0,212,170,.2);">
-      <div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px;margin-bottom:8px;">MONTANT À PAYER</div>
-      <div style="display:flex;align-items:baseline;gap:6px;">
-        <div style="font-size:42px;font-weight:900;color:#fff;line-height:1;">15 000</div>
-        <div style="font-size:18px;font-weight:600;color:rgba(255,255,255,.6);">XOF</div>
-      </div>
-      <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:12px;">Mars 2026 — Résidence Les Palmiers</div>
-    </div>
-
-    <!-- Payment Method Section -->
-    <div class="anim-3" style="padding:0 16px;margin-bottom:8px;">
-      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:14px;">Choisissez votre moyen de paiement</div>
+    <div class="screen-inner">
+      <!-- Météo cité -->
       
-      <!-- 2-Column Grid of Operator Cards -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-        
-        <!-- Orange Money -->
-        <div class="payment-card anim-4" id="pay-orange" onclick="selectPaymentMethod('orange')" style="
-          border-radius:20px;padding:18px;text-align:center;
-          background:linear-gradient(145deg,#2A1208,#300E06);
-          border:2px solid rgba(255,107,53,.2);
-          cursor:pointer;transition:all .3s;
-          box-shadow:0 6px 16px rgba(255,107,53,.1);">
-          
-          <!-- Orange Money SVG Logo -->
-          <svg style="width:60px;height:60px;margin:0 auto 10px;filter:drop-shadow(0 2px 6px rgba(255,107,53,.4));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="orangeGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" style="stop-color:#FF8B33;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#FF6B00;stop-opacity:1" />
-              </radialGradient>
-              <filter id="orangeGlowEffect">
-                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            <circle cx="50" cy="50" r="48" fill="url(#orangeGlow)" filter="url(#orangeGlowEffect)"/>
-            <text x="50" y="58" font-size="32" font-weight="900" fill="#fff" text-anchor="middle" font-family="Arial">OM</text>
-          </svg>
-          
-          <div style="font-size:12px;font-weight:700;color:#fff;">Orange Money</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px;">Rapide & simple</div>
+      <!-- Security Alert Banner (simulated) -->
+      <div class="security-alert-banner" id="home-security-alert" style="display:none;">
+        <div class="security-alert-text">
+          <span>⚠️ Alerte sécurité active — Restez à l'intérieur</span>
         </div>
+        <button class="security-alert-close" onclick="document.getElementById('home-security-alert').style.display='none'">×</button>
+      </div>
 
-        <!-- MTN MoMo -->
-        <div class="payment-card anim-4" id="pay-mtn" onclick="selectPaymentMethod('mtn')" style="
-          border-radius:20px;padding:18px;text-align:center;
-          background:linear-gradient(145deg,#2A1A08,#3A2408);
-          border:2px solid rgba(255,193,0,.2);
-          cursor:pointer;transition:all .3s;
-          box-shadow:0 6px 16px rgba(255,193,0,.1);">
-          
-          <!-- MTN MoMo SVG Logo -->
-          <svg style="width:60px;height:60px;margin:0 auto 10px;filter:drop-shadow(0 2px 6px rgba(255,193,0,.4));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="mtnGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" style="stop-color:#FFD000;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#FFC000;stop-opacity:1" />
-              </radialGradient>
-            </defs>
-            <circle cx="50" cy="50" r="48" fill="url(#mtnGlow)"/>
-            <text x="50" y="50" font-size="24" font-weight="900" fill="#000" text-anchor="middle" dominant-baseline="central" font-family="Arial">MTN</text>
-            <text x="50" y="68" font-size="12" font-weight="700" fill="#000" text-anchor="middle" font-family="Arial">MoMo</text>
-          </svg>
-          
-          <div style="font-size:12px;font-weight:700;color:#fff;">MTN MoMo</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px;">Mobile Money</div>
+      <!-- Vote Notification Banner -->
+      <div class="vote-banner" id="home-vote-banner" style="display:none;">
+        <div class="banner-text">
+          <span id="vote-banner-text">🗳️ 2 votes en attente de votre participation</span>
         </div>
+        <button class="banner-close" onclick="document.getElementById('home-vote-banner').style.display='none'">×</button>
+      </div>
 
-        <!-- Wave -->
-        <div class="payment-card anim-4" id="pay-wave" onclick="selectPaymentMethod('wave')" style="
-          border-radius:20px;padding:18px;text-align:center;
-          background:linear-gradient(145deg,#0A2A35,#082A38);
-          border:2px solid rgba(0,184,217,.2);
-          cursor:pointer;transition:all .3s;
-          box-shadow:0 6px 16px rgba(0,184,217,.1);">
-          
-          <!-- Wave SVG Logo -->
-          <svg style="width:60px;height:60px;margin:0 auto 10px;filter:drop-shadow(0 2px 6px rgba(0,184,217,.4));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#00B8D9;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#0052CC;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-            <circle cx="50" cy="50" r="48" fill="url(#waveGradient)"/>
-            <text x="50" y="58" font-size="42" font-weight="900" fill="#fff" text-anchor="middle" font-family="Arial" font-style="italic">W</text>
-          </svg>
-          
-          <div style="font-size:12px;font-weight:700;color:#fff;">Wave</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px;">Portefeuille digital</div>
+      <!-- Survey Notification Banner -->
+      <div class="survey-banner" id="home-survey-banner" style="display:none;">
+        <div class="banner-text">
+          <span id="survey-banner-text">📊 1 sondage disponible</span>
         </div>
+        <button class="banner-close" onclick="document.getElementById('home-survey-banner').style.display='none'">×</button>
+      </div>
 
-        <!-- Moov Money -->
-        <div class="payment-card anim-4" id="pay-moov" onclick="selectPaymentMethod('moov')" style="
-          border-radius:20px;padding:18px;text-align:center;
-          background:linear-gradient(145deg,#2A0A0A,#3A0808);
-          border:2px solid rgba(227,28,57,.2);
-          cursor:pointer;transition:all .3s;
-          box-shadow:0 6px 16px rgba(227,28,57,.1);">
-          
-          <!-- Moov Money SVG Logo -->
-          <svg style="width:60px;height:60px;margin:0 auto 10px;filter:drop-shadow(0 2px 6px rgba(227,28,57,.4));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="moovGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" style="stop-color:#FF4450;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#E31C39;stop-opacity:1" />
-              </radialGradient>
-            </defs>
-            <circle cx="50" cy="50" r="48" fill="url(#moovGlow)"/>
-            <text x="50" y="50" font-size="32" font-weight="900" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="Arial">M</text>
-            <text x="50" y="68" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial">MOOV</text>
-          </svg>
-          
-          <div style="font-size:12px;font-weight:700;color:#fff;">Moov Money</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px;">Paiement mobile</div>
+<div class="weather-card">
+        <div class="weather-left">
+          <div class="cité">Cité Les Bougainvillées</div>
+          <div class="statut" style="color: var(--teal)">🌿 Ambiance calme</div>
+          <div style="font-size:12px; color:var(--gray); margin-top:6px;">Abidjan, Côte d'Ivoire</div>
         </div>
-
-        <!-- SOKORA Pay (Recommended) -->
-        <div class="payment-card anim-4" id="pay-sokora" onclick="selectPaymentMethod('sokora')" style="
-          border-radius:20px;padding:18px;text-align:center;grid-column:span 2;
-          background:linear-gradient(145deg,#2A1008,#380E04);
-          border:2px solid rgba(255,107,53,.4);
-          cursor:pointer;transition:all .3s;
-          box-shadow:0 8px 24px rgba(255,107,53,.2);
-          position:relative;">
-          
-          <!-- Recommended Badge -->
-          <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);
-            background:linear-gradient(135deg,#FFD700,#FF8C00);
-            color:#000;padding:4px 12px;border-radius:12px;
-            font-size:10px;font-weight:800;box-shadow:0 2px 8px rgba(255,200,0,.3);">
-            ⭐ RECOMMANDÉ
-          </div>
-          
-          <!-- SOKORA Pay SVG Logo with Sparkle -->
-          <svg style="width:60px;height:60px;margin:10px auto 10px;filter:drop-shadow(0 3px 8px rgba(255,107,53,.5));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="sokoraGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#FF4500;stop-opacity:1" />
-              </linearGradient>
-              <filter id="sokoraGlowEffect">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            <circle cx="50" cy="50" r="48" fill="url(#sokoraGradient)" filter="url(#sokoraGlowEffect)"/>
-            <text x="40" y="58" font-size="36" font-weight="900" fill="#fff" text-anchor="middle" font-family="Arial">S</text>
-            <!-- Sparkles -->
-            <circle cx="68" cy="32" r="2" fill="#FFD700"/>
-            <polygon points="70,30 72,32 70,34 68,32" fill="#FFD700"/>
-            <circle cx="22" cy="35" r="1.5" fill="#FFD700"/>
-            <polygon points="23,33 24.5,35 23,37 21.5,35" fill="#FFD700"/>
-          </svg>
-          
-          <div style="font-size:12px;font-weight:700;color:#fff;">SOKORA Pay</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px;">Votre portefeuille SOKORA</div>
+        <div class="weather-right">
+          <div class="weather-icon">☀️</div>
+          <div class="weather-temp">28°</div>
         </div>
+      </div>
 
+      <!-- Tickets actifs -->
+      <div class="card">
+        <div class="card-title">Mes tickets actifs <span class="see-all" onclick="showScreen('services')">Voir tout</span></div>
+        <div id="home-tickets"></div>
+      </div>
+
+      <!-- Annonces récentes -->
+      <div class="card">
+        <div class="card-title">Annonces récentes <span class="see-all" onclick="showScreen('annonces')">Voir tout</span></div>
+        <div id="home-annonces"></div>
+      </div>
+
+      <!-- Événements à venir -->
+      <div class="section-label">Événements cette semaine</div>
+      <div class="event-scroll" id="home-events"></div>
+    </div>
+
+    <!-- FAB -->
+    <button class="fab" onclick="openModal('modal-quick')">＋</button>
+  </div>
+
+  <!-- ===== SCREEN 2: MARCHÉ ===== -->
+  <div class="screen" id="screen-marche">
+    <div class="header">
+      <div class="header-avatar">🏪</div>
+      <div class="header-info"><div class="name">Marché des voisins</div><div class="sub">Achetez, vendez, échangez</div></div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-annonce-form')">+ Annonce</button>
+    </div>
+    <div class="screen-inner">
+      <div class="sub-tabs" id="marche-filters">
+        <button class="sub-tab active" onclick="filterMarche('tout',this)">Tout</button>
+        <button class="sub-tab" onclick="filterMarche('vente',this)">Vente</button>
+        <button class="sub-tab" onclick="filterMarche('service',this)">Service</button>
+        <button class="sub-tab" onclick="filterMarche('don',this)">Don</button>
+        <button class="sub-tab" onclick="filterMarche('recherche',this)">Recherche</button>
+      </div>
+      <div id="marche-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 3: ANNONCES ===== -->
+  <div class="screen" id="screen-annonces">
+    <div class="header">
+      <div class="header-avatar">🔔</div>
+      <div class="header-info"><div class="name">Annonces</div><div class="sub">Syndic & résidence</div></div>
+      <label class="toggle" style="margin-left:auto"><input type="checkbox" checked id="notif-toggle" onchange="toggleNotifs(this)"><span class="toggle-slider"></span></label>
+    </div>
+    <div class="screen-inner">
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="switchAnnTab('feed',this)">Fil d'annonces</button>
+        <button class="sub-tab" onclick="switchAnnTab('ag',this)">AG & Résolutions</button>
+        <button class="sub-tab" onclick="switchAnnTab('votes',this)">Votes</button>
+        <button class="sub-tab" onclick="switchAnnTab('sondages',this)">Sondages</button>
+      </div>
+      <div id="ann-feed"></div>
+      <div id="ann-ag" style="display:none"></div>
+      <div id="ann-votes" style="display:none"></div>
+      <div id="ann-sondages" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 4: SERVICES ===== -->
+  <div class="screen" id="screen-services">
+    <div class="header">
+      <div class="header-avatar">🛠️</div>
+      <div class="header-info"><div class="name">Services</div><div class="sub">Demandes & incidents</div></div>
+    </div>
+    <div class="screen-inner" id="services-main">
+      <div style="padding:16px 16px 8px; font-size:14px; color:var(--gray)">Que souhaitez-vous faire ?</div>
+      <div class="service-grid">
+        <div class="service-item" onclick="showService('incidents')">
+          <div class="srv-icon">🔧</div>
+          <div class="srv-label">Incidents</div>
+          <div class="srv-count" id="inc-count">1 en cours</div>
+        </div>
+        <div class="service-item" onclick="showService('espaces')">
+          <div class="srv-icon">🏛️</div>
+          <div class="srv-label">Espaces communs</div>
+          <div class="srv-count">Réserver</div>
+        </div>
+        <div class="service-item" onclick="showService('evenements')">
+          <div class="srv-icon">🎉</div>
+          <div class="srv-label">Événement chez moi</div>
+          <div class="srv-count">Planifier</div>
+        </div>
+        <div class="service-item" onclick="showService('chat')">
+          <div class="srv-icon">💬</div>
+          <div class="srv-label">Chat syndic</div>
+          <div class="srv-count">2 messages</div>
+        </div>
       </div>
     </div>
+    <!-- SUB-SCREENS services -->
+    <div class="screen-inner" id="sub-incidents" style="display:none;padding:0"></div>
+    <div class="screen-inner" id="sub-espaces" style="display:none;padding:0"></div>
+    <div class="screen-inner" id="sub-evenements" style="display:none;padding:0"></div>
+    <div class="screen-inner" id="sub-chat" style="display:none;padding:0;display:none;flex-direction:column;height:100%"></div>
+  </div>
 
-    <!-- Info Section -->
-    <div class="anim-5" style="margin:0 16px 20px;padding:14px;background:rgba(0,212,170,.08);
-      border-radius:16px;border:1px solid rgba(0,212,170,.15);">
-      <div style="font-size:12px;color:#fff;font-weight:600;margin-bottom:6px;">💡 Astuce utile</div>
-      <div style="font-size:11px;color:rgba(255,255,255,.6);">Si vous n'avez pas de compte SOKORA, créez-en un gratuitement pour bénéficier de réductions sur vos futurs paiements.</div>
+  <!-- ===== SCREEN 5: SOCIAL ===== -->
+  <div class="screen" id="screen-social">
+    <div class="header">
+      <div class="header-avatar">👥</div>
+      <div class="header-info"><div class="name">Voisinage</div><div class="sub">Communauté résidentielle</div></div>
     </div>
-
-    <!-- CTA Button -->
-    <div class="anim-6" style="padding:0 16px 88px;display:flex;flex-direction:column;gap:12px;">
-      <button class="btn btn-orange anim-6" style="width:100%;padding:16px;font-size:15px;" onclick="confirmPayment()">
-        Confirmer le paiement →
-      </button>
-      <div style="text-align:center;font-size:11px;color:rgba(255,255,255,.5);">
-        🔒 Paiement sécurisé · 💬 Reçu par SMS
+    <div class="screen-inner">
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="switchSocTab('annuaire',this)">Annuaire</button>
+        <button class="sub-tab" onclick="switchSocTab('qrcode',this)">QR Visiteur</button>
+        <button class="sub-tab" onclick="switchSocTab('inviter',this)">Inviter</button>
+        <button class="sub-tab" onclick="switchSocTab('events-voisins',this)">Événements</button>
       </div>
+      <div id="soc-annuaire"></div>
+      <div id="soc-qrcode" style="display:none"></div>
+      <div id="soc-inviter" style="display:none"></div>
+      <div id="soc-events-voisins" style="display:none"></div>
     </div>
   </div>
-</div><!-- end s-paiement -->
 
+  <!-- ===== SCREEN 6: PROFIL ===== -->
+  <div class="screen" id="screen-profil">
+    <div class="header">
+      <div class="header-avatar">👤</div>
+      <div class="header-info"><div class="name">Mon profil</div><div class="sub">Paramètres & informations</div></div>
+    </div>
+    <div class="screen-inner" id="profil-content"></div>
+  </div>
 
-<!-- ==================== BOTTOM NAV ==================== -->
-<div class="nav" id="main-nav">
-  <div class="nav-item active" id="nav-home" onclick="navigate('home')">
-    <span class="ni">🏠</span><span class="nl">Accueil</span>
-  </div>
-  <div class="nav-item" id="nav-cotisations" onclick="navigate('cotisations')">
-    <span class="ni">💰</span><span class="nl">Cotisations</span>
-  </div>
-  <div class="nav-item" id="nav-incidents" onclick="navigate('incidents')">
-    <span class="ni">🚨</span><span class="nl">Incidents</span>
-  </div>
-  <div class="nav-item" id="nav-visiteurs" onclick="navigate('visiteurs')">
-    <span class="ni">🔑</span><span class="nl">Visiteurs</span>
-  </div>
-  <div class="nav-item" id="nav-marche" onclick="navigate('marche')">
-    <span class="ni">🛍️</span><span class="nl">Marché</span>
+  <!-- ===== BOTTOM TAB BAR ===== -->
+  <nav class="tab-bar">
+    <div class="tab-item active" onclick="showScreen('home')" id="tab-home">
+      <span class="tab-dot"></span>
+      <span class="tab-icon">🏠</span>
+      <span class="tab-label">Accueil</span>
+    </div>
+    <div class="tab-item" onclick="showScreen('marche')" id="tab-marche">
+      <span class="tab-dot"></span>
+      <span class="tab-icon">🏪</span>
+      <span class="tab-label">Marché</span>
+    </div>
+    <div class="tab-item" onclick="showScreen('annonces')" id="tab-annonces">
+      <span class="tab-dot"></span>
+      <span class="tab-icon">🔔</span>
+      <span class="tab-label">Annonces</span>
+    </div>
+    <div class="tab-item" onclick="showScreen('services')" id="tab-services">
+      <span class="tab-dot"></span>
+      <span class="tab-icon">🛠️</span>
+      <span class="tab-label">Services</span>
+    </div>
+    <div class="tab-item" onclick="showScreen('social')" id="tab-social">
+      <span class="tab-dot"></span>
+      <span class="tab-icon">👥</span>
+      <span class="tab-label">Social</span>
+    </div>
+    <div class="tab-item" onclick="showScreen('profil')" id="tab-profil">
+      <span class="tab-dot"></span>
+      <span class="tab-icon">👤</span>
+      <span class="tab-label">Profil</span>
+    </div>
+  </nav>
+</div>
+
+<!-- ===== MODALS ===== -->
+<!-- Modal quick actions -->
+<div class="modal-overlay" id="modal-quick" onclick="closeModalOnBg(event,'modal-quick')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Actions rapides <button class="modal-close" onclick="closeModal('modal-quick')">×</button></div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn btn-primary btn-full" onclick="closeModal('modal-quick');showService('incidents');openModal('modal-incident')">🔧 Signaler un incident</button>
+      <button class="btn btn-ghost btn-full" onclick="closeModal('modal-quick');showScreen('marche');openModal('modal-annonce-form')">🏪 Soumettre au marché</button>
+      <button class="btn btn-ghost btn-full" onclick="closeModal('modal-quick');showService('espaces')">🏛️ Demander un espace</button>
+      <button class="btn btn-ghost btn-full" onclick="closeModal('modal-quick');showScreen('social');switchSocTab('inviter',null)">👥 Inviter un voisin</button>
+    </div>
   </div>
 </div>
 
-<!-- ==================== MODAL: COTISATION DETAIL ==================== -->
-<div class="modal-overlay" id="modal-cotis" onclick="closeModalOut(event,'modal-cotis')">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="mhandle"></div>
-    <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;" id="cotis-title">Mars 2026</div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:22px;" id="cotis-sub">Cotisation mensuelle</div>
-    <!-- Detail amounts -->
-    <div style="background:rgba(11,22,34,.7);border-radius:20px;padding:18px;margin-bottom:22px;
-      border:1px solid rgba(0,212,170,.1);">
-      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
-        <span style="font-size:13px;color:var(--muted);">Montant total</span>
-        <span style="font-size:14px;font-weight:700;color:#fff;">25 000 XOF</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
-        <span style="font-size:13px;color:var(--muted);">Déjà payé</span>
-        <span style="font-size:14px;font-weight:700;color:var(--green);" id="cotis-paid">10 000 XOF</span>
-      </div>
-      <div style="height:1px;background:rgba(255,255,255,.06);margin:10px 0;"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:14px;font-weight:700;color:#fff;">Reste à payer</span>
-        <span style="font-size:20px;font-weight:900;color:var(--orange);" id="cotis-remain">15 000 XOF</span>
-      </div>
+<!-- Modal incident -->
+<div class="modal-overlay" id="modal-incident" onclick="closeModalOnBg(event,'modal-incident')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Déclarer un incident <button class="modal-close" onclick="closeModal('modal-incident')">×</button></div>
+    <div class="form-group">
+      <label class="form-label">Type d'incident</label>
+      <select class="form-input" id="inc-type">
+        <option>Plomberie</option><option>Électricité</option><option>Sécurité</option>
+        <option>Espace commun</option><option>Bruit</option><option>Autre</option>
+      </select>
     </div>
-    <button class="btn btn-orange" style="width:100%;margin-bottom:10px;font-size:15px;" id="btn-pay-now" onclick="openModal('modal-paiement')">
-      💳 Payer maintenant — 15 000 XOF
-    </button>
-    <button class="btn btn-ghost" style="width:100%;font-size:14px;" onclick="closeModal('modal-cotis')">Fermer</button>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-input" id="inc-desc" placeholder="Décrivez le problème..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Priorité</label>
+      <select class="form-input" id="inc-prio"><option>Faible</option><option>Moyen</option><option>Urgent</option></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Localisation</label>
+      <select class="form-input" id="inc-loc">
+        <option>Couloir Bâtiment B</option><option>Parking</option><option>Jardin central</option>
+        <option>Salle commune</option><option>Terrasse</option><option>Entrée principale</option>
+      </select>
+    </div>
+    <div id="escalade-section" style="display:none;margin-top:16px;padding:12px;background:rgba(255,75,75,0.08);border-left:3px solid var(--red);border-radius:8px;">
+      <button class="btn btn-escalade btn-full" onclick="escaladeToSecurity('new')">🔒 Escalader vers Sécurité</button>
+      <div style="font-size:11px;color:var(--gray);margin-top:8px;text-align:center;">Disponible pour incidents haute/critique</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Photos (max 3)</label>
+      <div class="photo-upload-area" onclick="document.getElementById('inc-photos').click()">
+        <input type="file" id="inc-photos" accept="image/*" capture="environment" multiple onchange="previewPhotos(this,'inc-preview')">
+        <div>📷 Appuyer pour photographier ou choisir</div>
+        <div style="font-size:12px;color:var(--gray);margin-top:4px">Max 3 photos</div>
+      </div>
+      <div class="photo-preview" id="inc-preview"></div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="submitIncident()">Soumettre l'incident</button>
   </div>
 </div>
 
-<!-- ==================== MODAL: PAYMENT METHOD ==================== -->
-<div class="modal-overlay" id="modal-paiement" onclick="closeModalOut(event,'modal-paiement')">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="mhandle"></div>
-    <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;">Moyen de paiement</div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:22px;">Montant : <strong style="color:var(--orange);">15 000 XOF</strong></div>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px;" id="pay-methods">
-      <div class="pay-meth" onclick="selectPay(this)">
-        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#1565C0,#0D47A1);
-          display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🌊</div>
-        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">Wave CI</div>
-          <div style="font-size:11px;color:var(--muted);">Paiement mobile instantané</div></div>
-        <div class="pay-chk" style="font-size:20px;color:var(--muted);">○</div>
-      </div>
-      <div class="pay-meth" onclick="selectPay(this)">
-        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#E65100,#BF360C);
-          display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🟠</div>
-        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">Orange Money</div>
-          <div style="font-size:11px;color:var(--muted);">Orange CI</div></div>
-        <div class="pay-chk" style="font-size:20px;color:var(--muted);">○</div>
-      </div>
-      <div class="pay-meth" onclick="selectPay(this)">
-        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#F57F17,#E65100);
-          display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🟡</div>
-        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">MTN MoMo</div>
-          <div style="font-size:11px;color:var(--muted);">MTN Côte d'Ivoire</div></div>
-        <div class="pay-chk" style="font-size:20px;color:var(--muted);">○</div>
-      </div>
-      <div class="pay-meth" onclick="selectPay(this)">
-        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#1A237E,#283593);
-          display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">💳</div>
-        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">Carte bancaire</div>
-          <div style="font-size:11px;color:var(--muted);">Visa / Mastercard</div></div>
-        <div class="pay-chk" style="font-size:20px;color:var(--muted);">○</div>
-      </div>
+<!-- Modal annonce marché -->
+<div class="modal-overlay" id="modal-annonce-form" onclick="closeModalOnBg(event,'modal-annonce-form')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Nouvelle annonce <button class="modal-close" onclick="closeModal('modal-annonce-form')">×</button></div>
+    <div class="form-group">
+      <label class="form-label">Titre</label>
+      <input class="form-input" id="ann-titre" placeholder="Ex: Chaise de bureau à vendre">
     </div>
-    <button class="btn btn-orange" style="width:100%;margin-bottom:10px;font-size:15px;" onclick="confirmPay()">
-      ✅ Confirmer le paiement
-    </button>
-    <button class="btn btn-ghost" style="width:100%;font-size:14px;" onclick="closeModal('modal-paiement')">Annuler</button>
+    <div class="form-group">
+      <label class="form-label">Catégorie</label>
+      <select class="form-input" id="ann-cat">
+        <option value="vente">Vente</option><option value="service">Service</option>
+        <option value="don">Don</option><option value="recherche">Recherche</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-input" id="ann-desc" placeholder="Décrivez votre article..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Prix (optionnel)</label>
+      <input class="form-input" id="ann-prix" type="number" placeholder="0 = Gratuit">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Photos (max 3)</label>
+      <div class="photo-upload-area" onclick="document.getElementById('ann-photos').click()">
+        <input type="file" id="ann-photos" accept="image/*" multiple onchange="previewPhotos(this,'ann-preview')">
+        <div>📷 Choisir des photos</div>
+      </div>
+      <div class="photo-preview" id="ann-preview"></div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="submitAnnonce()">Publier l'annonce</button>
   </div>
 </div>
 
-<!-- ==================== MODAL: CREATE VISITOR ==================== -->
-<div class="modal-overlay" id="modal-visiteur" onclick="closeModalOut(event,'modal-visiteur')">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="mhandle"></div>
-    <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;">Nouveau code visiteur</div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:22px;">Accès temporaire à la résidence</div>
-    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px;">
+<!-- Modal espace commun -->
+<div class="modal-overlay" id="modal-espace" onclick="closeModalOnBg(event,'modal-espace')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Réserver un espace <button class="modal-close" onclick="closeModal('modal-espace')">×</button></div>
+    <div class="form-group">
+      <label class="form-label">Espace</label>
+      <select class="form-input" id="esp-type">
+        <option>Salle commune</option><option>Jardin central</option><option>Terrasse rooftop</option>
+        <option>Parking visiteurs</option><option>Couloir réception</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input class="form-input" id="esp-date" type="date">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="form-group">
       <div>
-        <label style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;display:block;margin-bottom:7px;">👤 NOM DU VISITEUR</label>
-        <input class="inp" type="text" placeholder="Ex: Marie Dupont" id="vis-nom">
+        <label class="form-label">Heure début</label>
+        <input class="form-input" id="esp-debut" type="time" value="09:00">
       </div>
       <div>
-        <label style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;display:block;margin-bottom:7px;">📞 TÉLÉPHONE</label>
-        <input class="inp" type="tel" placeholder="+225 07 XX XX XX" id="vis-tel">
-      </div>
-      <div>
-        <label style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;display:block;margin-bottom:7px;">💬 MOTIF DE VISITE</label>
-        <input class="inp" type="text" placeholder="Ex: Livraison, Visite famille, Prestataire" id="vis-motif">
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div>
-          <label style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;display:block;margin-bottom:7px;">📅 VALIDE DU</label>
-          <input class="inp" type="date" id="vis-from" style="font-size:13px;">
-        </div>
-        <div>
-          <label style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;display:block;margin-bottom:7px;">📅 AU</label>
-          <input class="inp" type="date" id="vis-to" style="font-size:13px;">
-        </div>
+        <label class="form-label">Heure fin</label>
+        <input class="form-input" id="esp-fin" type="time" value="11:00">
       </div>
     </div>
-    <button class="btn btn-violet" style="width:100%;margin-bottom:10px;font-size:15px;" onclick="createVisitor()">
-      ✨ Générer le code d'accès
-    </button>
-    <button class="btn btn-ghost" style="width:100%;font-size:14px;" onclick="closeModal('modal-visiteur')">Annuler</button>
+    <div class="form-group">
+      <label class="form-label">Nombre de personnes</label>
+      <input class="form-input" id="esp-nb" type="number" placeholder="Ex: 10" min="1">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Motif</label>
+      <textarea class="form-input" id="esp-motif" placeholder="Décrivez votre utilisation..." rows="2"></textarea>
+    </div>
+    <div style="background:var(--navy);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;">
+      <div style="font-size:12px;color:var(--teal);font-weight:600;margin-bottom:8px;">📅 Disponibilités simulées</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap" id="cal-slots"></div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="submitEspace()">Envoyer la demande</button>
   </div>
 </div>
 
-<!-- ==================== SUCCESS MODAL ==================== -->
-<div class="modal-overlay" id="modal-success" onclick="closeModal('modal-success')">
-  <div class="modal" style="text-align:center;" onclick="event.stopPropagation()">
-    <div class="mhandle"></div>
-    <div style="font-size:64px;margin-bottom:16px;animation:scaleIn .4s ease;" id="success-icon">✅</div>
-    <div style="font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;" id="success-title">Paiement confirmé !</div>
-    <div style="font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6;" id="success-desc">Votre paiement de 15 000 XOF a bien été enregistré pour Mars 2026.</div>
-    <button class="btn btn-teal" style="width:100%;font-size:15px;" onclick="closeModal('modal-success')">
-      Super, merci ! 🎉
-    </button>
+<!-- Modal événement chez moi -->
+<div class="modal-overlay" id="modal-event-home" onclick="closeModalOnBg(event,'modal-event-home')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Planifier un événement <button class="modal-close" onclick="closeModal('modal-event-home')">×</button></div>
+    <div class="form-group">
+      <label class="form-label">Titre de l'événement</label>
+      <input class="form-input" id="ev-titre" placeholder="Ex: Dîner en famille">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="form-group">
+      <div>
+        <label class="form-label">Date</label>
+        <input class="form-input" id="ev-date" type="date">
+      </div>
+      <div>
+        <label class="form-label">Heure</label>
+        <input class="form-input" id="ev-heure" type="time" value="19:00">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Durée estimée</label>
+      <select class="form-input" id="ev-duree">
+        <option>1h</option><option>2h</option><option>3h</option><option>Toute la soirée</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nombre d'invités estimé</label>
+      <input class="form-input" id="ev-invites" type="number" placeholder="Ex: 8" min="1">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Niveau sonore</label>
+      <select class="form-input" id="ev-son">
+        <option>🤫 Calme</option><option>🎵 Modéré</option><option>🎶 Animé</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description (optionnel)</label>
+      <textarea class="form-input" id="ev-desc" rows="2" placeholder="Plus d'infos..."></textarea>
+    </div>
+    <div class="toggle-row" style="padding:12px 0; margin-bottom:14px">
+      <div class="toggle-info">
+        <div class="toggle-title">Notifier mes voisins</div>
+        <div class="toggle-sub">Ils verront une alerte dans Social</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="ev-notif" checked><span class="toggle-slider"></span></label>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="submitEvent()">Planifier l'événement</button>
   </div>
 </div>
 
-<!-- ==================== TOAST ==================== -->
-<div id="toast"></div>
+<!-- Modal QR Code généré -->
+<div class="modal-overlay" id="modal-qr-result" onclick="closeModalOnBg(event,'modal-qr-result')">
+  <div class="modal-sheet" style="text-align:center">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="text-align:center">QR Code visiteur <button class="modal-close" onclick="closeModal('modal-qr-result')">×</button></div>
+    <div id="qr-display" style="display:flex;justify-content:center;padding:20px"></div>
+    <div id="qr-info" style="font-size:13px;color:var(--gray);margin-bottom:16px"></div>
+    <button class="btn btn-ghost btn-full" onclick="closeModal('modal-qr-result')">Fermer</button>
+  </div>
+</div>
 
-</div><!-- END PHONE -->
+<!-- Toast notification -->
+<div id="toast" style="position:fixed;bottom:calc(var(--tab-h) + 20px);left:50%;transform:translateX(-50%) translateY(20px);background:#1A3050;border:1px solid var(--navy-border);border-radius:25px;padding:10px 20px;font-size:13px;font-weight:500;z-index:400;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center"></div>
 
 <script>
-// ==================== NAVIGATION ====================
-const SCREENS = {
-  login:      { id:'s-login',       nav:null },
-  home:       { id:'s-home',        nav:'nav-home' },
-  cotisations:{ id:'s-cotisations', nav:'nav-cotisations' },
-  incidents:  { id:'s-incidents',   nav:'nav-incidents' },
-  visiteurs:  { id:'s-visiteurs',   nav:'nav-visiteurs' },
-  profil:     { id:'s-profil',      nav:'nav-profil' },
-  paiement:   { id:'s-paiement',    nav:null }
+// ===== DONNÉES SIMULÉES =====
+const STATE = {
+  currentTab: 'home',
+  notifCount: 3,
+  notifications: true,
+  annoncesRead: {},
+  votes: {},
+  sondages: {},
+  favoris: [],
+  incidents: [],
+  espaces: [],
+  events: [],
+  qrHistory: [],
+  chatMessages: [],
 };
-let currentScreen = 'login';
 
-function navigate(key) {
-  if (key === currentScreen) return;
-  const prev = SCREENS[currentScreen];
-  const next = SCREENS[key];
-  if (!next) return;
+const USER = {
+  nom: 'Aminata Koné', prenom: 'Aminata', initials: 'AK',
+  email: 'aminata.kone@email.com', tel: '+225 07 12 34 56',
+  cite: 'Cité Les Bougainvillées', batiment: 'Bâtiment B',
+  apt: 'Villa B-12', etage: 'RDC',
+  animaux: true,
+  gpsVisible: true, gpsLivreurs: true
+};
 
-  // Hide old screen
-  const prevEl = document.getElementById(prev.id);
-  if (prevEl) prevEl.classList.remove('active');
+const MARKET_ITEMS = [
+  { id:1, cat:'vente', emoji:'🪑', title:'Chaise de bureau ergonomique', prix:15000, auteur:'Kofi A.', apt:'A-04', date:'Il y a 2j', statut:'disponible', desc:'Chaise en bon état, tissu gris, hauteur réglable.' },
+  { id:2, cat:'service', emoji:'🎹', title:'Cours de piano – tous niveaux', prix:10000, auteur:'Marie S.', apt:'C-07', date:'Il y a 3j', statut:'disponible', desc:'Cours individuels chez vous ou à domicile, 1h par session.' },
+  { id:3, cat:'don', emoji:'📚', title:'Lot de livres – romans & BD', prix:0, auteur:'Omar T.', apt:'B-03', date:'Il y a 5j', statut:'disponible', desc:'20 livres en très bon état à donner. À récupérer chez moi.' },
+];
 
-  // Show new screen
-  const nextEl = document.getElementById(next.id);
-  if (nextEl) {
-    nextEl.classList.add('active');
-    // Re-trigger stagger animations
-    nextEl.querySelectorAll('[class*="anim-"]').forEach(el => {
-      el.style.animation = 'none';
-      void el.offsetWidth;
-      el.style.animation = '';
-    });
-  }
+const ANNONCES_SYNDIC = [
+  { id:1, type:'urgent', icon:'⚠️', title:'Coupure eau – Maintenance réseau', body:'Une maintenance d\'urgence du réseau d\'eau est prévue demain mercredi de 8h à 14h. Merci de prévoir des réserves d\'eau.', date:'Aujourd\'hui 09:15', read: false },
+  { id:2, type:'info', icon:'ℹ️', title:'Assemblée Générale – 20 avril 2026', body:'L\'AG annuelle se tiendra le 20 avril à 18h30 en salle commune. Ordre du jour : approbation comptes, nouveaux prestataires, aménagement jardin.', date:'Hier 14:00', read: false },
+  { id:3, type:'info', icon:'📋', title:'Rappel : Respect des horaires de silence', body:'Nous rappelons que les horaires de silence sont de 22h à 7h. Merci de votre coopération.', date:'Il y a 3j', read: true },
+];
 
-  // Update nav
-  const navBar = document.getElementById('main-nav');
-  if (key === 'login') {
-    navBar.style.display = 'none';
-  } else {
-    navBar.style.display = 'flex';
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    if (next.nav) {
-      const navItem = document.getElementById(next.nav);
-      if (navItem) navItem.classList.add('active');
-    }
-  }
-  currentScreen = key;
+const AG_DATA = [
+  { id:1, titre:'AG Ordinaire – Avril 2025', date:'15 avril 2025', statut:'passée', resolutions: ['Approbation du budget annuel 2025 (✅ Adopté)', 'Renouvellement contrat gardiennage (✅ Adopté)', 'Rénovation fontaine centrale (❌ Rejeté – budget insuffisant)'] },
+  { id:2, titre:'AG Extraordinaire – Janvier 2025', date:'10 janvier 2025', statut:'passée', resolutions: ['Installation caméras de surveillance (✅ Adopté)', 'Modification règlement intérieur art.12 (✅ Adopté)'] },
+  { id:3, titre:'AG Ordinaire – Avril 2026', date:'20 avril 2026', statut:'à venir', resolutions: [] },
+];
+
+const VOTES_DATA = [
+  { id:1, titre:'Approbation du nouveau prestataire de nettoyage', desc:'Passer de ProClean à EcoNet Services, proposant -20% sur le tarif actuel.', deadline:'18 avril 2026', participation: 62, oui:18, non:8, abs:2, total:28, voted: null }
+];
+
+const SONDAGES_DATA = [
+  { id:1, titre:'Satisfaction – Sécurité de la cité', question:'Comment évaluez-vous le niveau de sécurité actuel ?', options:['Très satisfait','Satisfait','Neutre','Insatisfait'], resultats:[8,14,6,3], totalVotes:31, voted:null, clos:false }
+];
+
+const INCIDENTS_DATA = [
+  { id:1, type:'Plomberie', icon:'🚰', desc:'Fuite importante au niveau du couloir B, près de l\'appartement B-05. Sol glissant.', prio:'Urgent', loc:'Couloir Bâtiment B', date:'02/04/2026', statut:'En cours', steps:[{done:true,label:'Ouvert', date:'02/04 10:00'},{done:true,label:'Pris en charge',date:'02/04 14:30'},{done:false,label:'Résolu',date:'—'}] }
+];
+
+const RESIDENTS = [
+  { id:1, nom:'Kofi Asante', apt:'Villa A-04', etage:'RDC', batiment:'A', tel:'+225 05 98 76 54', visible:true, color:'#4299E1', initials:'KA' },
+  { id:2, nom:'Marie Sanogo', apt:'Villa C-07', etage:'1er étage', batiment:'C', tel:'+225 07 65 43 21', visible:true, color:'#9F7AEA', initials:'MS' },
+  { id:3, nom:'Omar Touré', apt:'Villa B-03', etage:'RDC', batiment:'B', tel:'', visible:false, color:'#F6AD55', initials:'OT' },
+];
+
+const EVENTS_DATA = [
+  { id:1, titre:'Réunion jardinage', date:'Mer 9 Avr', heure:'09:00', type:'communauté', organisateur:'Le syndic', icon:'🌱' },
+  { id:2, titre:'Tournoi de pétanque', date:'Sam 12 Avr', heure:'16:00', type:'loisir', organisateur:'Kofi A.', icon:'⚽' },
+  { id:3, titre:'Fête de quartier', date:'Dim 20 Avr', heure:'14:00', type:'fête', organisateur:'Comité fête', icon:'🎉' },
+];
+
+const CHAT_INIT = [
+  { from:'syndic', text:'Bonjour Aminata, comment puis-je vous aider ?', time:'Hier 09:00', lu:true },
+  { from:'user', text:'Bonjour, je voulais signaler la fuite dans le couloir B.', time:'Hier 09:15', lu:true },
+  { from:'syndic', text:'Merci pour votre signalement, notre équipe technique intervient demain matin.', time:'Hier 09:20', lu:true },
+];
+
+// ===== NAVIGATION =====
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  const screen = document.getElementById('screen-' + name);
+  if (screen) screen.classList.add('active');
+  const tab = document.getElementById('tab-' + name);
+  if (tab) tab.classList.add('active');
+  STATE.currentTab = name;
+  // Reset services sub if navigating away
+  if (name !== 'services') resetServicesView();
 }
 
-// Init
-document.getElementById('main-nav').style.display = 'none';
-
-// ==================== MODALS ====================
-function openModal(id, data) {
-  if (id === 'modal-cotis' && data) setupCotisModal(data);
-  document.getElementById(id).classList.add('open');
-}
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-}
-function closeModalOut(event, id) {
-  if (event.target === document.getElementById(id)) closeModal(id);
-}
-
-function setupCotisModal(month) {
-  const configs = {
-    jan: { title:'Janvier 2026', sub:'Cotisation mensuelle — Payé intégralement', paid:'25 000 XOF', remain:'0 XOF', btnText:'Déjà payé ✅', disabled:true },
-    feb: { title:'Février 2026', sub:'Cotisation mensuelle — Payé intégralement', paid:'25 000 XOF', remain:'0 XOF', btnText:'Déjà payé ✅', disabled:true },
-    mar: { title:'Mars 2026', sub:'Cotisation mensuelle — En attente', paid:'10 000 XOF', remain:'15 000 XOF', btnText:'💳 Payer maintenant — 15 000 XOF', disabled:false },
-    apr: { title:'Avril 2026', sub:'Cotisation mensuelle — En retard ⚠️', paid:'0 XOF', remain:'25 000 XOF', btnText:'💳 Payer maintenant — 25 000 XOF', disabled:false }
-  };
-  const c = configs[month] || configs.mar;
-  document.getElementById('cotis-title').textContent = c.title;
-  document.getElementById('cotis-sub').textContent = c.sub;
-  document.getElementById('cotis-paid').textContent = c.paid;
-  document.getElementById('cotis-remain').textContent = c.remain;
-  const btn = document.getElementById('btn-pay-now');
-  btn.textContent = c.btnText;
-  btn.disabled = c.disabled;
-  btn.style.opacity = c.disabled ? '.5' : '1';
-  btn.style.cursor = c.disabled ? 'default' : 'pointer';
-}
-
-// ==================== PAYMENT ====================
-function selectPay(el) {
-  document.querySelectorAll('.pay-meth').forEach(m => {
-    m.classList.remove('sel');
-    m.querySelector('.pay-chk').textContent = '○';
-    m.querySelector('.pay-chk').style.color = 'var(--muted)';
+function resetServicesView() {
+  const main = document.getElementById('services-main');
+  if (main) main.style.display = '';
+  ['incidents','espaces','evenements','chat'].forEach(s => {
+    const el = document.getElementById('sub-' + s);
+    if (el) el.style.display = 'none';
   });
-  el.classList.add('sel');
-  el.querySelector('.pay-chk').textContent = '●';
-  el.querySelector('.pay-chk').style.color = 'var(--teal)';
 }
 
-function confirmPay() {
-  const sel = document.querySelector('.pay-meth.sel');
-  if (!sel) { showToast('⚠️ Choisissez un moyen de paiement'); return; }
-  closeModal('modal-paiement');
-  closeModal('modal-cotis');
-  setTimeout(() => {
-    document.getElementById('success-icon').textContent = '💰';
-    document.getElementById('success-title').textContent = 'Paiement confirmé !';
-    document.getElementById('success-desc').textContent = 'Votre paiement de 15 000 XOF a bien été enregistré pour Mars 2026. Vous êtes à jour !';
-    openModal('modal-success');
-  }, 300);
+// ===== MODALS =====
+function openModal(id) {
+  const m = document.getElementById(id);
+  if (m) { m.classList.add('open'); if (id === 'modal-espace') populateCalSlots(); }
+}
+function closeModal(id) { const m = document.getElementById(id); if (m) m.classList.remove('open'); }
+function closeModalOnBg(e, id) { if (e.target.id === id) closeModal(id); }
+
+// ===== TOAST =====
+function showToast(msg, icon) {
+  const t = document.getElementById('toast');
+  t.textContent = (icon||'') + ' ' + msg;
+  t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; }, 3000);
 }
 
-// ==================== INCIDENTS ====================
-function selectCat(el) {
-  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('sel'));
-  el.classList.add('sel');
+// ===== PHOTO PREVIEW =====
+function previewPhotos(input, previewId) {
+  const preview = document.getElementById(previewId);
+  preview.innerHTML = '';
+  const files = Array.from(input.files).slice(0, 3);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.style.cssText = 'width:60px;height:60px;border-radius:8px;object-fit:cover';
+      preview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
-function selectPrio(el) {
-  document.querySelectorAll('.prio-btn').forEach(b => b.classList.remove('sel'));
-  el.classList.add('sel');
+// ===== SCREEN 1: ACCUEIL =====
+function renderHome() {
+  // Tickets actifs
+  const ticketContainer = document.getElementById('home-tickets');
+  const allTickets = [...INCIDENTS_DATA, ...STATE.incidents];
+  if (allTickets.length === 0) {
+    ticketContainer.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:4px 0">Aucun ticket actif 🎉</div>';
+  } else {
+    ticketContainer.innerHTML = allTickets.map(t => `
+      <div class="ticket-row">
+        <div class="ticket-icon">${t.icon}</div>
+        <div class="ticket-info">
+          <div class="ticket-title">${t.type} – ${t.loc}</div>
+          <div class="ticket-meta">${t.date}</div>
+        </div>
+        <span class="badge ${t.statut === 'Résolu' ? 'badge-teal' : t.statut === 'En cours' ? 'badge-orange' : 'badge-blue'}">${t.statut}</span>
+      </div>
+    `).join('');
+  }
+
+  // Annonces récentes
+  const annContainer = document.getElementById('home-annonces');
+  annContainer.innerHTML = ANNONCES_SYNDIC.slice(0,2).map(a => `
+    <div class="ticket-row" onclick="showScreen('annonces')">
+      <div class="ticket-icon">${a.icon}</div>
+      <div class="ticket-info">
+        <div class="ticket-title">${a.title}${!a.read ? '<span class="unread-dot" style="width:6px;height:6px;background:var(--red);border-radius:50%;display:inline-block;margin-left:6px;"></span>' : ''}</div>
+        <div class="ticket-meta">${a.date}</div>
+      </div>
+      <span class="badge ${a.type === 'urgent' ? 'badge-orange' : a.type === 'critical' ? 'badge-red' : 'badge-blue'}">${a.type}</span>
+    </div>
+  `).join('');
+
+  // Événements
+  const evContainer = document.getElementById('home-events');
+  evContainer.innerHTML = [...EVENTS_DATA, ...STATE.events].map(e => `
+    <div class="event-card-h">
+      <div class="event-date">${e.date} · ${e.heure}</div>
+      <div class="event-title-h">${e.icon} ${e.titre}</div>
+      <div class="event-detail">Par ${e.organisateur}</div>
+    </div>
+  `).join('');
+
+  // Notif badge
+  const unread = ANNONCES_SYNDIC.filter(a => !STATE.annoncesRead[a.id] && !a.read).length;
+  document.getElementById('notif-count').textContent = unread || STATE.notifCount;
+}
+
+// ===== SCREEN 2: MARCHÉ =====
+function renderMarche(filter) {
+  const items = filter && filter !== 'tout'
+    ? [...MARKET_ITEMS, ...STATE.incidents.filter(x=>false)].filter(i => i.cat === filter)
+    : MARKET_ITEMS;
+
+  const allItems = filter && filter !== 'tout'
+    ? MARKET_ITEMS.filter(i => i.cat === filter)
+    : MARKET_ITEMS;
+
+  const container = document.getElementById('marche-list');
+  if (allItems.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">Aucune annonce dans cette catégorie</div></div>';
+    return;
+  }
+  container.innerHTML = allItems.map(item => `
+    <div class="market-card">
+      <div class="market-img" style="background:linear-gradient(135deg,var(--navy-card),#0D2A4A)">${item.emoji}</div>
+      <div class="market-info">
+        <div class="market-title">${item.title}</div>
+        <div class="market-price">${item.prix === 0 ? 'Gratuit 🎁' : item.prix.toLocaleString('fr-FR') + ' FCFA'}</div>
+        <div class="market-meta">👤 ${item.auteur} · ${item.apt} · ${item.date}</div>
+        <div style="margin-top:6px"><span class="badge ${item.statut==='disponible'?'badge-teal':'badge-gray'}">${item.statut==='disponible'?'✅ Disponible':'❌ Vendu'}</span></div>
+      </div>
+      <button class="market-fav" onclick="toggleFav(${item.id},this)" style="background:none;border:none;cursor:pointer;font-size:22px;color:${STATE.favoris.includes(item.id)?'#FF6B35':'var(--gray)'}">${STATE.favoris.includes(item.id)?'♥':'♡'}</button>
+    </div>
+  `).join('');
+}
+
+function filterMarche(cat, btn) {
+  document.querySelectorAll('#marche-filters .sub-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderMarche(cat);
+}
+
+function toggleFav(id, btn) {
+  if (STATE.favoris.includes(id)) {
+    STATE.favoris = STATE.favoris.filter(f => f !== id);
+    btn.textContent = '♡'; btn.style.color = 'var(--gray)';
+    showToast('Retiré des favoris');
+  } else {
+    STATE.favoris.push(id);
+    btn.textContent = '♥'; btn.style.color = 'var(--orange)';
+    showToast('Ajouté aux favoris', '❤️');
+  }
+}
+
+function submitAnnonce() {
+  const titre = document.getElementById('ann-titre').value.trim();
+  if (!titre) { showToast('Veuillez entrer un titre', '⚠️'); return; }
+  showToast('Annonce soumise – en attente de validation', '✅');
+  closeModal('modal-annonce-form');
+  document.getElementById('ann-titre').value = '';
+  document.getElementById('ann-desc').value = '';
+  document.getElementById('ann-prix').value = '';
+}
+
+// ===== SCREEN 3: ANNONCES =====
+function renderAnnonces() {
+  // Feed
+  const feed = document.getElementById('ann-feed');
+  feed.innerHTML = ANNONCES_SYNDIC.map(a => `
+    <div class="announce-card ${a.type}" id="ann-${a.id}" onclick="readAnnonce(${a.id})">
+      <div class="ann-title">${a.icon} ${a.title}${(!STATE.annoncesRead[a.id] && !a.read) ? '<span class="unread-dot"></span>' : ''}</div>
+      <div class="ann-body">${a.body}</div>
+      <div class="ann-meta">📅 ${a.date}</div>
+    </div>
+  `).join('');
+
+  // AG
+  const ag = document.getElementById('ann-ag');
+  ag.innerHTML = AG_DATA.map(g => `
+    <div class="ag-card">
+      <div class="ag-header">
+        <div class="ag-title">📋 ${g.titre}</div>
+        <span class="badge ${g.statut==='à venir'?'badge-orange':'badge-gray'}">${g.statut}</span>
+      </div>
+      <div class="ag-date">📅 ${g.date}</div>
+      ${g.statut === 'à venir' ? `
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn btn-teal btn-sm" onclick="rsvpAG('physique',this)">✅ Présence physique</button>
+          <button class="btn btn-ghost btn-sm" onclick="rsvpAG('ligne',this)">💻 En ligne</button>
+        </div>
+      ` : g.resolutions.map(r => `<div class="ag-resolution">${r}</div>`).join('')}
+    </div>
+  `).join('');
+
+  // Votes
+  renderVotes();
+  // Sondages
+  renderSondages();
+}
+
+function readAnnonce(id) {
+  STATE.annoncesRead[id] = true;
+  const dot = document.querySelector(`#ann-${id} .unread-dot`);
+  if (dot) { dot.style.animation = 'fadeIn 0.3s reverse'; setTimeout(() => dot.remove(), 300); }
+}
+
+function switchAnnTab(tab, btn) {
+  ['feed','ag','votes','sondages'].forEach(t => {
+    document.getElementById('ann-'+t).style.display = t === tab ? '' : 'none';
+  });
+  document.querySelectorAll('#screen-annonces .sub-tabs .sub-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function rsvpAG(mode, btn) {
+  btn.textContent = '✅ Confirmé !';
+  btn.classList.add('btn-teal');
+  showToast(`Présence ${mode === 'ligne' ? 'en ligne' : 'physique'} confirmée`, '🎉');
+}
+
+function toggleNotifs(el) {
+  STATE.notifications = el.checked;
+  showToast(el.checked ? 'Notifications activées' : 'Notifications désactivées', el.checked ? '🔔' : '🔕');
+}
+
+// ===== VOTES =====
+function renderVotes() {
+  const container = document.getElementById('ann-votes');
+  container.innerHTML = VOTES_DATA.map(v => `
+    <div class="vote-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="font-size:14px;font-weight:600;flex:1">${v.titre}</div>
+        <span class="badge badge-orange">Vote actif</span>
+      </div>
+      <div style="font-size:12px;color:var(--gray);margin-bottom:10px">${v.desc}</div>
+      <div style="font-size:11px;color:var(--gray);margin-bottom:10px">⏰ Date limite : ${v.deadline} · 👥 ${v.participation}% de participation</div>
+      ${!v.voted ? `
+        <div class="vote-choices">
+          <button class="vote-btn oui" onclick="submitVote(${v.id},'oui',this)">✅ Oui</button>
+          <button class="vote-btn non" onclick="submitVote(${v.id},'non',this)">❌ Non</button>
+          <button class="vote-btn abs" onclick="submitVote(${v.id},'abs',this)">— Abstention</button>
+        </div>
+      ` : `
+        <div style="margin-bottom:10px;font-size:12px;color:var(--teal)">✅ Vous avez voté : <strong>${VOTES_DATA.find(x=>x.id===v.id).voted}</strong></div>
+        ${renderVoteResults(v)}
+      `}
+    </div>
+  `).join('');
+}
+
+function renderVoteResults(v) {
+  const total = v.oui + v.non + v.abs;
+  return `
+    <div class="vote-result-label"><span>✅ Oui</span><span>${v.oui}/${total}</span></div>
+    <div class="progress-bar" style="margin-bottom:8px"><div class="progress-fill teal" style="width:${Math.round(v.oui/total*100)}%"></div></div>
+    <div class="vote-result-label"><span>❌ Non</span><span>${v.non}/${total}</span></div>
+    <div class="progress-bar" style="margin-bottom:8px"><div class="progress-fill red" style="width:${Math.round(v.non/total*100)}%"></div></div>
+    <div class="vote-result-label"><span>— Abstention</span><span>${v.abs}/${total}</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${Math.round(v.abs/total*100)}%;background:var(--gray)"></div></div>
+  `;
+}
+
+function submitVote(id, choice, btn) {
+  const vote = VOTES_DATA.find(v => v.id === id);
+  if (!vote) return;
+  vote.voted = choice;
+  if (choice === 'oui') vote.oui++;
+  else if (choice === 'non') vote.non++;
+  else vote.abs++;
+  vote.participation = Math.min(100, vote.participation + 2);
+  document.querySelectorAll(`#ann-votes .vote-btn`).forEach(b => b.classList.remove('voted'));
+  btn.classList.add('voted');
+  showToast('Vote enregistré !', '✅');
+  setTimeout(() => renderVotes(), 400);
+}
+
+// ===== SONDAGES =====
+function renderSondages() {
+  const container = document.getElementById('ann-sondages');
+  container.innerHTML = SONDAGES_DATA.map(s => `
+    <div class="vote-card">
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px">📊 ${s.titre}</div>
+      <div style="font-size:13px;margin-bottom:12px;color:var(--gray-light)">${s.question}</div>
+      ${!s.voted ? `
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${s.options.map((opt,i) => `
+            <button class="btn btn-ghost btn-full" style="justify-content:flex-start;font-size:13px" onclick="submitSondage(${s.id},${i},this)">${opt}</button>
+          `).join('')}
+        </div>
+      ` : `
+        <div style="font-size:11px;color:var(--teal);margin-bottom:12px">✅ Merci pour votre réponse !</div>
+        ${s.options.map((opt,i) => {
+          const total = s.resultats.reduce((a,b)=>a+b,0);
+          const pct = total > 0 ? Math.round(s.resultats[i]/total*100) : 0;
+          return `
+            <div style="margin-bottom:10px">
+              <div class="vote-result-label"><span>${opt}</span><span>${pct}%</span></div>
+              <div class="progress-bar"><div class="progress-fill ${i===0?'teal':i===1?'orange':''}" style="width:${pct}%;background:${i===s.voted?'var(--teal)':'var(--navy-border)'}"></div></div>
+            </div>
+          `;
+        }).join('')}
+        <div style="font-size:11px;color:var(--gray)">👥 ${s.totalVotes} réponses</div>
+      `}
+    </div>
+  `).join('');
+}
+
+function submitSondage(id, choice, btn) {
+  const s = SONDAGES_DATA.find(x => x.id === id);
+  if (!s) return;
+  s.voted = choice;
+  s.resultats[choice]++;
+  s.totalVotes++;
+  showToast('Réponse enregistrée !', '📊');
+  setTimeout(() => renderSondages(), 300);
+}
+
+// ===== SCREEN 4: SERVICES =====
+function showService(name) {
+  const main = document.getElementById('services-main');
+  if (main) main.style.display = 'none';
+  ['incidents','espaces','evenements','chat'].forEach(s => {
+    const el = document.getElementById('sub-' + s);
+    if (el) el.style.display = 'none';
+  });
+  const sub = document.getElementById('sub-' + name);
+  if (sub) { sub.style.display = ''; sub.style.flexDirection = 'column'; }
+  if (name === 'incidents') renderIncidents();
+  else if (name === 'espaces') renderEspaces();
+  else if (name === 'evenements') renderEvenements();
+  else if (name === 'chat') renderChat();
+}
+
+function renderIncidents() {
+  const container = document.getElementById('sub-incidents');
+  const allInc = [...INCIDENTS_DATA, ...STATE.incidents];
+  container.innerHTML = `
+    <div class="header" style="position:sticky;top:0;z-index:50">
+      <button onclick="resetServicesView()" style="font-size:20px;background:none;border:none;color:var(--white);cursor:pointer;padding:4px">←</button>
+      <div class="header-info"><div class="name">Incidents</div><div class="sub">${allInc.length} signalement(s)</div></div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-incident')">+ Déclarer</button>
+    </div>
+    <div style="padding:16px">
+    ${allInc.map(inc => `
+      <div class="card" style="margin:0 0 12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="display:flex;gap:10px;align-items:center">
+            <span style="font-size:22px">${inc.icon}</span>
+            <div>
+              <div style="font-size:14px;font-weight:600">${inc.type}</div>
+              <div style="font-size:11px;color:var(--gray)">${inc.loc} · ${inc.date}</div>
+            </div>
+          </div>
+          <span class="badge ${inc.statut==='Résolu'?'badge-teal':inc.statut==='En cours'?'badge-orange':'badge-blue'}">${inc.statut}</span>
+        </div>
+        <div style="font-size:13px;color:var(--gray-light);margin-bottom:12px">${inc.desc}</div>
+        <div class="timeline">
+          ${inc.steps.map(s => `
+            <div class="timeline-item ${s.done ? 'done' : ''}">
+              <div class="tl-label">${s.date}</div>
+              <div class="tl-title">${s.label}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('')}
+    ${allInc.length === 0 ? '<div class="empty-state"><div class="empty-icon">🎉</div><div class="empty-text">Aucun incident en cours</div></div>' : ''}
+    </div>
+  `;
+  document.getElementById('inc-count').textContent = allInc.filter(i=>i.statut!=='Résolu').length + ' en cours';
 }
 
 function submitIncident() {
-  const title = document.getElementById('inc-title').value.trim();
+  const type = document.getElementById('inc-type').value;
   const desc = document.getElementById('inc-desc').value.trim();
-  const cat = document.querySelector('.cat-btn.sel');
-  if (!title) { showToast('📝 Renseignez un titre'); return; }
-  if (!desc) { showToast('📋 Ajoutez une description'); return; }
-  document.getElementById('inc-title').value = '';
+  if (!desc) { showToast('Veuillez décrire l\'incident', '⚠️'); return; }
+  const prio = document.getElementById('inc-prio').value;
+  const loc = document.getElementById('inc-loc').value;
+  const icons = { Plomberie:'🚰', Électricité:'⚡', Sécurité:'🔒', 'Espace commun':'🏛️', Bruit:'📢', Autre:'🔧' };
+  const newInc = {
+    id: Date.now(), type, icon: icons[type] || '🔧', desc, prio, loc,
+    date: new Date().toLocaleDateString('fr-FR'), statut: 'Ouvert',
+    steps: [{done:true,label:'Ouvert',date: new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})},{done:false,label:'En cours',date:'—'},{done:false,label:'Résolu',date:'—'}]
+  };
+  STATE.incidents.push(newInc);
+  closeModal('modal-incident');
   document.getElementById('inc-desc').value = '';
-  document.getElementById('success-icon').textContent = '🚨';
-  document.getElementById('success-title').textContent = 'Signalement envoyé !';
-  document.getElementById('success-desc').textContent = 'Votre incident a été transmis au syndic. Vous recevrez une réponse sous 24h.';
-  openModal('modal-success');
+  showToast('Incident signalé avec succès !', '✅');
+  renderIncidents();
+  renderHome();
 }
 
-// ==================== VISITORS ====================
-function createVisitor() {
-  const nom = document.getElementById('vis-nom').value.trim();
-  const tel = document.getElementById('vis-tel').value.trim();
-  const motif = document.getElementById('vis-motif').value.trim();
-  if (!nom) { showToast('👤 Entrez le nom du visiteur'); return; }
-  if (!tel) { showToast('📞 Entrez le numéro de téléphone'); return; }
-  closeModal('modal-visiteur');
-  document.getElementById('vis-nom').value = '';
-  document.getElementById('vis-tel').value = '';
-  document.getElementById('vis-motif').value = '';
-  const code = generateCode();
-  document.getElementById('success-icon').textContent = '🔑';
-  document.getElementById('success-title').textContent = `Code créé : ${code}`;
-  document.getElementById('success-desc').textContent = `${nom} peut maintenant accéder à la résidence avec le code ${code}. Partagez-le avec votre visiteur !`;
-  setTimeout(() => openModal('modal-success'), 300);
+// ===== ESPACES COMMUNS =====
+function populateCalSlots() {
+  const slots = ['Lun 7', 'Mar 8', 'Mer 9', 'Jeu 10', 'Ven 11', 'Sam 12'];
+  const avail = [true, false, true, true, false, true];
+  const container = document.getElementById('cal-slots');
+  if (!container) return;
+  container.innerHTML = slots.map((d,i) => `
+    <div style="padding:8px 12px;border-radius:8px;font-size:12px;text-align:center;background:${avail[i]?'rgba(0,212,170,0.15)':'rgba(255,75,75,0.1)'};color:${avail[i]?'var(--teal)':'var(--gray)'};border:1px solid ${avail[i]?'var(--teal)':'transparent'}">
+      <div style="font-weight:600">${d}</div>
+      <div>${avail[i]?'✅ Libre':'❌ Occupé'}</div>
+    </div>
+  `).join('');
 }
 
-function cancelCode(btn, e) {
-  e && e.stopPropagation();
-  const card = btn.closest('[style*="border-radius:24px"]') || btn.closest('.card') || btn.parentElement.parentElement.parentElement;
-  card.style.transition = 'all .3s';
-  card.style.opacity = '0';
-  card.style.transform = 'translateX(30px)';
-  setTimeout(() => { card.style.display = 'none'; showToast('✅ Code annulé avec succès'); }, 300);
+function renderEspaces() {
+  const container = document.getElementById('sub-espaces');
+  container.innerHTML = `
+    <div class="header" style="position:sticky;top:0;z-index:50">
+      <button onclick="resetServicesView()" style="font-size:20px;background:none;border:none;color:var(--white);cursor:pointer;padding:4px">←</button>
+      <div class="header-info"><div class="name">Espaces communs</div><div class="sub">Réserver un espace</div></div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-espace')">+ Réserver</button>
+    </div>
+    <div style="padding:16px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        ${[{icon:'🏛️',nom:'Salle commune',dispo:true},{icon:'🌿',nom:'Jardin central',dispo:true},{icon:'🏠',nom:'Terrasse rooftop',dispo:false},{icon:'🅿️',nom:'Parking visiteurs',dispo:true}].map(e => `
+          <div style="background:var(--navy-card);border:1px solid var(--navy-border);border-radius:var(--radius);padding:14px;text-align:center;cursor:pointer" onclick="openModal('modal-espace')">
+            <div style="font-size:28px;margin-bottom:6px">${e.icon}</div>
+            <div style="font-size:13px;font-weight:600">${e.nom}</div>
+            <div style="margin-top:6px"><span class="badge ${e.dispo?'badge-teal':'badge-red'}">${e.dispo?'Disponible':'Occupé'}</span></div>
+          </div>
+        `).join('')}
+      </div>
+      ${STATE.espaces.length > 0 ? `
+        <div class="sub-section-title">Mes demandes</div>
+        ${STATE.espaces.map(e => `
+          <div class="card" style="margin:0 0 10px">
+            <div style="display:flex;justify-content:space-between">
+              <div>
+                <div style="font-size:14px;font-weight:600">${e.espace}</div>
+                <div style="font-size:12px;color:var(--gray);margin-top:4px">📅 ${e.date} · ⏰ ${e.debut}–${e.fin}</div>
+              </div>
+              <span class="badge badge-orange">En attente</span>
+            </div>
+          </div>
+        `).join('')}
+      ` : '<div class="empty-state" style="padding:30px 20px"><div class="empty-icon">🏛️</div><div class="empty-text">Aucune réservation en cours</div></div>'}
+    </div>
+  `;
 }
 
-function generateCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
-  return code;
+function submitEspace() {
+  const espace = document.getElementById('esp-type').value;
+  const date = document.getElementById('esp-date').value;
+  const debut = document.getElementById('esp-debut').value;
+  const fin = document.getElementById('esp-fin').value;
+  if (!date) { showToast('Veuillez choisir une date', '⚠️'); return; }
+  STATE.espaces.push({ espace, date, debut, fin });
+  closeModal('modal-espace');
+  showToast('Demande envoyée au syndic !', '✅');
+  renderEspaces();
 }
 
-// ==================== TOAST ====================
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
-  t.style.animation = 'fadeUp .3s ease';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => {
-    t.style.opacity = '0';
-    t.style.transition = 'opacity .3s';
-    setTimeout(() => { t.style.display = 'none'; t.style.opacity = '1'; t.style.transition = ''; }, 300);
-  }, 2500);
+// ===== ÉVÉNEMENTS =====
+function renderEvenements() {
+  const container = document.getElementById('sub-evenements');
+  const myEvents = STATE.events.filter(e => e.mine);
+  container.innerHTML = `
+    <div class="header" style="position:sticky;top:0;z-index:50">
+      <button onclick="resetServicesView()" style="font-size:20px;background:none;border:none;color:var(--white);cursor:pointer;padding:4px">←</button>
+      <div class="header-info"><div class="name">Événements</div><div class="sub">Chez moi & voisinage</div></div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-event-home')">+ Planifier</button>
+    </div>
+    <div style="padding:16px">
+      <div class="sub-section-title" style="padding:0 0 8px">Événements de la cité</div>
+      ${EVENTS_DATA.map(e => `
+        <div class="card" style="margin:0 0 10px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:28px">${e.icon}</span>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600">${e.titre}</div>
+              <div style="font-size:12px;color:var(--gray);margin-top:4px">📅 ${e.date} · ⏰ ${e.heure} · 👤 ${e.organisateur}</div>
+            </div>
+            <button class="btn btn-teal btn-sm" onclick="rsvpEvent(this)">RSVP</button>
+          </div>
+        </div>
+      `).join('')}
+      ${myEvents.length > 0 ? `
+        <div class="sub-section-title" style="padding:16px 0 8px">Mes événements planifiés</div>
+        ${myEvents.map(e => `
+          <div class="card" style="margin:0 0 10px;border-color:var(--orange)">
+            <div style="display:flex;justify-content:space-between">
+              <div>
+                <div style="font-size:14px;font-weight:600">${e.icon} ${e.titre}</div>
+                <div style="font-size:12px;color:var(--gray);margin-top:4px">📅 ${e.date} · ⏰ ${e.heure} · 👥 ~${e.invites} invités</div>
+                <div style="font-size:12px;color:var(--gray);margin-top:2px">🔊 ${e.son}</div>
+              </div>
+              <span class="badge badge-orange">Planifié</span>
+            </div>
+            ${e.notifVoisins ? '<div style="font-size:11px;color:var(--teal);margin-top:8px">✅ Voisins notifiés</div>' : ''}
+          </div>
+        `).join('')}
+      ` : ''}
+    </div>
+  `;
 }
-</script>
 
-<script>
-// ==================== QR CODE GENERATOR ====================
-function drawQR(canvasId, data) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const size = 58;
-  const cells = 10;
-  const cell = size / cells;
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(0, 0, size, size);
-  // Generate pseudo-random pattern based on data string
-  let seed = 0;
-  for (let i = 0; i < data.length; i++) seed = (seed * 31 + data.charCodeAt(i)) & 0xFFFFFF;
-  const rand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
-  // Draw finder patterns (corners)
-  const drawFinder = (x, y) => {
-    ctx.fillStyle = '#000';
-    ctx.fillRect(x * cell, y * cell, 7 * cell, 7 * cell);
-    ctx.fillStyle = '#fff';
-    ctx.fillRect((x+1)*cell, (y+1)*cell, 5*cell, 5*cell);
-    ctx.fillStyle = '#000';
-    ctx.fillRect((x+2)*cell, (y+2)*cell, 3*cell, 3*cell);
+function rsvpEvent(btn) {
+  btn.textContent = '✅ Inscrit !';
+  btn.classList.remove('btn-teal'); btn.classList.add('btn-ghost');
+  btn.disabled = true;
+  showToast('RSVP confirmé !', '🎉');
+}
+
+function submitEvent() {
+  const titre = document.getElementById('ev-titre').value.trim();
+  if (!titre) { showToast('Veuillez entrer un titre', '⚠️'); return; }
+  const date = document.getElementById('ev-date').value;
+  const heure = document.getElementById('ev-heure').value;
+  const son = document.getElementById('ev-son').value;
+  const invites = document.getElementById('ev-invites').value;
+  const notifVoisins = document.getElementById('ev-notif').checked;
+  const newEv = {
+    id: Date.now(), titre, date: date || 'Date à définir', heure, son, invites,
+    notifVoisins, mine: true, icon: '🏠', organisateur: USER.nom, type: 'perso'
   };
-  drawFinder(0, 0);
-  // Draw data cells
-  for (let r = 0; r < cells; r++) {
-    for (let c = 0; c < cells; c++) {
-      if ((r < 7 && c < 7)) continue; // Skip top-left finder
-      if (rand() > 0.55) {
-        ctx.fillStyle = '#000';
-        ctx.fillRect(c * cell, r * cell, cell - 0.5, cell - 0.5);
-      }
-    }
+  STATE.events.push(newEv);
+  closeModal('modal-event-home');
+  document.getElementById('ev-titre').value = '';
+  showToast(notifVoisins ? 'Événement planifié – voisins notifiés !' : 'Événement planifié !', '🎉');
+  renderEvenements();
+  renderHome();
+}
+
+// ===== CHAT SYNDIC =====
+function renderChat() {
+  if (STATE.chatMessages.length === 0) STATE.chatMessages = [...CHAT_INIT];
+  const container = document.getElementById('sub-chat');
+  container.style.display = 'flex';
+  container.style.flexDirection = 'column';
+  container.style.height = '100%';
+  container.innerHTML = `
+    <div class="header" style="position:sticky;top:0;z-index:50">
+      <button onclick="resetServicesView()" style="font-size:20px;background:none;border:none;color:var(--white);cursor:pointer;padding:4px">←</button>
+      <div class="header-avatar" style="width:34px;height:34px;font-size:13px;background:linear-gradient(135deg,var(--teal),#00B894)">SY</div>
+      <div class="header-info"><div class="name">Syndic DOMO</div><div class="sub" style="color:var(--teal)">● En ligne</div></div>
+    </div>
+    <div class="chat-messages" id="chat-msgs">
+      ${STATE.chatMessages.map(m => `
+        <div>
+          <div class="msg-bubble ${m.from === 'user' ? 'sent' : 'recv'}">${m.text}</div>
+          <div class="msg-meta" style="text-align:${m.from==='user'?'right':'left'}">${m.time} ${m.from==='user'?'· ✓✓':''}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="chat-input-bar">
+      <textarea class="form-input" id="chat-input" placeholder="Écrire un message..." rows="1" onkeydown="chatKeydown(event)"></textarea>
+      <button class="btn btn-primary" style="padding:10px 16px;border-radius:10px;flex-shrink:0" onclick="sendChat()">➤</button>
+    </div>
+  `;
+  scrollChatBottom();
+}
+
+function chatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const now = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+  STATE.chatMessages.push({ from:'user', text, time: now, lu: true });
+  input.value = '';
+  renderChat();
+  setTimeout(() => {
+    const replies = ['Merci, nous prenons note.', 'Bien reçu ! Nous reviendrons vers vous.', 'Votre demande a été enregistrée.', 'Notre équipe s\'en occupe, merci de votre patience.'];
+    STATE.chatMessages.push({ from:'syndic', text: replies[Math.floor(Math.random()*replies.length)], time: now, lu:true });
+    renderChat();
+  }, 1200);
+}
+
+function scrollChatBottom() {
+  const msgs = document.getElementById('chat-msgs');
+  if (msgs) setTimeout(() => msgs.scrollTop = msgs.scrollHeight, 100);
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
+// ===== SECURITY & NOTIFICATIONS FUNCTIONS =====
+
+// Show security banners on home load
+function initSecurityBanners() {
+  // Show security alert (simulated - change style display to 'flex' to show)
+  // Uncomment to enable: document.getElementById('home-security-alert').style.display = 'flex';
+  
+  // Check for active votes and show banner
+  if (hasActiveVotes()) {
+    document.getElementById('home-vote-banner').style.display = 'flex';
+  }
+  
+  // Check for active surveys and show banner
+  if (hasActiveSurveys()) {
+    document.getElementById('home-survey-banner').style.display = 'flex';
   }
 }
 
-window.addEventListener('load', () => {
-  drawQR('qr1', 'DOMO-D8K2-VILLA14B-PALMIERS');
-  drawQR('qr2', 'DOMO-P5M9-VILLA14B-PALMIERS');
-});
+function hasActiveVotes() {
+  // Simulated: check if there are active votes
+  return true; // Show vote banner by default
+}
 
-function selectPaymentMethod(method) {
-  // Remove selection from all payment cards
-  document.querySelectorAll('.payment-card').forEach(card => {
-    card.style.borderColor = '';
-    card.style.borderWidth = '';
-    card.style.boxShadow = '';
+function hasActiveSurveys() {
+  // Simulated: check if there are active surveys
+  return true; // Show survey banner by default
+}
+
+// Escalade incident to security
+function escaladeToSecurity(incidentId) {
+  if (!confirm('Transmettre cet incident à l'équipe de sécurité ?')) return;
+  
+  // Simulate escalation
+  showToast('✓ Incident transmis à la sécurité — un agent va être dépêché');
+  
+  // Update the badge
+  const badge = document.getElementById('incident-status-' + incidentId);
+  if (badge) {
+    badge.innerHTML = '<span class="badge badge-red">Escaladé → Sécurité</span>';
+  }
+}
+
+// Handle AG online participation
+function handleAGOnlineParticipation(agId) {
+  const agCard = document.getElementById('ag-card-' + agId);
+  if (!agCard) return;
+  
+  // Show online participation section
+  const onlineSec = agCard.querySelector('.online-participation');
+  if (onlineSec) {
+    onlineSec.style.display = 'block';
+  }
+}
+
+// Submit AG question
+function submitAGQuestion(agId) {
+  const textarea = document.getElementById('ag-question-input-' + agId);
+  if (!textarea || !textarea.value.trim()) {
+    showToast('Veuillez saisir une question');
+    return;
+  }
+  
+  const question = textarea.value.trim();
+  const questionsList = document.getElementById('ag-questions-list-' + agId);
+  
+  // Add question to list with "pending moderation" status
+  const newQuestion = document.createElement('div');
+  newQuestion.className = 'question-item pending';
+  newQuestion.innerHTML = `
+    <strong>Votre question:</strong> ${question}
+    <div class="question-meta">En attente de modération</div>
+  `;
+  
+  questionsList.appendChild(newQuestion);
+  textarea.value = '';
+  showToast('✓ Question soumise et en attente de modération');
+}
+
+// Notify security for events with high noise level
+function notifySecurityForEvent() {
+  const noiseLevelSelect = document.getElementById('evt-noise-level');
+  if (noiseLevelSelect && noiseLevelSelect.value === 'élevé') {
+    showToast('La sécurité a été notifiée de votre événement');
+  }
+}
+
+ 
+<!-- Template for AG Online Participation -->
+<div class="online-participation" style="display:none;" id="ag-online-template">
+  <div style="font-size:14px;font-weight:600;margin-bottom:12px;">🖥️ Participation en ligne</div>
+  <div style="background:var(--navy);padding:12px;border-radius:10px;margin-bottom:12px;">
+    <div style="font-size:12px;color:var(--gray);margin-bottom:8px;">Questions en direct:</div>
+    <div class="question-item" style="margin-bottom:8px;">
+      <strong>Question actuelle:</strong> Quand débuteront les travaux?
+      <div class="question-meta">Question de M. Kouassi</div>
+    </div>
+  </div>
+  
+  <div style="background:var(--navy);padding:12px;border-radius:10px;">
+    <div style="font-size:12px;color:var(--gray);margin-bottom:8px;">Poser une question:</div>
+    <div class="question-input">
+      <textarea class="form-input" placeholder="Votre question..." style="margin-bottom:8px;"></textarea>
+      <button class="btn btn-primary" onclick="submitAGQuestion('current')" style="width:100%;margin-top:8px;">Envoyer</button>
+    </div>
+    <div id="ag-questions-list-current"></div>
+  </div>
+</div>
+
+</body>
+</html>
+
+// ===== SCREEN 6: PROFIL =====
+function renderProfil() {
+  const container = document.getElementById('profil-content');
+  container.innerHTML = `
+    <!-- Hero profil -->
+    <div class="profile-hero">
+      <div class="profile-avatar-lg">${USER.initials}</div>
+      <div class="profile-name">${USER.nom}</div>
+      <div class="profile-apt">${USER.cite} · ${USER.apt}</div>
+    </div>
+
+    <!-- Informations personnelles -->
+    <div class="sub-section-title">Mes informations</div>
+    <div class="card" style="margin:0 16px 12px">
+      <div class="info-row"><span class="info-label">Prénom</span><span class="info-val">${USER.prenom}</span></div>
+      <div class="info-row"><span class="info-label">Email</span><span class="info-val" style="color:var(--teal)">${USER.email}</span></div>
+      <div class="info-row"><span class="info-label">Téléphone</span><span class="info-val">${USER.tel}</span></div>
+      <div class="info-row"><span class="info-label">Résidence</span><span class="info-val">${USER.cite}</span></div>
+      <div class="info-row"><span class="info-label">Bâtiment</span><span class="info-val">${USER.batiment}</span></div>
+      <div class="info-row"><span class="info-label">Appartement/Villa</span><span class="info-val">${USER.apt}</span></div>
+      <div class="info-row"><span class="info-label">Étage</span><span class="info-val">${USER.etage}</span></div>
+    </div>
+
+    <!-- Animaux de compagnie -->
+    <div class="sub-section-title">Animaux de compagnie</div>
+    <div class="card" style="margin:0 16px 12px">
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-title">J'ai des animaux de compagnie</div>
+          <div class="toggle-sub">Visible par le syndic</div>
+        </div>
+        <label class="toggle"><input type="checkbox" ${USER.animaux?'checked':''} onchange="toggleAnimaux(this)"><span class="toggle-slider"></span></label>
+      </div>
+      <div id="animaux-list" style="${USER.animaux?'':'display:none'}">
+        <div style="padding:10px 0;border-bottom:1px solid var(--navy-border)">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:24px">🐕</span>
+            <div><div style="font-size:13px;font-weight:500">Labrador</div><div style="font-size:11px;color:var(--gray)">Chien · Prénom : Max</div></div>
+          </div>
+        </div>
+        <div style="padding:10px 0">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:24px">🐈</span>
+            <div><div style="font-size:13px;font-weight:500">Siamois</div><div style="font-size:11px;color:var(--gray)">Chat · Prénom : Luna</div></div>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-full btn-sm" style="margin-top:10px" onclick="showToast('Formulaire d\'ajout en cours de déploiement', '🚧')">+ Ajouter un animal</button>
+      </div>
+    </div>
+
+    <!-- Informations particulières -->
+    <div class="sub-section-title">Informations pour le syndic</div>
+    <div class="card" style="margin:0 16px 12px">
+      <textarea class="form-input" rows="3" placeholder="Besoins spéciaux, préférences, informations utiles pour le syndic...">Accès PMR nécessaire pour livraisons. Horaires de présence : souvent absente le matin.</textarea>
+      <button class="btn btn-primary btn-sm" style="margin-top:10px;width:auto" onclick="showToast('Informations sauvegardées', '✅')">Sauvegarder</button>
+    </div>
+
+    <!-- Localisation GPS -->
+    <div class="sub-section-title">Ma localisation</div>
+    <div class="card" style="margin:0 16px 12px">
+      <div class="form-group">
+        <label class="form-label">Adresse précise</label>
+        <input class="form-input" value="Cité Les Bougainvillées, Villa B-12, Abidjan" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Coordonnées GPS (simulées)</label>
+        <input class="form-input" value="5.3600° N, 4.0083° W" readonly>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-title">Visible par mes voisins</div>
+        </div>
+        <label class="toggle"><input type="checkbox" ${USER.gpsVisible?'checked':''} onchange="USER.gpsVisible=this.checked;showToast('Préférence mise à jour','✅')"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-title">Accessible aux visiteurs/livreurs</div>
+        </div>
+        <label class="toggle"><input type="checkbox" ${USER.gpsLivreurs?'checked':''} onchange="USER.gpsLivreurs=this.checked;showToast('Préférence mise à jour','✅')"><span class="toggle-slider"></span></label>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="btn btn-teal" style="flex:1" onclick="window.open('https://www.google.com/maps/search/Cité+Les+Bougainvillées+Abidjan','_blank')">🗺️ Mon itinéraire</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="copyAccessLink()">🔗 Partager l'accès</button>
+      </div>
+    </div>
+
+    <!-- Paramètres notifications -->
+    <div class="sub-section-title">Paramètres notifications</div>
+    <div class="card" style="margin:0 16px 32px">
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-title">🚨 Annonces urgentes</div></div>
+        <label class="toggle"><input type="checkbox" checked onchange="showToast('Préférence mise à jour','🔔')"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-title">⚠️ Incidents de la cité</div></div>
+        <label class="toggle"><input type="checkbox" checked onchange="showToast('Préférence mise à jour','🔔')"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-title">🗳️ Nouveaux votes</div></div>
+        <label class="toggle"><input type="checkbox" checked onchange="showToast('Préférence mise à jour','🔔')"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-title">🎉 Événements voisinage</div></div>
+        <label class="toggle"><input type="checkbox" checked onchange="showToast('Préférence mise à jour','🔔')"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-title">💬 Messages du syndic</div></div>
+        <label class="toggle"><input type="checkbox" checked onchange="showToast('Préférence mise à jour','🔔')"><span class="toggle-slider"></span></label>
+      </div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--navy-border);text-align:center">
+        <div style="font-size:12px;color:var(--gray);margin-bottom:12px">Version DOMO App 2.0.0 · Prototype UI</div>
+        <button class="btn btn-ghost btn-sm" onclick="showToast('Déconnexion simulée','👋')">🚪 Se déconnecter</button>
+      </div>
+    </div>
+  `;
+}
+
+function toggleAnimaux(checkbox) {
+  USER.animaux = checkbox.checked;
+  const list = document.getElementById('animaux-list');
+  if (list) list.style.display = checkbox.checked ? '' : 'none';
+  showToast(checkbox.checked ? 'Animaux enregistrés' : 'Section masquée', '🐾');
+}
+
+function copyAccessLink() {
+  const link = 'https://domo-app.ci/acces/villa-b12';
+  navigator.clipboard?.writeText(link).then(() => showToast('Lien copié !', '📋')).catch(() => showToast('Lien : ' + link, '🔗'));
+}
+
+// ===== INITIALISATION =====
+function init() {
+  renderHome();
+  renderMarche('tout');
+  renderAnnonces();
+  renderSocial();
+  renderProfil();
+  // Set today's date as default in forms
+  const today = new Date().toISOString().split('T')[0];
+  ['esp-date','ev-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = today;
   });
-  
-  // Add selection to clicked card
-  const card = document.getElementById('pay-' + method);
-  if (card) {
-    card.style.borderColor = 'var(--orange)';
-    card.style.borderWidth = '2px';
-    card.style.boxShadow = '0 8px 24px rgba(255,107,53,.3)';
-    
-    // Store selected method
-    window.selectedPaymentMethod = method;
-  }
 }
 
-function confirmPayment() {
-  const method = window.selectedPaymentMethod || 'sokora';
-  const methods = {
-    'orange': 'Orange Money',
-    'mtn': 'MTN MoMo',
-    'wave': 'Wave',
-    'moov': 'Moov Money',
-    'sokora': 'SOKORA Pay'
-  };
-  
-  alert('✅ Paiement initié avec ' + methods[method] + '\n\nMontant: 15 000 XOF\nVous recevrez une confirmation par SMS.');
-  navigate('cotisations');
-}
-
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
