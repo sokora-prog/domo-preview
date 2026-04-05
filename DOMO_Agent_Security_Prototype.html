@@ -1466,8 +1466,8 @@
             </div>
             <div class="status-center">SecurPlus CI</div>
             <div class="status-right">
-                <span>ðŸ“¶</span>
-                <span>ðŸ”‹</span>
+                <span>&#55357;&#56566;</span>
+                <span>&#55357;&#56587;</span>
             </div>
         </div>
 
@@ -1477,11 +1477,11 @@
             <div id="s-agent-login" class="screen active">
                 <div class="login-container">
                     <div class="logo">DOMO</div>
-                    <div class="logo-subtitle">AGENT SÃ‰CURITÃ‰</div>
+                    <div class="logo-subtitle">AGENT S&#201;CURIT&#201;</div>
 
                     <div class="residence-info">
                         <div class="residence-info-name">SecurPlus CI</div>
-                        <div>CitÃ© Les Palmiers</div>
+                        <div>Cit&#233; Les Palmiers</div>
                     </div>
 
                     <div class="form-group" style="width: 100%; padding: 0 20px;">
@@ -1489,10 +1489,10 @@
                         <input type="text" id="badgeId" class="form-input" placeholder="Ex: SEC-2024-001" value="">
 
                         <label>Code PIN (4 chiffres)</label>
-                        <input type="password" id="pinCode" class="form-input" placeholder="â€¢â€¢â€¢â€¢" maxlength="4" inputmode="numeric">
+                        <input type="password" id="pinCode" class="form-input" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4" inputmode="numeric">
 
                         <button class="btn btn-primary" onclick="loginAgent()">ENTRER</button>
-                        <button class="btn btn-secondary" onclick="openQRValidator()">PrÃ©senter badge QR</button>
+                        <button class="btn btn-secondary" onclick="openQRValidator()">Pr&#233;senter badge QR</button>
                     </div>
                 </div>
             </div>
@@ -1502,7 +1502,7 @@
                 <div class="screen-header">
                     <div class="header-left">
                         <h1>Agent Dashboard</h1>
-                        <p>KONAN MICHEL â€¢ Badge: SEC-2024-001</p>
+                        <p>KONAN MICHEL &#8226; Badge: SEC-2024-001</p>
                     </div>
                     <div class="header-right">
                         <div style="font-size: 12px; font-weight: 600;">Service 14h-22h</div>
@@ -1532,7 +1532,7 @@
 
                     <!-- SOS Button -->
                     <button class="sos-button" onclick="triggerSOS()">
-                        <div class="sos-icon">ðŸš¨</div>
+                        <div class="sos-icon">&#55357;&#57000;</div>
                         <div>URGENCE</div>
                         <div style="font-size: 12px;">SOS</div>
                     </button>
@@ -1540,27 +1540,27 @@
                     <!-- Action Grid -->
                     <div class="action-grid">
                         <div class="action-card" onclick="navigateAgent('ronde')">
-                            <div class="action-icon">ðŸ“</div>
+                            <div class="action-icon">&#55357;&#56525;</div>
                             <div class="action-label">Pointer Ronde</div>
                         </div>
                         <div class="action-card" onclick="navigateAgent('acces')">
-                            <div class="action-icon">ðŸšª</div>
-                            <div class="action-label">ContrÃ´le AccÃ¨s</div>
+                            <div class="action-icon">&#55357;&#57002;</div>
+                            <div class="action-label">Contr&#244;le Acc&#232;s</div>
                         </div>
                         <div class="action-card" onclick="openIncidentForm()">
-                            <div class="action-icon">âš ï¸</div>
+                            <div class="action-icon">&#9888;&#65039;</div>
                             <div class="action-label">Signaler Incident</div>
                         </div>
                         <div class="action-card" onclick="navigateAgent('acces')">
-                            <div class="action-icon">ðŸ‘¥</div>
+                            <div class="action-icon">&#55357;&#56421;</div>
                             <div class="action-label">Visiteurs</div>
                         </div>
                         <div class="action-card" onclick="navigateAgent('incidents')">
-                            <div class="action-icon">ðŸ“‹</div>
+                            <div class="action-icon">&#55357;&#56523;</div>
                             <div class="action-label">Feed Incidents</div>
                         </div>
                         <div class="action-card" onclick="navigateAgent('badge')">
-                            <div class="action-icon">ðŸ…</div>
+                            <div class="action-icon">&#55356;&#57285;</div>
                             <div class="action-label">Mon Badge</div>
                         </div>
                     </div>
@@ -1582,13 +1582,13 @@
                         <div class="ronde-header">
                             <div>
                                 <div class="ronde-zone">Bloc A-B</div>
-                                <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">Zone assignÃ©e</div>
+                                <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">Zone assign&#233;e</div>
                             </div>
                             <div class="ronde-timer" id="ronde-timer">00:00</div>
                         </div>
                         <div class="ronde-info">
-                            <span>DÃ©but: 14:00</span>
-                            <span>Fin prÃ©vue: 14:45</span>
+                            <span>D&#233;but: 14:00</span>
+                            <span>Fin pr&#233;vue: 14:45</span>
                         </div>
                         <div>
                             <div style="font-size: 10px; color: var(--muted); margin-bottom: 6px;">
@@ -1609,7 +1609,7 @@
                     <div class="accordion-item">
                         <div class="accordion-header" onclick="toggleAccordion(this)">
                             <div class="accordion-title">Planning des rondes</div>
-                            <div class="accordion-arrow">â–¼</div>
+                            <div class="accordion-arrow">&#9660;</div>
                         </div>
                         <div class="accordion-content">
                             <div id="planning-list">
@@ -1624,8 +1624,8 @@
             <div id="s-agent-acces" class="screen">
                 <div class="screen-header">
                     <div class="header-left">
-                        <h1>ContrÃ´le AccÃ¨s</h1>
-                        <p>Portail - EntrÃ©e principale</p>
+                        <h1>Contr&#244;le Acc&#232;s</h1>
+                        <p>Portail - Entr&#233;e principale</p>
                     </div>
                 </div>
 
@@ -1634,7 +1634,7 @@
                     <div class="tabs">
                         <button class="tab active" onclick="switchTab(event, 'tab-qr')">QR Scanner</button>
                         <button class="tab" onclick="switchTab(event, 'tab-manuel')">Saisie Manuelle</button>
-                        <button class="tab" onclick="switchTab(event, 'tab-log')">Log AccÃ¨s</button>
+                        <button class="tab" onclick="switchTab(event, 'tab-log')">Log Acc&#232;s</button>
                     </div>
 
                     <!-- TAB 1: QR Scanner -->
@@ -1662,9 +1662,9 @@
                             <label>Nom du visiteur</label>
                             <input type="text" class="form-input" id="visitor-name" placeholder="Ex: M. Diallo">
 
-                            <label>RÃ©sidence ciblÃ©e</label>
+                            <label>R&#233;sidence cibl&#233;e</label>
                             <select class="form-input" id="residence-select" style="appearance: none; cursor: pointer;">
-                                <option value="">-- SÃ©lectionner --</option>
+                                <option value="">-- S&#233;lectionner --</option>
                                 <option value="A01">A01</option>
                                 <option value="A02">A02</option>
                                 <option value="B05">B05</option>
@@ -1673,7 +1673,7 @@
 
                             <label>Motif</label>
                             <select class="form-input" id="motif-select" style="appearance: none; cursor: pointer;">
-                                <option value="">-- SÃ©lectionner --</option>
+                                <option value="">-- S&#233;lectionner --</option>
                                 <option value="Livraison">Livraison</option>
                                 <option value="Visite famille">Visite famille</option>
                                 <option value="Technicien">Technicien</option>
@@ -1683,14 +1683,14 @@
                             <label>Plaque (optionnel)</label>
                             <input type="text" class="form-input" id="plaque-input" placeholder="Ex: AB 1234 CI">
 
-                            <button class="btn btn-secondary" onclick="photoCapture()" style="margin-bottom: 12px;">ðŸ“· Photo visiteur</button>
+                            <button class="btn btn-secondary" onclick="photoCapture()" style="margin-bottom: 12px;">&#55357;&#56567; Photo visiteur</button>
 
-                            <button class="btn btn-teal" onclick="authorizeAccess()">âœ“ Autoriser entrÃ©e</button>
-                            <button class="btn btn-secondary" onclick="denyAccess()" style="margin-top: 8px;">âœ— Refuser</button>
+                            <button class="btn btn-teal" onclick="authorizeAccess()">&#10003; Autoriser entr&#233;e</button>
+                            <button class="btn btn-secondary" onclick="denyAccess()" style="margin-top: 8px;">&#10007; Refuser</button>
                         </div>
                     </div>
 
-                    <!-- TAB 3: Log AccÃ¨s -->
+                    <!-- TAB 3: Log Acc&#232;s -->
                     <div id="tab-log" class="tab-content">
                         <div class="incidents-count">
                             <span>Total</span>
@@ -1708,12 +1708,12 @@
                 <div class="screen-header">
                     <div class="header-left">
                         <h1>Incidents</h1>
-                        <p>CitÃ© Les Palmiers</p>
+                        <p>Cit&#233; Les Palmiers</p>
                     </div>
                 </div>
 
                 <div class="screen-content">
-                    <button class="btn btn-primary" onclick="openIncidentForm()" style="margin-bottom: 16px;">ðŸš¨ Signaler Incident</button>
+                    <button class="btn btn-primary" onclick="openIncidentForm()" style="margin-bottom: 16px;">&#55357;&#57000; Signaler Incident</button>
 
                     <div class="incidents-count">
                         <span>Incidents actifs</span>
@@ -1731,7 +1731,7 @@
                 <div class="screen-header">
                     <div class="header-left">
                         <h1>Mon Badge</h1>
-                        <p>Badge numÃ©rique de sÃ©curitÃ©</p>
+                        <p>Badge num&#233;rique de s&#233;curit&#233;</p>
                     </div>
                 </div>
 
@@ -1741,7 +1741,7 @@
                         <div class="badge-front">
                             <div class="badge-top">
                                 <div class="badge-logo">DOMO</div>
-                                <div class="badge-title">SÃ©curitÃ©</div>
+                                <div class="badge-title">S&#233;curit&#233;</div>
                             </div>
                             <div class="badge-center">
                                 <div class="badge-avatar">KM</div>
@@ -1755,25 +1755,25 @@
                                 </div>
                                 <div class="badge-info">
                                     <div class="badge-info-label">Valide jusqu'au</div>
-                                    <div class="badge-info-value">31 DÃ©c 2026</div>
+                                    <div class="badge-info-value">31 D&#233;c 2026</div>
                                 </div>
-                                <div class="badge-status">ACCRÃ‰DITÃ‰ âœ“</div>
+                                <div class="badge-status">ACCR&#201;DIT&#201; &#10003;</div>
                             </div>
                         </div>
                         <!-- Back (QR) -->
                         <div class="badge-back">
                             <div style="text-align: center; margin-top: 10px;">
                                 <div class="badge-logo" style="margin-bottom: 8px;">DOMO</div>
-                                <div class="qr-code">â–ˆâ–€â–ˆ â–ˆâ–€â–ˆ</div>
-                                <div class="qr-text">Scanner pour vÃ©rifier</div>
+                                <div class="qr-code">&#9608;&#9600;&#9608; &#9608;&#9600;&#9608;</div>
+                                <div class="qr-text">Scanner pour v&#233;rifier</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="geofencing-section">
-                        <div class="geofencing-title">GÃ©olocalisation</div>
+                        <div class="geofencing-title">G&#233;olocalisation</div>
                         <div class="geofencing-item">
-                            <div class="geofencing-zone">Zone assignÃ©e: Bloc A-B</div>
+                            <div class="geofencing-zone">Zone assign&#233;e: Bloc A-B</div>
                             <div class="geofencing-status">
                                 <span class="pulse-dot" style="width: 4px; height: 4px;"></span>
                                 OK
@@ -1787,23 +1787,23 @@
         <!-- Bottom Navigation -->
         <div class="bottom-nav">
             <div class="nav-item active" id="nav-home" onclick="navigateAgent('home')">
-                <div style="font-size: 20px;">ðŸ </div>
+                <div style="font-size: 20px;">&#55356;&#57312;</div>
                 <div class="nav-label">Accueil</div>
             </div>
             <div class="nav-item" id="nav-ronde" onclick="navigateAgent('ronde')">
-                <div style="font-size: 20px;">ðŸ“</div>
+                <div style="font-size: 20px;">&#55357;&#56525;</div>
                 <div class="nav-label">Ronde</div>
             </div>
             <div class="nav-item" id="nav-acces" onclick="navigateAgent('acces')">
-                <div style="font-size: 20px;">ðŸšª</div>
-                <div class="nav-label">AccÃ¨s</div>
+                <div style="font-size: 20px;">&#55357;&#57002;</div>
+                <div class="nav-label">Acc&#232;s</div>
             </div>
             <div class="nav-item" id="nav-incidents" onclick="navigateAgent('incidents')">
-                <div style="font-size: 20px;">âš ï¸</div>
+                <div style="font-size: 20px;">&#9888;&#65039;</div>
                 <div class="nav-label">Incidents</div>
             </div>
             <div class="nav-item" id="nav-badge" onclick="navigateAgent('badge')">
-                <div style="font-size: 20px;">ðŸ…</div>
+                <div style="font-size: 20px;">&#55356;&#57285;</div>
                 <div class="nav-label">Badge</div>
             </div>
         </div>
@@ -1834,7 +1834,7 @@
             heureDebut: '14:00',
             heureFin: '14:45',
             checkpoints: [
-                {nom:'EntrÃ©e Bloc A', pointe:false, heure:null},
+                {nom:'Entr&#233;e Bloc A', pointe:false, heure:null},
                 {nom:'Parking sous-sol', pointe:false, heure:null},
                 {nom:'Jardins communs', pointe:false, heure:null},
                 {nom:'Sortie Bloc B', pointe:false, heure:null}
@@ -1845,27 +1845,27 @@
             {zone:'Bloc A-B', debut:'14:00', fin:'14:45', statut:'en_cours'},
             {zone:'Portail+Parking', debut:'16:00', fin:'16:30', statut:'planifiee'},
             {zone:'Bloc C-D', debut:'18:00', fin:'18:45', statut:'planifiee'},
-            {zone:'Tour complÃ¨te', debut:'22:00', fin:'23:00', statut:'planifiee'},
+            {zone:'Tour compl&#232;te', debut:'22:00', fin:'23:00', statut:'planifiee'},
         ];
 
         const logAccesAgent = [
-            {heure:'14:25', visiteur:'M. Diallo Ibrahima', residence:'A04', motif:'Livraison', statut:'entrÃ©'},
-            {heure:'13:50', visiteur:'Mme Kone Aissatou', residence:'B07', motif:'Visite famille', statut:'entrÃ©'},
+            {heure:'14:25', visiteur:'M. Diallo Ibrahima', residence:'A04', motif:'Livraison', statut:'entr&#233;'},
+            {heure:'13:50', visiteur:'Mme Kone Aissatou', residence:'B07', motif:'Visite famille', statut:'entr&#233;'},
             {heure:'12:30', visiteur:'M. Ouattara Jean', residence:'C02', motif:'Technicien', statut:'sorti'},
-            {heure:'11:15', visiteur:'Inconnu', residence:'???', motif:'???', statut:'refusÃ©'},
+            {heure:'11:15', visiteur:'Inconnu', residence:'???', motif:'???', statut:'refus&#233;'},
         ];
 
         const listeNoire = [
-            {nom:'Inconnu X', description:'Vol Ã  main armÃ©e Mars 2025', signalement:'Homme, 30-35 ans, cicatrice joue gauche'},
+            {nom:'Inconnu X', description:'Vol &#224; main arm&#233;e Mars 2025', signalement:'Homme, 30-35 ans, cicatrice joue gauche'},
         ];
 
         let incidentsFeed = [
-            {id:1, type:'intrusion', gravite:'critique', description:'Individu non identifiÃ© dans parking sous-sol',
-             source:'Agent Konan Michel', heure:'14:10', statut:'en_cours', icon:'ðŸ”“'},
-            {id:2, type:'personne_suspecte', gravite:'moyen', description:'Homme qui rÃ´de autour du Bloc B',
-             source:'Agent TourÃ© Seydou', heure:'13:45', statut:'ouvert', icon:'ðŸ‘¤'},
-            {id:3, type:'autre', gravite:'faible', description:'LumiÃ¨re panne Bloc C escalier 2',
-             source:'RÃ©sident C05', heure:'11:20', statut:'ouvert', icon:'âš ï¸'},
+            {id:1, type:'intrusion', gravite:'critique', description:'Individu non identifi&#233; dans parking sous-sol',
+             source:'Agent Konan Michel', heure:'14:10', statut:'en_cours', icon:'&#55357;&#56595;'},
+            {id:2, type:'personne_suspecte', gravite:'moyen', description:'Homme qui r&#244;de autour du Bloc B',
+             source:'Agent Tour&#233; Seydou', heure:'13:45', statut:'ouvert', icon:'&#55357;&#56420;'},
+            {id:3, type:'autre', gravite:'faible', description:'Lumi&#232;re panne Bloc C escalier 2',
+             source:'R&#233;sident C05', heure:'11:20', statut:'ouvert', icon:'&#9888;&#65039;'},
         ];
 
         let rondeTimer = null;
@@ -1885,7 +1885,7 @@
             const list = document.getElementById('checkpoints-list');
             list.innerHTML = rondeActive.checkpoints.map((cp, i) => {
                 const statusClass = cp.pointe ? 'done' : 'pending';
-                const statusText = cp.pointe ? `âœ… PointÃ© ${cp.heure}` : 'â³ En attente';
+                const statusText = cp.pointe ? `&#9989; Point&#233; ${cp.heure}` : '&#9203; En attente';
                 const btnDisabled = cp.pointe ? 'done' : '';
                 return `
                     <div class="checkpoint-item">
@@ -1909,7 +1909,7 @@
                         <div class="planning-zone">${p.zone}</div>
                         <div class="planning-time">${p.debut}-${p.fin}</div>
                     </div>
-                    <div class="planning-status ${p.statut}">${p.statut === 'en_cours' ? 'EN COURS' : 'PLANIFIÃ‰E'}</div>
+                    <div class="planning-status ${p.statut}">${p.statut === 'en_cours' ? 'EN COURS' : 'PLANIFI&#201;E'}</div>
                 </div>
             `).join('');
         }
@@ -1939,8 +1939,8 @@
         function renderAccesLog() {
             const list = document.getElementById('acces-log-list');
             list.innerHTML = logAccesAgent.map(log => {
-                const statusClass = log.statut === 'entrÃ©' ? 'valid' : log.statut === 'refusÃ©' ? 'invalid' : 'valid';
-                const statusEmoji = log.statut === 'entrÃ©' ? 'âœ“' : log.statut === 'sorti' ? 'â†' : 'âœ—';
+                const statusClass = log.statut === 'entr&#233;' ? 'valid' : log.statut === 'refus&#233;' ? 'invalid' : 'valid';
+                const statusEmoji = log.statut === 'entr&#233;' ? '&#10003;' : log.statut === 'sorti' ? '&#8592;' : '&#10007;';
                 return `
                     <div class="incident-item">
                         <div class="incident-header">
@@ -1949,7 +1949,7 @@
                         </div>
                         <div class="visitor-info">
                             <div class="visitor-info-row">
-                                <div class="visitor-info-label">RÃ©sidence</div>
+                                <div class="visitor-info-label">R&#233;sidence</div>
                                 <div>${log.residence}</div>
                             </div>
                             <div class="visitor-info-row">
@@ -2013,7 +2013,7 @@
                 return;
             }
 
-            showToast('âœ“ Authentification rÃ©ussie', 'success');
+            showToast('&#10003; Authentification r&#233;ussie', 'success');
             setTimeout(() => {
                 navigateAgent('home');
                 initApp();
@@ -2023,8 +2023,8 @@
         function openQRValidator() {
             showModal(`
                 <div style="text-align: center;">
-                    <div style="font-size: 48px; margin: 20px 0;">ðŸ“±</div>
-                    <p style="margin-bottom: 16px;">PrÃ©sentez votre badge QR au scanner du superviseur.</p>
+                    <div style="font-size: 48px; margin: 20px 0;">&#55357;&#56561;</div>
+                    <p style="margin-bottom: 16px;">Pr&#233;sentez votre badge QR au scanner du superviseur.</p>
                     <button class="btn btn-secondary" onclick="closeModal()">Fermer</button>
                 </div>
             `);
@@ -2037,7 +2037,7 @@
             const modal = `
                 <div style="text-align: center;">
                     <div class="countdown" id="countdown">3</div>
-                    <p style="margin-bottom: 16px; color: var(--muted);">Alerte SOS envoyÃ©e dans...</p>
+                    <p style="margin-bottom: 16px; color: var(--muted);">Alerte SOS envoy&#233;e dans...</p>
                     <button class="btn btn-secondary" onclick="closeModal()" style="width: 100%;">Annuler (5s)</button>
                 </div>
             `;
@@ -2060,15 +2060,15 @@
             const now = new Date().toLocaleTimeString('fr-FR');
             const modal = `
                 <div style="text-align: center;">
-                    <div style="font-size: 48px; color: var(--red); margin: 20px 0; animation: pulse 1s infinite;">ðŸš¨</div>
-                    <div style="font-size: 18px; font-weight: 700; color: var(--red); margin-bottom: 16px;">ALERTE ENVOYÃ‰E</div>
+                    <div style="font-size: 48px; color: var(--red); margin: 20px 0; animation: pulse 1s infinite;">&#55357;&#57000;</div>
+                    <div style="font-size: 18px; font-weight: 700; color: var(--red); margin-bottom: 16px;">ALERTE ENVOY&#201;E</div>
                     <div style="background: var(--card); border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 11px; color: var(--text-muted);">
                         <div><strong>Heure:</strong> ${now}</div>
                         <div style="margin-top: 6px;"><strong>Position:</strong> Bloc A-B</div>
-                        <div style="margin-top: 6px;"><strong>Alerte envoyÃ©e Ã :</strong></div>
-                        <div style="margin-top: 4px;">âœ“ Syndic de copropriÃ©tÃ©</div>
-                        <div>âœ“ SecurPlus CI</div>
-                        <div>âœ“ Tous les agents</div>
+                        <div style="margin-top: 6px;"><strong>Alerte envoy&#233;e &#224;:</strong></div>
+                        <div style="margin-top: 4px;">&#10003; Syndic de copropri&#233;t&#233;</div>
+                        <div>&#10003; SecurPlus CI</div>
+                        <div>&#10003; Tous les agents</div>
                     </div>
                     <button class="btn btn-primary" onclick="closeModal()" style="width: 100%;">Fermer</button>
                 </div>
@@ -2087,7 +2087,7 @@
 
             renderCheckpoints();
             updateStats();
-            showToast('âœ“ Checkpoint pointÃ© â€” NFC dÃ©tectÃ©', 'success');
+            showToast('&#10003; Checkpoint point&#233; &#8212; NFC d&#233;tect&#233;', 'success');
 
             // Check if all done
             if (rondeActive.checkpoints.every(cp => cp.pointe)) {
@@ -2105,7 +2105,7 @@
 
             const modal = `
                 <div>
-                    <div style="font-size: 16px; font-weight: 700; color: var(--teal); text-align: center; margin-bottom: 16px;">âœ“ RONDE TERMINÃ‰E</div>
+                    <div style="font-size: 16px; font-weight: 700; color: var(--teal); text-align: center; margin-bottom: 16px;">&#10003; RONDE TERMIN&#201;E</div>
                     <div style="background: var(--card); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
                         ${summary}
                     </div>
@@ -2122,7 +2122,7 @@
 
         function submitRondeReport() {
             const note = document.getElementById('ronde-note')?.value || '';
-            showToast('âœ“ Rapport enregistrÃ©', 'success');
+            showToast('&#10003; Rapport enregistr&#233;', 'success');
             closeModal();
             resetRonde();
         }
@@ -2155,16 +2155,16 @@
         function simulateValidQR() {
             const visitorCard = `
                 <div style="text-align: center;">
-                    <div style="font-size: 32px; margin: 12px 0;">âœ“</div>
+                    <div style="font-size: 32px; margin: 12px 0;">&#10003;</div>
                     <div style="font-size: 14px; font-weight: 700; color: var(--teal); margin-bottom: 16px;">QR VALIDE</div>
                     <div class="visitor-card">
                         <div class="visitor-header">
                             <div class="visitor-name">M. Diallo Ibrahima</div>
-                            <div class="visitor-status valid">âœ“ AUTORISÃ‰</div>
+                            <div class="visitor-status valid">&#10003; AUTORIS&#201;</div>
                         </div>
                         <div class="visitor-info">
                             <div class="visitor-info-row">
-                                <div class="visitor-info-label">RÃ©sidence</div>
+                                <div class="visitor-info-label">R&#233;sidence</div>
                                 <div>A04</div>
                             </div>
                             <div class="visitor-info-row">
@@ -2172,12 +2172,12 @@
                                 <div>Livraison</div>
                             </div>
                             <div class="visitor-info-row">
-                                <div class="visitor-info-label">ValiditÃ©</div>
+                                <div class="visitor-info-label">Validit&#233;</div>
                                 <div>Aujourd'hui</div>
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-teal" onclick="approveVisitor()" style="width: 100%; margin-top: 12px;">âœ“ AccÃ¨s autorisÃ©</button>
+                    <button class="btn btn-teal" onclick="approveVisitor()" style="width: 100%; margin-top: 12px;">&#10003; Acc&#232;s autoris&#233;</button>
                 </div>
             `;
             showModal(visitorCard);
@@ -2187,14 +2187,14 @@
         function simulateInvalidQR() {
             const invalidCard = `
                 <div style="text-align: center;">
-                    <div style="font-size: 32px; margin: 12px 0; color: var(--red);">âœ—</div>
-                    <div style="font-size: 14px; font-weight: 700; color: var(--red); margin-bottom: 16px;">QR EXPIRÃ‰/INVALIDE</div>
+                    <div style="font-size: 32px; margin: 12px 0; color: var(--red);">&#10007;</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--red); margin-bottom: 16px;">QR EXPIR&#201;/INVALIDE</div>
                     <div class="blacklist-alert">
-                        <div class="blacklist-alert-title">â›” PERSONNE SIGNALÃ‰E</div>
-                        <div class="blacklist-alert-desc">Individu figurant sur liste noire - Vol Ã  main armÃ©e Mars 2025</div>
+                        <div class="blacklist-alert-title">&#9940; PERSONNE SIGNAL&#201;E</div>
+                        <div class="blacklist-alert-desc">Individu figurant sur liste noire - Vol &#224; main arm&#233;e Mars 2025</div>
                     </div>
-                    <button class="btn btn-secondary" onclick="contactResident()" style="width: 100%; margin-bottom: 8px;">Contacter rÃ©sident</button>
-                    <button class="btn btn-primary" onclick="denyAccess2()" style="width: 100%;">âœ— Refuser entrÃ©e</button>
+                    <button class="btn btn-secondary" onclick="contactResident()" style="width: 100%; margin-bottom: 8px;">Contacter r&#233;sident</button>
+                    <button class="btn btn-primary" onclick="denyAccess2()" style="width: 100%;">&#10007; Refuser entr&#233;e</button>
                 </div>
             `;
             showModal(invalidCard);
@@ -2216,17 +2216,17 @@
         }
 
         function approveVisitor() {
-            showToast('âœ“ AccÃ¨s approuvÃ©', 'success');
+            showToast('&#10003; Acc&#232;s approuv&#233;', 'success');
             closeModal();
         }
 
         function denyAccess2() {
-            showToast('âœ— AccÃ¨s refusÃ©', 'error');
+            showToast('&#10007; Acc&#232;s refus&#233;', 'error');
             closeModal();
         }
 
         function contactResident() {
-            showToast('ðŸ“ž Appel au rÃ©sident en cours...', 'success');
+            showToast('&#55357;&#56542; Appel au r&#233;sident en cours...', 'success');
         }
 
         function authorizeAccess() {
@@ -2235,19 +2235,19 @@
                 showToast('Remplir tous les champs requis', 'error');
                 return;
             }
-            showToast('âœ“ AccÃ¨s autorisÃ©', 'success');
+            showToast('&#10003; Acc&#232;s autoris&#233;', 'success');
             document.getElementById('visitor-name').value = '';
             document.getElementById('motif-select').value = '';
             document.getElementById('residence-select').value = '';
         }
 
         function denyAccess() {
-            showToast('âœ— AccÃ¨s refusÃ©', 'error');
+            showToast('&#10007; Acc&#232;s refus&#233;', 'error');
             document.getElementById('visitor-name').value = '';
         }
 
         function photoCapture() {
-            showToast('ðŸ“· Photo capturÃ©e', 'success');
+            showToast('&#55357;&#56567; Photo captur&#233;e', 'success');
         }
 
         // ============== INCIDENTS ==============
@@ -2258,31 +2258,31 @@
                 <div class="form-section">
                     <div class="form-section-title">Type d'incident</div>
                     <div class="type-selector">
-                        <button class="type-button" onclick="selectType(this, 'intrusion')"><div class="type-icon">ðŸ”“</div>Intrusion</button>
-                        <button class="type-button" onclick="selectType(this, 'bagarre')"><div class="type-icon">ðŸ‘Š</div>Bagarre</button>
-                        <button class="type-button" onclick="selectType(this, 'vol')"><div class="type-icon">ðŸ”’</div>Vol</button>
-                        <button class="type-button" onclick="selectType(this, 'incendie')"><div class="type-icon">ðŸ”¥</div>Incendie</button>
-                        <button class="type-button" onclick="selectType(this, 'personne')"><div class="type-icon">ðŸ‘¤</div>Personne</button>
-                        <button class="type-button" onclick="selectType(this, 'accident')"><div class="type-icon">ðŸš—</div>Accident</button>
+                        <button class="type-button" onclick="selectType(this, 'intrusion')"><div class="type-icon">&#55357;&#56595;</div>Intrusion</button>
+                        <button class="type-button" onclick="selectType(this, 'bagarre')"><div class="type-icon">&#55357;&#56394;</div>Bagarre</button>
+                        <button class="type-button" onclick="selectType(this, 'vol')"><div class="type-icon">&#55357;&#56594;</div>Vol</button>
+                        <button class="type-button" onclick="selectType(this, 'incendie')"><div class="type-icon">&#55357;&#56613;</div>Incendie</button>
+                        <button class="type-button" onclick="selectType(this, 'personne')"><div class="type-icon">&#55357;&#56420;</div>Personne</button>
+                        <button class="type-button" onclick="selectType(this, 'accident')"><div class="type-icon">&#55357;&#56983;</div>Accident</button>
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <div class="form-section-title">GravitÃ©</div>
+                    <div class="form-section-title">Gravit&#233;</div>
                     <div class="severity-selector">
-                        <button class="severity-button" onclick="selectSeverity(this, 'faible')">âšª Faible</button>
-                        <button class="severity-button" onclick="selectSeverity(this, 'moyen')">ðŸŸ  Moyen</button>
-                        <button class="severity-button" onclick="selectSeverity(this, 'critique')">ðŸ”´ Critique</button>
+                        <button class="severity-button" onclick="selectSeverity(this, 'faible')">&#9898; Faible</button>
+                        <button class="severity-button" onclick="selectSeverity(this, 'moyen')">&#55357;&#57312; Moyen</button>
+                        <button class="severity-button" onclick="selectSeverity(this, 'critique')">&#55357;&#56628; Critique</button>
                     </div>
                 </div>
 
                 <div class="form-section">
                     <div class="form-section-title">Description</div>
-                    <textarea id="incident-desc" placeholder="DÃ©tails de l'incident..."></textarea>
+                    <textarea id="incident-desc" placeholder="D&#233;tails de l'incident..."></textarea>
                 </div>
 
                 <div class="form-section">
-                    <button class="btn btn-secondary" style="width: 100%;">ðŸŽ™ï¸ Retranscription vocale</button>
+                    <button class="btn btn-secondary" style="width: 100%;">&#55356;&#57241;&#65039; Retranscription vocale</button>
                 </div>
 
                 <div class="form-section">
@@ -2340,16 +2340,16 @@
                 source: 'Agent Konan Michel',
                 heure: new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}),
                 statut: 'ouvert',
-                icon: 'âš ï¸'
+                icon: '&#9888;&#65039;'
             };
 
             incidentsFeed.unshift(newIncident);
 
             if (incidentData.severity === 'critique') {
-                showToast('ðŸš¨ Alerte envoyÃ©e au syndic et Ã  la sociÃ©tÃ© de sÃ©curitÃ©', 'success');
+                showToast('&#55357;&#57000; Alerte envoy&#233;e au syndic et &#224; la soci&#233;t&#233; de s&#233;curit&#233;', 'success');
                 setTimeout(triggerSOS, 600);
             } else {
-                showToast('âœ“ Incident enregistrÃ©', 'success');
+                showToast('&#10003; Incident enregistr&#233;', 'success');
             }
 
             closeModal();
